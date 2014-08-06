@@ -1,3 +1,6 @@
+var EventEmitter = require('events').EventEmitter,
+    ee = new EventEmitter();
+
 var express = require('express');
 var router = express.Router();
 
@@ -16,10 +19,23 @@ var User = require('../models/user.js');
 var FileInfo = require('../models/fileinfo.js');
 var AnswerInfo = require('../models/answerinfo.js');
 
+
 validator.extend('isTimeUp', function(str){
   return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
 });
 
+
+ee.on("ModelError", function(err){
+  console.error(err);
+});
+
+ee.on("FSError", function(err){
+  throw err;
+});
+
+ee.on("MailError", function(err){
+  console.error(err);
+});
 
 /* GET home page. */
 // router.get('/', function(req, res) {
@@ -56,14 +72,16 @@ router.post('/launch', function(req, res) {
 
   User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
     if (err) {
-      throw err;
+      ee.emit("ModelError", "Unable to find one user");
+      // throw err;
     }
 
     if ( !user ) {
       user = new User({email: email});
       user.save(function(err){
         if(err)
-          throw err;
+          ee.emit("ModelError", "Unable to save user");
+          // throw err;
       });
     }
 
@@ -77,7 +95,8 @@ router.post('/launch', function(req, res) {
 
     global.email.transporter.sendMail(mailOptions, function(error, info){
         if(error){
-            throw(error);
+          ee.emit("MailError", "Unable to send email");
+          // throw(error);
         }else{
             console.log('Message sent: ' + info.response);
         }
@@ -105,14 +124,16 @@ router.post('/contact', function(req, res) {
 
   User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
     if (err) {
-      throw err;
+      ee.emit("ModelError", "Unable to find one user");
+      // throw err;
     }
 
     if ( !user ) {
       user = new User({email: email});
       user.save(function(err){
         if(err)
-          throw err;
+          ee.emit("ModelError", "Unable to save user");
+          // throw err;
       });
     }
 
@@ -126,7 +147,8 @@ router.post('/contact', function(req, res) {
 
     global.email.transporter.sendMail(mailOptions, function(error, info){
         if(error){
-            throw(error);
+          ee.emit("MailError", "Unable to send email");
+          // throw(error);
         }else{
             console.log('Message sent: ' + info.response);
         }
@@ -142,7 +164,8 @@ router.post('/contact', function(req, res) {
 
     global.email.transporter.sendMail(mailOptions, function(error, info){
         if(error){
-            throw(error);
+          ee.emit("MailError", "Unable to send email");
+            // throw(error);
         }else{
             console.log('Message sent: ' + info.response);
         }
@@ -163,7 +186,8 @@ router.post('/upload', function(req, res) {
 
   form.parse(req, function(err, fields, files){
     if (err)
-      throw err;
+      ee.emit("FormError", "Unable to parse form");
+      // throw err;
 
     if ( !validator.isEmail(fields.email) ) {
       res.render('index', { title: 'Hupothesis', upload: false, error: "Invalid Email" });
@@ -177,26 +201,30 @@ router.post('/upload', function(req, res) {
 
     User.findOne({'email':fields.email, deleted:null}, 'id email deleted updated added', function(err, user){
       if (err) {
-        throw err;
+        ee.emit("ModelError", "Unable to find one user");
+        // throw err;
       }
 
       if ( !user ) {
         user = new User({email:fields.email});
         user.save(function(err){
           if(err)
-            throw err;
+            ee.emit("ModelError", "Unable to save user");
+            // throw err;
         });
       }
 
       var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
       fileInfo.save(function(err){
         if(err)
-          throw err;
+          ee.emit("ModelError", "Unable to save file");
+          // throw err;
       });
 
       fs.rename(files.fileinfo.path, './tmp/'+fileInfo.id, function(err){
         if (err)
-          throw err;
+          ee.emit("FSError", "Unable to rename file");
+          // throw err;
       });
 
       /*  --- Email Notification ---  */
@@ -209,7 +237,8 @@ router.post('/upload', function(req, res) {
 
       global.email.transporter.sendMail(mailOptions, function(error, info){
           if(error){
-              throw(error);
+            ee.emit("MailError", "Unable to send email");
+              // throw(error);
           }else{
               console.log('Message sent: ' + info.response);
           }
@@ -230,7 +259,8 @@ router.get('/answer/:fileinfoid', function(req, res) {
 
   FileInfo.findOne({'_id': fileinfoid, 'deleted':null}, 'filename uptime anstime', function(err, fileInfo){
     if (err)
-      throw err;
+      ee.emit("ModelError", "Unable to find one file");
+      // throw err;
 
     if ( !fileInfo ) {
       res.redirect('/');
@@ -257,19 +287,22 @@ router.post('/answer', function(req, res) {
 
     User.findOne({'email':fields.email,'deleted':null},'id email',function(err,user){
       if(err)
-        throw err;
+        ee.emit("ModelError", "Unable to find one user");
+        // throw err;
 
       if ( !user ) {
         var user = new User({email:fields.email});
         user.save(function(err){
           if(err)
-            throw err;
+            ee.emit("ModelError", "Unable to save user");
+            // throw err;
         });
       }
 
       FileInfo.findOne({'_id':fields.fileinfo,'deleted':null}, 'id userid', function(err,fileInfo){
         if(err)
-          throw err;
+          ee.emit("ModelError", "Unable to find one file");
+          // throw err;
 
         if ( !fileInfo ) {
           res.redirect('/');
@@ -278,24 +311,28 @@ router.post('/answer', function(req, res) {
 
         fs.rename(files.answerinfo.path, './tmp/'+files.answerinfo.filename, function(err){
           if (err)
-            throw err;
+            ee.emit("FSError", "Unable to rename file");
+            // throw err;
         });
 
         AnswerInfo.findOne({'fileid':fileInfo.id,'userid':user.id,'deleted':null}, 'id', function(err, answerInfo){
           if(err)
-            throw err;
+            ee.emit("ModelError", "Unable to find one answer");
+            // throw err;
 
           if(!answerInfo) {
             answerInfo = new AnswerInfo({'fileid':fileInfo.id,'userid':user.id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
             answerInfo.save(function(err){
               if(err)
-                throw err;
+                ee.emit("ModelError", "Unable to save answer");
+                // throw err;
             });
           }
 
           AnswerInfo.update({'fileid':fileInfo.id,'userid':user.id}, {'filename':files.answerinfo.name,'comments':fields.comments}, {}, function(err){
             if(err)
-              throw err;
+              ee.emit("ModelError", "Unable to update answer");
+              // throw err;
           });
 
           /*  --- Email Notification ---  */
@@ -309,7 +346,8 @@ router.post('/answer', function(req, res) {
 
           global.email.transporter.sendMail(mailOptions, function(error, info){
               if(error){
-                  throw(error);
+                ee.emit("MailError", "Unable to send mail");
+                  // throw(error);
               }else{
                   console.log('Message sent: ' + info.response);
               }
@@ -317,7 +355,8 @@ router.post('/answer', function(req, res) {
 
           User.findOne({'_id':fileInfo.userid,'deleted':null}, 'id email', function(err,fileUser){
             if ( err )
-              throw err;
+              ee.emit("ModelError", "Unable to find one user");
+              // throw err;
 
             if ( fileUser )
             {
@@ -330,7 +369,8 @@ router.post('/answer', function(req, res) {
 
               global.email.transporter.sendMail(mailOptions, function(error, info){
                   if(error){
-                      throw(error);
+                    ee.emit("MailError", "Unable to send mail");
+                      // throw(error);
                   }else{
                       console.log('Message sent: ' + info.response);
                   }
@@ -355,7 +395,8 @@ router.get('/download/:fileinfoid', function(req, res){
 
   FileInfo.findOne({'_id':fileinfoid,'deleted':null}, 'id userid uptime anstime filename downloaded', function(err,fileInfo){
     if (err)
-      throw err;
+      ee.emit("ModelError", "Unable to find one file");
+      // throw err;
 
     if( !fileInfo ) {
       res.redirect('/answer/'+fileinfoid);
@@ -379,13 +420,15 @@ router.post('/download', function(req, res){
 
   User.findOne({'email':email,'deleted':null}, 'id email', function(err, user){
     if (err)
-      throw err;
+      ee.emit("ModelError", "Unable to find one user");
+      // throw err;
 
     if( !user ) {
       user = new User({'email': email});
       user.save(function(err){
         if(err)
-          throw err;
+          ee.emit("ModelError", "Unable to save user");
+          // throw err;
       });
     }
 
@@ -398,7 +441,8 @@ router.post('/download', function(req, res){
 
       AnswerInfo.update({'fileid':fileInfo.id,'userid':user.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
         if(err)
-          throw err;
+          ee.emit("ModelError", "Unable to update answer");
+          // throw err;
       });
 
       var filePath = './tmp/'+fileinfoid;
@@ -423,7 +467,8 @@ router.post('/download', function(req, res){
 
       global.email.transporter.sendMail(mailOptions, function(error, info){
           if(error){
-              throw(error);
+            ee.emit("MailError", "Unable to send mail");
+              // throw(error);
           }else{
               console.log('Message sent: ' + info.response);
           }
