@@ -1,0 +1,60 @@
+html, body {
+  height: 100%;
+}
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  margin: 0 auto -60px;
+}
+
+#push {
+  height: 60px;
+}
+
+.header {
+  height: 45px;
+}
+
+p.notice {
+  padding: 0.5em;
+}
+
+form dl, dl.labels {
+  margin:0em;
+  font-size:100%;
+  margin-top:0.5em
+}
+form dt, dl.labels dt {
+  float:left;
+  clear:left;
+  width:15em;
+  margin-bottom:0.8em;
+  color:#555;
+  text-align:left;
+  font-weight:normal;
+  position:relative /*IEWin hack*/
+}
+form dd, dl.labels dd {
+  clear:right;
+  margin-left:15.5em;
+  margin-bottom:0.8em;
+  font-size:100%;
+  font-style:normal;
+  padding-left:0.5em
+}
+form dd.submit, dl.labels dd.submit {
+  margin-top:2em
+}
+
+.footer {
+  background-color: #F5F5F5;
+}
+
+.container .credit {
+  margin: 20px 0;
+}
+
+.muted {
+  color: #999;
+}
