@@ -1,18 +1,23 @@
 var nodemailer = require('nodemailer');
 var sgTransport = require('nodemailer-sendgrid-transport');
 
-var transporter = null;
-	transporter = nodemailer.createTransport({
+var transporterOptions = {
 	    host: process.env.OPENSHIFT_SENDGRID_HOST || 'localhost',
 	    port: process.env.OPENSHIFT_SENDGRID_PORT || 25,
 	    secure: false,
 	    ignoreTLS: true,
 	    debug: true,
-	    auth : {
+	};
+
+if ( process.env.OPENSHIFT_SENDGRID_USER && process.env.OPENSHIFT_SENDGRID_PASS ) {
+	transporterOptions.auth = {
 	    	user: process.env.OPENSHIFT_SENDGRID_USER || '',
 	    	pass: process.env.OPENSHIFT_SENDGRID_PASS || ''
-	    }
-	});
+	    };
+}
+
+var transporter = null;
+	transporter = nodemailer.createTransport(transporterOptions);
 
 
 var global = {
@@ -26,6 +31,10 @@ var global = {
 	email : {
 		user : "contact@hupothesis.com",
 		transporter: transporter
+	},
+	captcha : {
+		private_key: process.env.OPENSHIFT_RECAPTCHA_PRIVATE_KEY || '6LeGQPUSAAAAAA9JjXnT6yqbEIFPRPj6jjdN-P3k',
+		public_key: process.env.OPENSHIFT_RECAPTCHA_PUBLIC_KEY || '6LeGQPUSAAAAALTh6FWNUf96BnAWAkD2gswYbPJx',
 	}
 };
 

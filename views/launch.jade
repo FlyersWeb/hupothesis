@@ -21,16 +21,23 @@ block content
     p If you want to get notified when hupothesis will be available, fill our form.
     p You'll be able to use this same email address to use our service.
 
-  form(method="POST", action="/launch")
-    dl
-      dt
-        label(for="email") Please enter you email
-      dd
-        input.form-control(type="email",name="email",id="email",required="true")
-      dt
-      dd
-        input(type="checkbox",checked="true",required="true",name="newsletter",id="newsletter")
-        label(for="newsletter") &nbsp; I want to be notified when Hupothesis will be available
-      dt
-      dd
-        button.btn.btn-primary(type="submit") Notify me
+    form(method="POST", action="/launch")
+      dl
+        dt
+          label(for="email") Please enter you email
+        dd
+          input.form-control(type="email",name="email",id="email",required="true")
+        dt
+        dd
+          script(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}')
+          noscript
+            iframe(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}', height="300", width="500", frameborder="0")
+            textarea(name='recaptcha_challenge_field', rows='3', cols='40')
+            input(type='hidden', name='recaptcha_response_field', value='manual_challenge')
+        dt
+        dd
+          input(type="checkbox",checked="true",required="true",name="newsletter",id="newsletter")
+          label(for="newsletter") &nbsp; I want to be notified when Hupothesis will be available
+        dt
+        dd
+          button.btn.btn-primary(type="submit") Notify me

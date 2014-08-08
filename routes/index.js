@@ -13,6 +13,8 @@ var fs = require('fs-extra');
 
 var mongoose = require('mongoose');
 
+var simple_recaptcha = require('simple-recaptcha');
+
 var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
@@ -38,9 +40,10 @@ ee.on("MailError", function(err){
 });
 
 /* GET home page. */
-// router.get('/', function(req, res) {
-//   res.render('index', { title: 'Hupothesis - validate your hypothesis', notice: null });
-// });
+router.get('/', function(req, res) {
+  res.redirect('/launch');
+  // res.render('index', { title: 'Hupothesis - validate your hypothesis', notice: null });
+});
 
 /* GET FAQ page. */
 router.get('/faq', function(req, res) {
@@ -49,12 +52,12 @@ router.get('/faq', function(req, res) {
 
 /* GET contact page. */
 router.get('/contact', function(req, res) {
-  res.render('contact', { title: 'Hupothesis - contact us', notice: null });
+  res.render('contact', { title: 'Hupothesis - contact us', notice: null, captcha_key: global.captcha.public_key });
 });
 
 /* GET launch page. */
-router.get('/', function(req, res) {
-  res.render('launch', { title: 'Hupothesis - launch soon', notice: null });
+router.get('/launch', function(req, res) {
+  res.render('launch', { title: 'Hupothesis - launch soon', notice: null, captcha_key: global.captcha.public_key });
 });
 
 router.get('/terms', function(req, res){
@@ -66,44 +69,55 @@ router.post('/launch', function(req, res) {
 
   var email = req.body.email;
 
+  var ip = req.ip;
+  var challenge = req.body.recaptcha_challenge_field;
+  var response = req.body.recaptcha_response_field;
+  var private_key = global.captcha.private_key;
+
   if ( !validator.isEmail(email) ) {
     res.render('launch', {title: 'Hupothesis - error', error: 'Invalid email'});
   }
 
-  User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
-    if (err) {
-      ee.emit("ModelError", "Unable to find one user");
-      // throw err;
-    }
+  simple_recaptcha(private_key, ip, challenge, response, function(err) {
+    
+    if (err) return res.send(err.message);
+    
+    User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
+      if (err) {
+        ee.emit("ModelError", "Unable to find one user");
+        // throw err;
+      }
 
-    if ( !user ) {
-      user = new User({email: email});
-      user.save(function(err){
-        if(err)
-          ee.emit("ModelError", "Unable to save user");
-          // throw err;
+      if ( !user ) {
+        user = new User({email: email});
+        user.save(function(err){
+          if(err)
+            ee.emit("ModelError", "Unable to save user");
+            // throw err;
+        });
+      }
+
+      /* ------------- Email -------------- */
+      var mailOptions = {
+        from: global.email.user,
+        to: ''+email+', '+global.email.user+'',
+        subject: "[Hupothesis] Newsletter subscription",
+        text: "Congratulations, we've received your request to be informed when Hupothesis will be online. We're working hard to let you access our service as soon as possible.\nFeel free to contact us when you need.\nThanks."
+      };
+
+      global.email.transporter.sendMail(mailOptions, function(error, info){
+          if(error){
+            ee.emit("MailError", "Unable to send email");
+            // throw(error);
+          }else{
+              console.log('Message sent: ' + info.response);
+          }
       });
-    }
+      /* ------------ */
 
-    /* ------------- Email -------------- */
-    var mailOptions = {
-      from: global.email.user,
-      to: ''+email+', '+global.email.user+'',
-      subject: "[Hupothesis] Newsletter subscription",
-      text: "Congratulations, we've received your request to be informed when Hupothesis will be online. We're working hard to let you access our service as soon as possible.\nFeel free to contact us when you need.\nThanks."
-    };
+      res.render('launch', { title: 'Hupothesis - launch soon', notice: 'Your request has been taken in account' });
 
-    global.email.transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-          ee.emit("MailError", "Unable to send email");
-          // throw(error);
-        }else{
-            console.log('Message sent: ' + info.response);
-        }
     });
-    /* ------------ */
-
-    res.render('launch', { title: 'Hupothesis - launch soon', notice: 'Your request has been taken in account' });
 
   });
 
@@ -115,6 +129,11 @@ router.post('/contact', function(req, res) {
   var subject = req.body.subject;
   var comments = req.body.comments;
 
+  var ip = req.ip;
+  var challenge = req.body.recaptcha_challenge_field;
+  var response = req.body.recaptcha_response_field;
+  var private_key = global.captcha.private_key;
+
   if ( !validator.isEmail(email) ) {
     res.render('launch', {title: 'Hupothesis - error', error: 'Invalid email'});
   }
@@ -122,57 +141,63 @@ router.post('/contact', function(req, res) {
   subject = validator.toString(subject);
   comments = validator.toString(comments);
 
-  User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
-    if (err) {
-      ee.emit("ModelError", "Unable to find one user");
-      // throw err;
-    }
+  simple_recaptcha(private_key, ip, challenge, response, function(err) {
+    
+    if (err) return res.send(err.message);
 
-    if ( !user ) {
-      user = new User({email: email});
-      user.save(function(err){
-        if(err)
-          ee.emit("ModelError", "Unable to save user");
-          // throw err;
-      });
-    }
+    User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
+      if (err) {
+        ee.emit("ModelError", "Unable to find one user");
+        // throw err;
+      }
 
-    /* ------------- Email -------------- */
-    var mailOptions = {
-      from: global.email.user,
-      to: ''+email+', '+global.email.user+'',
-      subject: "[Hupothesis] Message successfully sent",
-      text: "Congratulations, we've received your contact request we'll respond as soon as possible.\nThanks."
-    };
+      if ( !user ) {
+        user = new User({email: email});
+        user.save(function(err){
+          if(err)
+            ee.emit("ModelError", "Unable to save user");
+            // throw err;
+        });
+      }
 
-    global.email.transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-          ee.emit("MailError", "Unable to send email");
-          // throw(error);
-        }else{
-            console.log('Message sent: ' + info.response);
-        }
-    });
+      /* ------------- Email -------------- */
+      var mailOptions = {
+        from: global.email.user,
+        to: ''+email+', '+global.email.user+'',
+        subject: "[Hupothesis] Message successfully sent",
+        text: "Congratulations, we've received your contact request we'll respond as soon as possible.\nThanks."
+      };
 
-
-    var mailOptions = {
-      from: email,
-      to: ''+global.email.user+'',
-      subject: "[Hupothesis] "+subject,
-      text: comments
-    };
-
-    global.email.transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-          ee.emit("MailError", "Unable to send email");
+      global.email.transporter.sendMail(mailOptions, function(error, info){
+          if(error){
+            ee.emit("MailError", "Unable to send email");
             // throw(error);
-        }else{
-            console.log('Message sent: ' + info.response);
-        }
-    });
-    /* ------------ */
+          }else{
+              console.log('Message sent: ' + info.response);
+          }
+      });
 
-    res.render('contact', { title: 'Hupothesis - contact us', notice: "Message sent with success" });
+
+      var mailOptions = {
+        from: email,
+        to: ''+global.email.user+'',
+        subject: "[Hupothesis] "+subject,
+        text: comments
+      };
+
+      global.email.transporter.sendMail(mailOptions, function(error, info){
+          if(error){
+            ee.emit("MailError", "Unable to send email");
+              // throw(error);
+          }else{
+              console.log('Message sent: ' + info.response);
+          }
+      });
+      /* ------------ */
+
+      res.render('contact', { title: 'Hupothesis - contact us', notice: "Message sent with success" });
+
+    });
 
   });
 });

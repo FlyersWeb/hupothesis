@@ -15,20 +15,28 @@ block content
       span &nbsp; #{notice}
   else
     p Fill free to contact us for any Hupothesis related request and/or informations. We will get in touch as soon as possible.
-  form(method="POST", action="/contact")
-    dl
-      dt
-        label(for="email") Your email
-      dd
-        input.form-control(type="email",name="email",id="email",required="true")
-      dt
-        label(for="subject") Subject
-      dd
-        input.form-control(type="text",name="subject",id="subject",required="true")
-      dt
-        label(for="comments") Your message
-      dd
-        textarea.form-control(name="comments",id="comments")
-      dt
-      dd
-        button.btn.btn-primary(type="submit") Send
+  
+    form(method="POST", action="/contact")
+      dl
+        dt
+          label(for="email") Your email
+        dd
+          input.form-control(type="email",name="email",id="email",required="true")
+        dt
+          label(for="subject") Subject
+        dd
+          input.form-control(type="text",name="subject",id="subject",required="true")
+        dt
+          label(for="comments") Your message
+        dd
+          textarea.form-control(name="comments",id="comments")
+        dt
+        dd
+          script(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}')
+          noscript
+            iframe(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}', height="300", width="500", frameborder="0")
+            textarea(name='recaptcha_challenge_field', rows='3', cols='40')
+            input(type='hidden', name='recaptcha_response_field', value='manual_challenge')
+        dt
+        dd
+          button.btn.btn-primary(type="submit") Send
