@@ -6,33 +6,40 @@ block content
   if error
     p.notice.bg-danger.text-danger 
       i.fa.fa-exclamation-triangle  
-      span Error when uploading exam : #{error}
+      span &nbsp; Error when uploading exam : #{error}
 
   if upload
     p.notice.bg-info.text-info 
       i.fa.fa-exclamation-triangle  
       span &nbsp; File Uploaded with success get it on 
         a(href="/answer/#{fileid}") /answer/#{fileid}
-        
-  form(method="post", action="/upload", enctype="multipart/form-data")
-    dl
-      dt
-        label(for="email") Please enter you email
-      dd
-        input.form-control(type="email",name="email",id="email",required="true")
-      dt
-        label(for="timeup") Enter test answer time as (1d2h3m)
-      dd
-        input.form-control(type="text",name="timeup",id="timeup",required="true")
-      dt
-        label(for="fileinfo") Choose your questionary
-      dd
-        input(type="file",name="fileinfo",id="fileinfo",required="true")
-      dt
-      dd
-        input(type="checkbox",checked="true",required="true",name="cgu",id="cgu")
-        label(for="cgu")  &nbsp; 
-          a(href="/terms") Please accept our terms of use
-      dt
-      dd
-        button.btn.btn-primary(type="submit") Submit your test
+  else  
+    form(method="post", action="/upload", enctype="multipart/form-data")
+      dl
+        dt
+          label(for="email") Please enter you email
+        dd
+          input.form-control(type="email",name="email",id="email",required="true")
+        dt
+          label(for="timeup") Enter test answer time as (1d2h3m)
+        dd
+          input.form-control(type="text",name="timeup",id="timeup",required="true")
+        dt
+          label(for="fileinfo") Choose your questionary
+        dd
+          input(type="file",name="fileinfo",id="fileinfo",required="true")
+        dt
+        dd
+          script(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}')
+          noscript
+            iframe(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}', height="300", width="500", frameborder="0")
+            textarea(name='recaptcha_challenge_field', rows='3', cols='40')
+            input(type='hidden', name='recaptcha_response_field', value='manual_challenge')
+        dt
+        dd
+          input(type="checkbox",checked="true",required="true",name="cgu",id="cgu")
+          label(for="cgu")  &nbsp; 
+            a(href="/terms") Please accept our terms of use
+        dt
+        dd
+          button.btn.btn-primary(type="submit") Submit your test

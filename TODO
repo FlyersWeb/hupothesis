@@ -1,0 +1,14 @@
+* Add form validations        DONE (captcha edit error message)
+* Add email notifications     DONE
+* Add user profile page       DONE
+* Add GFX layout              DONE (add more GFX)
+* Add launch page             DONE (add promotional video)
+* Add contact page            DONE
+* Add Error handler Express   IN PROGRESS
+* Add UT e2e FT
+* Add social share
+* Add widget integration
+* Add XSS protection
+* Add CSRF protection
+* Investigate s3 storage
+* Investigate ses mailing

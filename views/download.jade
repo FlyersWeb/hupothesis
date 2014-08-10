@@ -8,13 +8,21 @@ block content
     p.notice.bg-danger.text-danger 
       i.fa.fa-exclamation-triangle  
       span Error when downloading exam : #{error}
-  form(method="post", action="/download")
-    dl
-      dt
-        label(for="email") Enter your email
-      dd
-        input.form-control(type="email",name="email",id="email",required="true")
-      dt
-      dd
-        input(type="hidden",name="fileinfoid",value="#{fileinfo.id}")
-        button.btn.btn-primary(type="submit") Download the test
+  else
+    form(method="post", action="/download")
+      dl
+        dt
+          label(for="email") Enter your email
+        dd
+          input.form-control(type="email",name="email",id="email",required="true")
+        dt
+        dd
+          script(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}')
+          noscript
+            iframe(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}', height="300", width="500", frameborder="0")
+            textarea(name='recaptcha_challenge_field', rows='3', cols='40')
+            input(type='hidden', name='recaptcha_response_field', value='manual_challenge')
+        dt
+        dd
+          input(type="hidden",name="fileinfoid",value="#{fileinfo.id}")
+          button.btn.btn-primary(type="submit") Download the test

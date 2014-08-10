@@ -32,6 +32,13 @@ block content
           textarea.form-control(name="comments",id="comments")
         dt
         dd
+          script(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}')
+          noscript
+            iframe(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}', height="300", width="500", frameborder="0")
+            textarea(name='recaptcha_challenge_field', rows='3', cols='40')
+            input(type='hidden', name='recaptcha_response_field', value='manual_challenge')
+        dt
+        dd
           input(type="checkbox",checked="true",required="true",name="cgu",id="cgu")
           label(for="cgu")  &nbsp;
             a(href="/terms") Please accept our terms of use
