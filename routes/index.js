@@ -41,23 +41,23 @@ ee.on("MailError", function(err){
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.redirect('/launch');
-  // res.render('index', { title: 'Hupothesis - validate your hypothesis', notice: null, captcha_key: global.captcha.public_key });
+  // res.redirect('/launch');
+  res.render('index', { title: 'Hupothesis', notice: null, captcha_key: global.captcha.public_key });
 });
 
 /* GET FAQ page. */
 router.get('/faq', function(req, res) {
-  res.render('faq', { title: 'Hupothesis - FAQ', notice: null, captcha_key: global.captcha.public_key  });
+  res.render('faq', { title: 'About us', notice: null, captcha_key: global.captcha.public_key  });
 });
 
 /* GET contact page. */
 router.get('/contact', function(req, res) {
-  res.render('contact', { title: 'Hupothesis - contact us', notice: null, captcha_key: global.captcha.public_key });
+  res.render('contact', { title: 'Contact us', notice: null, captcha_key: global.captcha.public_key });
 });
 
 /* GET launch page. */
 router.get('/launch', function(req, res) {
-  res.render('launch', { title: 'Hupothesis - launch soon', notice: null, captcha_key: global.captcha.public_key });
+  res.render('launch', { title: 'Launching', notice: null, captcha_key: global.captcha.public_key });
 });
 
 router.get('/terms', function(req, res){
@@ -75,7 +75,7 @@ router.post('/launch', function(req, res) {
   var private_key = global.captcha.private_key;
 
   if ( !validator.isEmail(email) ) {
-    res.render('launch', {title: 'Hupothesis - error', error: 'Invalid email'});
+    res.render('launch', {title: 'Launching - error', error: 'Invalid email'});
   }
 
   simple_recaptcha(private_key, ip, challenge, response, function(err) {
@@ -135,7 +135,7 @@ router.post('/contact', function(req, res) {
   var private_key = global.captcha.private_key;
 
   if ( !validator.isEmail(email) ) {
-    res.render('launch', {title: 'Hupothesis - error', error: 'Invalid email'});
+    res.render('launch', {title: 'Contact us - error', error: 'Invalid email'});
   }
 
   subject = validator.toString(subject);

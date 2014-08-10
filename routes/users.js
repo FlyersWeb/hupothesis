@@ -1,3 +1,6 @@
+var EventEmitter = require('events').EventEmitter,
+    ee = new EventEmitter();
+
 var express = require('express');
 var router = express.Router();
 
@@ -35,6 +38,35 @@ var DHMToT = function(dhm) {
 /* GET users listing. */
 router.get('/', function(req, res) {
   res.send('respond with a resource');
+});
+
+
+router.get('/unsubscribe/:userid', function(req,res){
+
+  var userid = req.param('userid');
+  userid = validator.toString(userid);
+
+  User.findOne({'_id':userid, 'deleted':null}, 'id email newsletter', function(err, user){
+
+    if(err) {
+      ee.emit("ModelError", "Unable to find user");
+      // throw err;
+    }
+
+    if ( !user ) {
+      res.render('unsubscribe', {title:'Unsubscription', notice:'User not present in our newsletters'});
+    }
+
+    User.update({'_id':user.id}, {'newsletter':false}, {}, function(err){
+      if(err)
+        ee.emit("ModelError", "Unable to update user");
+        // throw err;
+
+        res.render('unsubscribe', {title:'Unsubscription completed', notice:'User removed from our newsletter with success'});
+    });
+
+  });
+
 });
 
 router.get('/profile/:userid', function(req,res){

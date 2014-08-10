@@ -1,0 +1,18 @@
+extends global
+
+block content
+  h1 #{title}
+  p.lead Hupothesis newsletter unsubscription page
+
+  if error
+    p.notice.bg-danger.text-danger 
+      i.fa.fa-exclamation-triangle  
+      span Error when unsubscribing : #{error}
+
+  if notice
+    p.notice.bg-info.text-info 
+      i.fa.fa-info
+      span &nbsp; #{notice}
+
+  p Hupothesis let you validate your hypothesis. If you want to know more, 
+    a(href='/') upload your hypothesis.
