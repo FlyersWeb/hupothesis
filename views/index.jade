@@ -13,6 +13,17 @@ block content
       i.fa.fa-exclamation-triangle  
       span &nbsp; File Uploaded with success get it on 
         a(href="/answer/#{fileid}") /answer/#{fileid}
+    p Now you can embed your file in your website using our widget. Use specified code.
+    pre
+      | &lt;script&gt;
+      | (function() {
+      | var s = document.createElement('script');
+      | s.src = '//#{global.app.host}/javascripts/hupothesis.js';
+      | s.async = true;
+      | window.hupothesis_options = (window.hupothesis_options || []).concat([{test:"test"}]);
+      | document.body.appendChild(s);
+      | }());
+      | &lt;/script&gt;
   else  
     form(method="post", action="/upload", enctype="multipart/form-data")
       dl

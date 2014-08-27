@@ -1,6 +1,3 @@
-var EventEmitter = require('events').EventEmitter,
-    ee = new EventEmitter();
-
 var express = require('express');
 var router = express.Router();
 
@@ -26,22 +23,9 @@ validator.extend('isTimeUp', function(str){
   return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
 });
 
-
-ee.on("ModelError", function(err){
-  console.error(err);
-});
-
-ee.on("FSError", function(err){
-  throw err;
-});
-
-ee.on("MailError", function(err){
-  console.error(err);
-});
-
 /* GET home page. */
 router.get('/', function(req, res) {
-  // res.redirect('/launch');
+  res.redirect('/launch');
   res.render('index', { title: 'Hupothesis', notice: null, captcha_key: global.captcha.public_key });
 });
 
@@ -65,7 +49,7 @@ router.get('/terms', function(req, res){
 });
 
 // Post launch newsletter
-router.post('/launch', function(req, res) {
+router.post('/launch', function(req, res, next) {
 
   var email = req.body.email;
 
@@ -80,20 +64,15 @@ router.post('/launch', function(req, res) {
 
   simple_recaptcha(private_key, ip, challenge, response, function(err) {
     
-    if (err) return res.send(err.message);
+    if (err) next(err);
     
     User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
-      if (err) {
-        ee.emit("ModelError", "Unable to find one user");
-        // throw err;
-      }
+      if (err) next(err);
 
       if ( !user ) {
         user = new User({email: email});
         user.save(function(err){
-          if(err)
-            ee.emit("ModelError", "Unable to save user");
-            // throw err;
+          if(err) next(err);
         });
       }
 
@@ -102,15 +81,14 @@ router.post('/launch', function(req, res) {
         from: global.email.user,
         to: ''+email+', '+global.email.user+'',
         subject: "[Hupothesis] Newsletter subscription",
-        text: "Congratulations, we've received your request to be informed when Hupothesis will be online. We're working hard to let you access our service as soon as possible.\nFeel free to contact us when you need.\nThanks."
+        text: "Congratulations, we've received your request to be informed when Hupothesis will be online. We're working hard to let you access our service as soon as possible.\nFeel free to contact us when you need.\nThanks.\nYou can unsubscribe to our service using the link : "+global.app.url+"/users/unsubscribe/"+user.id
       };
 
       global.email.transporter.sendMail(mailOptions, function(error, info){
-          if(error){
-            ee.emit("MailError", "Unable to send email");
-            // throw(error);
+          if(err){
+            next(err);
           }else{
-              console.log('Message sent: ' + info.response);
+            console.log('Message sent: ' + info.response);
           }
       });
       /* ------------ */
@@ -123,7 +101,7 @@ router.post('/launch', function(req, res) {
 
 });
 
-router.post('/contact', function(req, res) {
+router.post('/contact', function(req, res, next) {
 
   var email = req.body.email;
   var subject = req.body.subject;
@@ -143,20 +121,18 @@ router.post('/contact', function(req, res) {
 
   simple_recaptcha(private_key, ip, challenge, response, function(err) {
     
-    if (err) return res.send(err.message);
+    if (err) next(err);
 
     User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
       if (err) {
-        ee.emit("ModelError", "Unable to find one user");
-        // throw err;
+        next(err);
       }
 
       if ( !user ) {
         user = new User({email: email});
         user.save(function(err){
           if(err)
-            ee.emit("ModelError", "Unable to save user");
-            // throw err;
+            next(err);
         });
       }
 
@@ -168,12 +144,11 @@ router.post('/contact', function(req, res) {
         text: "Congratulations, we've received your contact request we'll respond as soon as possible.\nThanks."
       };
 
-      global.email.transporter.sendMail(mailOptions, function(error, info){
-          if(error){
-            ee.emit("MailError", "Unable to send email");
-            // throw(error);
+      global.email.transporter.sendMail(mailOptions, function(err, info){
+          if(err){
+            next(err);
           }else{
-              console.log('Message sent: ' + info.response);
+            console.log('Message sent: ' + info.response);
           }
       });
 
@@ -185,12 +160,11 @@ router.post('/contact', function(req, res) {
         text: comments
       };
 
-      global.email.transporter.sendMail(mailOptions, function(error, info){
-          if(error){
-            ee.emit("MailError", "Unable to send email");
-              // throw(error);
+      global.email.transporter.sendMail(mailOptions, function(err, info){
+          if(err){
+            next(err);
           }else{
-              console.log('Message sent: ' + info.response);
+            console.log('Message sent: ' + info.response);
           }
       });
       /* ------------ */
@@ -203,7 +177,7 @@ router.post('/contact', function(req, res) {
 });
 
 // Upload test
-router.post('/upload', function(req, res) {
+router.post('/upload', function(req, res, next) {
 
   var form = new formidable.IncomingForm();
   form.uploadDir = "./tmp/";
@@ -211,8 +185,7 @@ router.post('/upload', function(req, res) {
 
   form.parse(req, function(err, fields, files){
     if (err)
-      ee.emit("FormError", "Unable to parse form");
-      // throw err;
+      next(err);
 
     var ip        = req.ip;
     var challenge = fields.recaptcha_challenge_field;
@@ -220,45 +193,41 @@ router.post('/upload', function(req, res) {
     var private_key = global.captcha.private_key;
 
     if ( !validator.isEmail(fields.email) ) {
-      res.render('index', { title: 'Hupothesis', upload: false, error: "Invalid Email", captcha_key: global.captcha.public_keys });
+      res.render('index', { title: 'Hupothesis', global: global, upload: false, error: "Invalid Email", captcha_key: global.captcha.public_keys });
       return;
     }
 
     if ( !validator.isTimeUp(fields.timeup) ) {
-      res.render('index', { title: 'Hupothesis', upload: false, error: "Invalid Answer Time", captcha_key: global.captcha.public_keys });
+      res.render('index', { title: 'Hupothesis', global: global, upload: false, error: "Invalid Answer Time", captcha_key: global.captcha.public_keys });
       return;
     }
 
     simple_recaptcha(private_key, ip, challenge, response, function(err) {
 
-      if (err) return res.send(err.message);
+      if (err) next(err);
 
       User.findOne({'email':fields.email, deleted:null}, 'id email deleted updated added', function(err, user){
         if (err) {
-          ee.emit("ModelError", "Unable to find one user");
-          // throw err;
+          next(err);
         }
 
         if ( !user ) {
           user = new User({email:fields.email});
           user.save(function(err){
             if(err)
-              ee.emit("ModelError", "Unable to save user");
-              // throw err;
+              next(err);
           });
         }
 
         var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
         fileInfo.save(function(err){
           if(err)
-            ee.emit("ModelError", "Unable to save file");
-            // throw err;
+            next(err);
         });
 
         fs.rename(files.fileinfo.path, form.uploadDir+fileInfo.id, function(err){
           if (err)
-            ee.emit("FSError", "Unable to rename file");
-            // throw err;
+            next(err);
         });
 
         /*  --- Email Notification ---  */
@@ -269,17 +238,16 @@ router.post('/upload', function(req, res) {
           text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+fileInfo.id+"."
         };
 
-        global.email.transporter.sendMail(mailOptions, function(error, info){
-            if(error){
-              ee.emit("MailError", "Unable to send email");
-                // throw(error);
+        global.email.transporter.sendMail(mailOptions, function(err, info){
+            if(err){
+              next(err);
             }else{
-                console.log('Message sent: ' + info.response);
+              console.log('Message sent: ' + info.response);
             }
         });
         /* ------------ */
 
-        res.render('index', { title: 'Hupothesis', upload: true, fileid: fileInfo.id, captcha_key: global.captcha.public_keys });
+        res.render('index', { title: 'Hupothesis', global: global, upload: true, fileid: fileInfo.id, captcha_key: global.captcha.public_keys });
         return;
       });
     });
@@ -288,14 +256,13 @@ router.post('/upload', function(req, res) {
 });
 
 // Set session
-router.get('/answer/:fileinfoid', function(req, res) {
+router.get('/answer/:fileinfoid', function(req, res, err) {
 
   var fileinfoid = req.param('fileinfoid');
 
   FileInfo.findOne({'_id': fileinfoid, 'deleted':null}, 'filename uptime anstime', function(err, fileInfo){
     if (err)
-      ee.emit("ModelError", "Unable to find one file");
-      // throw err;
+      next(err);
 
     if ( !fileInfo ) {
       res.redirect('/');
@@ -308,7 +275,7 @@ router.get('/answer/:fileinfoid', function(req, res) {
 });
 
 // Upload answers
-router.post('/answer', function(req, res) {
+router.post('/answer', function(req, res, next) {
 
   var form = new formidable.IncomingForm();
   form.uploadDir = "./tmp/";
@@ -329,26 +296,23 @@ router.post('/answer', function(req, res) {
 
     simple_recaptcha(private_key, ip, challenge, response, function(err) {  
 
-      if (err) return res.send(err.message);
+      if (err) next(err);
 
       User.findOne({'email':email,'deleted':null},'id email',function(err,user){
         if(err)
-          ee.emit("ModelError", "Unable to find one user");
-          // throw err;
+          next(err);
 
         if ( !user ) {
           var user = new User({'email':email});
           user.save(function(err){
             if(err)
-              ee.emit("ModelError", "Unable to save user");
-              // throw err;
+              next(err);
           });
         }
 
         FileInfo.findOne({'_id':fields.fileinfo,'deleted':null}, 'id userid', function(err,fileInfo){
           if(err)
-            ee.emit("ModelError", "Unable to find one file");
-            // throw err;
+            next(err);
 
           if ( !fileInfo ) {
             res.redirect('/');
@@ -357,28 +321,24 @@ router.post('/answer', function(req, res) {
 
           fs.rename(files.answerinfo.path, form.uploadDir+files.answerinfo.filename, function(err){
             if (err)
-              ee.emit("FSError", "Unable to rename file");
-              // throw err;
+              next(err);
           });
 
           AnswerInfo.findOne({'fileid':fileInfo.id,'userid':user.id,'deleted':null}, 'id', function(err, answerInfo){
             if(err)
-              ee.emit("ModelError", "Unable to find one answer");
-              // throw err;
+              next(err);
 
             if(!answerInfo) {
               answerInfo = new AnswerInfo({'fileid':fileInfo.id,'userid':user.id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
               answerInfo.save(function(err){
                 if(err)
-                  ee.emit("ModelError", "Unable to save answer");
-                  // throw err;
+                  next(err);
               });
             }
 
             AnswerInfo.update({'fileid':fileInfo.id,'userid':user.id}, {'filename':files.answerinfo.name,'comments':fields.comments}, {}, function(err){
               if(err)
-                ee.emit("ModelError", "Unable to update answer");
-                // throw err;
+                next(err);
             });
 
             /*  --- Email Notification ---  */
@@ -390,19 +350,17 @@ router.post('/answer', function(req, res) {
               text: "Congratulations, you've successfully uploaded "+files.answerinfo.name+". Your administrator will be notified."
             };
 
-            global.email.transporter.sendMail(mailOptions, function(error, info){
-                if(error){
-                  ee.emit("MailError", "Unable to send mail");
-                    // throw(error);
+            global.email.transporter.sendMail(mailOptions, function(err, info){
+                if(err){
+                  next(err);
                 }else{
-                    console.log('Message sent: ' + info.response);
+                  console.log('Message sent: ' + info.response);
                 }
             });
 
             User.findOne({'_id':fileInfo.userid,'deleted':null}, 'id email', function(err,fileUser){
               if ( err )
-                ee.emit("ModelError", "Unable to find one user");
-                // throw err;
+                next(err);
 
               if ( fileUser )
               {
@@ -413,12 +371,11 @@ router.post('/answer', function(req, res) {
                   text: "You've received answers for your file "+fileInfo.filename+". You can view your files status on "+global.app.url+"/profile/"+fileUser.id+"."
                 };
 
-                global.email.transporter.sendMail(mailOptions, function(error, info){
-                    if(error){
-                      ee.emit("MailError", "Unable to send mail");
-                        // throw(error);
+                global.email.transporter.sendMail(mailOptions, function(err, info){
+                    if(err){
+                      next(err);
                     }else{
-                        console.log('Message sent: ' + info.response);
+                      console.log('Message sent: ' + info.response);
                     }
                 });
               }
@@ -436,14 +393,13 @@ router.post('/answer', function(req, res) {
 
 });
 
-router.get('/download/:fileinfoid', function(req, res){
+router.get('/download/:fileinfoid', function(req, res, next){
 
   var fileinfoid = req.param('fileinfoid');
 
   FileInfo.findOne({'_id':fileinfoid,'deleted':null}, 'id userid uptime anstime filename downloaded', function(err,fileInfo){
     if (err)
-      ee.emit("ModelError", "Unable to find one file");
-      // throw err;
+      next(err);
 
     if( !fileInfo ) {
       res.redirect('/answer/'+fileinfoid);
@@ -456,7 +412,7 @@ router.get('/download/:fileinfoid', function(req, res){
 
 });
 
-router.post('/download', function(req, res){
+router.post('/download', function(req, res, next){
 
   var fileinfoid = req.body.fileinfoid;
   var email = req.body.email;
@@ -468,23 +424,22 @@ router.post('/download', function(req, res){
 
   if ( !validator.isEmail(email) ) {
     res.redirect('/answer/'+fileinfoid);
+    return;
   }
 
   simple_recaptcha(private_key, ip, challenge, response, function(err) {  
 
-    if (err) return res.send(err.message);
+    if (err) next(err);
 
     User.findOne({'email':email,'deleted':null}, 'id email', function(err, user){
       if (err)
-        ee.emit("ModelError", "Unable to find one user");
-        // throw err;
+        next(err);
 
       if( !user ) {
         user = new User({'email': email});
         user.save(function(err){
           if(err)
-            ee.emit("ModelError", "Unable to save user");
-            // throw err;
+            next(err);
         });
       }
 
@@ -497,8 +452,7 @@ router.post('/download', function(req, res){
 
         AnswerInfo.update({'fileid':fileInfo.id,'userid':user.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
           if(err)
-            ee.emit("ModelError", "Unable to update answer");
-            // throw err;
+            next(err);
         });
 
         var filePath = './tmp/'+fileinfoid;
@@ -521,12 +475,11 @@ router.post('/download', function(req, res){
           text: "File "+fileInfo.filename+" downloaded with success. Downloaded by "+user.email+"."
         };
 
-        global.email.transporter.sendMail(mailOptions, function(error, info){
-            if(error){
-              ee.emit("MailError", "Unable to send mail");
-                // throw(error);
+        global.email.transporter.sendMail(mailOptions, function(err, info){
+            if(err){
+              next(err);
             }else{
-                console.log('Message sent: ' + info.response);
+              console.log('Message sent: ' + info.response);
             }
         });
 
