@@ -41,27 +41,56 @@ app.use(function(req, res, next) {
 
 /// error handlers
 
+function logErrors(err, req, res, next) {
+  console.error(err.stack);
+  next(err);
+}
+
+function captchaErrorHandler(err, req, res, next) {
+  if (err.message == "incorrect-captcha-sol") {
+    res.status(500);
+    err.message = 'Invalid captcha'
+    err.stack = 'You entered an invalid captcha, please try again'
+    res.render('error', { 
+        message: err.message,
+        error: err
+    });
+  }
+  next(err);
+}
+
+function errorHandler(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+}
+
+function errorHandlerDev(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: err
+  });
+}
+
+app.use(logErrors);
+app.use(captchaErrorHandler);
+
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
+    app.use(errorHandlerDev);
 }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
+app.use(errorHandler);
+
+function badCaptcha(err, req, res, next) {
+
+};
 
 
 module.exports = app;

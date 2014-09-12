@@ -41,7 +41,7 @@ router.get('/', function(req, res) {
 });
 
 
-router.get('/unsubscribe/:userid', function(req,res){
+router.get('/unsubscribe/:userid', function(req, res, next){
 
   var userid = req.param('userid');
   userid = validator.toString(userid);
@@ -49,8 +49,7 @@ router.get('/unsubscribe/:userid', function(req,res){
   User.findOne({'_id':userid, 'deleted':null}, 'id email newsletter', function(err, user){
 
     if(err) {
-      ee.emit("ModelError", "Unable to find user");
-      // throw err;
+      next(err);
     }
 
     if ( !user ) {
@@ -59,8 +58,7 @@ router.get('/unsubscribe/:userid', function(req,res){
 
     User.update({'_id':user.id}, {'newsletter':false}, {}, function(err){
       if(err)
-        ee.emit("ModelError", "Unable to update user");
-        // throw err;
+        next(err);
 
         res.render('unsubscribe', {title:'Unsubscription completed', notice:'User removed from our newsletter with success'});
     });
@@ -69,7 +67,7 @@ router.get('/unsubscribe/:userid', function(req,res){
 
 });
 
-router.get('/profile/:userid', function(req,res){
+router.get('/profile/:userid', function(req, res, next){
 
   var userid = req.param('userid');
   userid = validator.toString(userid);
@@ -110,6 +108,9 @@ router.get('/profile/:userid', function(req,res){
       });
     }
   ], function(err, user, fileInfos, answerInfos, answerUsers) {
+
+    if (err)
+      next(err);
     
     var infos = [];
 
