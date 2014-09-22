@@ -25,7 +25,7 @@ validator.extend('isTimeUp', function(str){
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.redirect('/launch');
+  // res.redirect('/launch');
   res.render('index', { title: 'Hupothesis', notice: null, captcha_key: global.captcha.public_key });
 });
 
@@ -247,7 +247,7 @@ router.post('/upload', function(req, res, next) {
         });
         /* ------------ */
 
-        res.render('index', { title: 'Hupothesis', global: global, upload: true, fileid: fileInfo.id, captcha_key: global.captcha.public_keys });
+        res.render('index', { title: 'Hupothesis', global: global, upload: true, fileid: fileInfo.id, userid: user.id, captcha_key: global.captcha.public_keys });
         return;
       });
     });
