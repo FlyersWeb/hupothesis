@@ -247,7 +247,9 @@ router.post('/upload', function(req, res, next) {
         });
         /* ------------ */
 
-        res.render('index', { title: 'Hupothesis', global: global, upload: true, fileid: fileInfo.id, userid: user.id, captcha_key: global.captcha.public_keys });
+        var options = { fileid: fileInfo.id, userid: user.id, url:global.app.url, filetype: "download" };
+
+        res.render('index', { title: 'Hupothesis', global: global, upload: true, options: options, captcha_key: global.captcha.public_keys });
         return;
       });
     });
