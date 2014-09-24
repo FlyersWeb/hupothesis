@@ -5,7 +5,7 @@
 * Add launch page             DONE (add promotional video)
 * Add contact page            DONE
 * Add Error handler Express   DONE
-* Add widget integration      IN PROGRESS (add download image and css)
+* Add widget integration      DONE
 * Add social share            IN PROGRESS 
 * Add UT e2e FT
 * Add social auth             (check passportjs)
