@@ -4,7 +4,7 @@ var sgTransport = require('nodemailer-sendgrid-transport');
 var transporterOptions = {
 	    host: process.env.OPENSHIFT_SENDGRID_HOST || 'localhost',
 	    port: process.env.OPENSHIFT_SENDGRID_PORT || 25,
-	    secure: true,
+	    secure: false,
 	    ignoreTLS: true,
 	    debug: true,
 	};
