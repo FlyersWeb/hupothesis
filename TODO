@@ -6,7 +6,7 @@
 * Add contact page            DONE
 * Add Error handler Express   DONE
 * Add widget integration      DONE
-* Add social share            IN PROGRESS 
+* Add social share            DONE 
 * Add UT e2e FT
 * Add social auth             (check passportjs)
 * Add XSS protection

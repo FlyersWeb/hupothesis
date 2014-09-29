@@ -3,6 +3,17 @@ extends global
 block content
   h1= title
   p.lead Welcome to Hupothesis
+
+  #fb-root
+  script
+    |  (function(d, s, id) {
+    |  var js, fjs = d.getElementsByTagName(s)[0];
+    |  if (d.getElementById(id)) return;
+    |  js = d.createElement(s); js.id = id;
+    |  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
+    |  fjs.parentNode.insertBefore(js, fjs);
+    |  }(document, 'script', 'facebook-jssdk'));
+
   if error
     p.notice.bg-danger.text-danger 
       i.fa.fa-exclamation-triangle  
@@ -15,7 +26,20 @@ block content
         a(href="/answer/#{options.fileid}") /answer/#{options.fileid}
     p Now share your brand new uploaded file
     p Share it on your favorite social media
-    p Share button bar
+    div.row
+      div.col-md-4
+        div.fb-share-button(data-href='#{options.url}/answer/#{options.userid}', data-layout='button_count', data-width='100')
+      div.col-md-4
+        div.tw-share-button
+          a.twitter-share-button(href='https://twitter.com/share', data-url='#{options.url}/answer/#{options.userid}') Tweet
+            script
+              | !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+      div.col-md-4
+        div.lk-share-button
+          script(src='//platform.linkedin.com/in.js', type='text/javascript')
+            | lang: en_US
+          script(type='IN/Share', data-counter='right', data-url='#{options.url}/answer/#{options.userid}')
+
     p Or on your website by inserting our javascript script where you want to insert widget :
     pre
       | &lt;script class="hupothesis-script-#{options.userid}" &gt;
