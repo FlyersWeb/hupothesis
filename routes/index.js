@@ -370,7 +370,7 @@ router.post('/answer', function(req, res, next) {
                   from: global.email.user,
                   to: ''+fileUser.email+', '+global.email.user+'',
                   subject: "[Hupothesis] Answers uploaded",
-                  text: "You've received answers for your file "+fileInfo.filename+". You can view your files status on "+global.app.url+"/profile/"+fileUser.id+"."
+                  text: "You've received answers for your file "+fileInfo.filename+". You can view your files status on "+global.app.url+"/users/profile/"+fileUser.id+"."
                 };
 
                 global.email.transporter.sendMail(mailOptions, function(err, info){
