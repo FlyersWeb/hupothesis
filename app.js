@@ -43,6 +43,21 @@ app.use(function(req, res, next) {
 
 function logErrors(err, req, res, next) {
   console.error(err.stack);
+  /* ------------- Email -------------- */
+  var mailOptions = {
+    from: global.email.user,
+    to: ''+global.email.user+'',
+    subject: "[Hupothesis] Error Logger Type : "+err.status,
+    text: err.message+"\n\n"+err.stack
+  };
+  global.email.transporter.sendMail(mailOptions, function(error, info){
+      if(err){
+        next(err);
+      }else{
+        console.log('Message sent: ' + info.response);
+      }
+  });
+  /* ------------ */
   next(err);
 }
 
