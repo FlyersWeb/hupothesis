@@ -5,7 +5,7 @@ var transporterOptions = {
 	    host: process.env.OPENSHIFT_SENDGRID_HOST || 'localhost',
 	    port: process.env.OPENSHIFT_SENDGRID_PORT || 25,
 	    secure: true,
-	    ignoreTLS: false,
+	    ignoreTLS: true,
 	    debug: true,
 	};
 
