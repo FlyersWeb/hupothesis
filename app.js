@@ -42,13 +42,13 @@ app.use(function(req, res, next) {
 /// error handlers
 
 function logErrors(err, req, res, next) {
-  console.error(err.stack);
+  var url = req.protocol + '://' + req.get('host') + req.originalUrl;
   /* ------------- Email -------------- */
   var mailOptions = {
     from: global.email.user,
-    to: ''+global.email.user+'',
+    to: global.email.user,
     subject: "[Hupothesis] Error Logger Type : "+err.status,
-    text: err.message+"\n\n"+err.stack
+    text: "Getting URL : "+url+"\n\n"+err.message+"\n\n"+err.stack
   };
   global.email.transporter.sendMail(mailOptions, function(error, info){
       if(err){
