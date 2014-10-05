@@ -53,7 +53,7 @@ block content
       | &lt;/script&gt;
   
   else  
-    form(method="post", action="/upload", enctype="multipart/form-data")
+    form(method="post", action="/upload?_csrf=#{csrf}", enctype="multipart/form-data")
       dl
         dt
           label(for="email") Please enter you email

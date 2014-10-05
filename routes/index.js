@@ -26,7 +26,7 @@ validator.extend('isTimeUp', function(str){
 /* GET home page. */
 router.get('/', function(req, res) {
   // res.redirect('/launch');
-  res.render('index', { title: 'Hupothesis', notice: null, captcha_key: global.captcha.public_key });
+  res.render('index', { title: 'Hupothesis', notice: null, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
 /* GET FAQ page. */
@@ -36,12 +36,12 @@ router.get('/faq', function(req, res) {
 
 /* GET contact page. */
 router.get('/contact', function(req, res) {
-  res.render('contact', { title: 'Contact us', notice: null, captcha_key: global.captcha.public_key });
+  res.render('contact', { title: 'Contact us', notice: null, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
 /* GET launch page. */
 router.get('/launch', function(req, res) {
-  res.render('launch', { title: 'Launching', notice: null, captcha_key: global.captcha.public_key });
+  res.render('launch', { title: 'Launching', notice: null, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
 router.get('/terms', function(req, res){
@@ -271,7 +271,7 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
       return;
     }
 
-    res.render('answer', { title: 'Hupothesis', fileinfo: { id: fileInfo.id, anstime: fileInfo.anstime }, captcha_key: global.captcha.public_key });
+    res.render('answer', { title: 'Hupothesis', fileinfo: { id: fileInfo.id, anstime: fileInfo.anstime }, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 
   });
 });
@@ -408,7 +408,7 @@ router.get('/download/:fileinfoid', function(req, res, next){
       return;
     }
 
-    res.render('download', {title: 'Hupothesis', fileinfo: {id: fileInfo.id}, captcha_key: global.captcha.public_key });
+    res.render('download', {title: 'Hupothesis', fileinfo: {id: fileInfo.id}, captcha_key: global.captcha.public_key, csrf:req.csrfToken() });
 
   });    
 

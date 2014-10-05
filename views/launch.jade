@@ -22,6 +22,7 @@ block content
     p You'll be able to use this same email address to use our service.
 
     form(method="POST", action="/launch")
+      input(type="hidden",name="_csrf",value="#{csrf}")
       dl
         dt
           label(for="email") Please enter you email

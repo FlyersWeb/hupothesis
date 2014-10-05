@@ -17,6 +17,7 @@ block content
     p Fill free to contact us for any Hupothesis related request and/or informations. We will get in touch as soon as possible.
   
     form(method="POST", action="/contact")
+      input(type="hidden",name="_csrf",value="#{csrf}")
       dl
         dt
           label(for="email") Your email

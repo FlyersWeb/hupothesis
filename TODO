@@ -1,6 +1,9 @@
 IN PROGRESS
 -----------
 
+* Documentation new Model
+* Refacto
+* Add register (Publisher/Webmaster) 
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
   | http://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/
@@ -10,6 +13,7 @@ IN PROGRESS
 TODO
 ----
 
+* Make GFX compatible mobile
 * Edit model based on new one
 * Add Billing informations to model
 * Add formulary creation interface
@@ -17,9 +21,8 @@ TODO
   (upload file/questionary, social share, widget, payment, collected money)
 * Add webmaster portal 
   (widget integration, social share, bills, collected money)
-* Add launch page (for marketing)                                             TODO (add promotional video)
+* Add launch page (for marketing)  ->  TODO (add promotional video)
 * Add UT e2e FT
-* Add XSS/CSRF protection
 
 DONE
 ----
@@ -33,3 +36,4 @@ DONE
 * Add widget integration      DONE
 * Add social share            DONE 
 * Investigate ses mailing     DONE [using sendgrid]
+* Add XSS/CSRF protection     DONE

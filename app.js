@@ -1,19 +1,23 @@
 var express = require('express');
-var path = require('path');
-var fs = require('fs-extra');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var methodOverride = require('method-override');
+var csrf = require('csurf');
+
+var path = require('path');
+var fs = require('fs-extra');
 var formidable = require('formidable');
 
 var global = require('./configuration/global.js');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
 var mongoose = require('mongoose');
 mongoose.connect(global.db.uri);
+
+var routes = require('./routes/index');
+var users = require('./routes/users');
 
 var app = express();
 
@@ -23,10 +27,13 @@ app.set('view engine', 'jade');
 
 app.use(favicon());
 app.use(logger('dev'));
+app.use(cookieParser());
+app.use(session({ secret: "NK1zFuZp", resave:true, saveUninitialized:true}));
 app.use(bodyParser())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(cookieParser());
+app.use(methodOverride());
+app.use(csrf());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
@@ -59,6 +66,15 @@ function logErrors(err, req, res, next) {
   });
   /* ------------ */
   next(err);
+}
+
+function csrfErrorHandler(err, req, res, next) {
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+  res.status(403)
+  res.render('error', { 
+      message: err.message,
+      error: err
+  });
 }
 
 function captchaErrorHandler(err, req, res, next) {
@@ -102,10 +118,5 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(errorHandler);
-
-function badCaptcha(err, req, res, next) {
-
-};
-
 
 module.exports = app;
