@@ -1,7 +1,6 @@
 IN PROGRESS
 -----------
 
-* Documentation new Model
 * Refacto
 * Add register (Publisher/Webmaster) 
 * Add social auth             (check passportjs)
@@ -14,7 +13,6 @@ TODO
 ----
 
 * Make GFX compatible mobile
-* Edit model based on new one
 * Add Billing informations to model
 * Add formulary creation interface
 * Add publisher portal
@@ -27,6 +25,8 @@ TODO
 DONE
 ----
 
+* Documentation new model     DONE
+* Edit model based on new one DONE [new model created]
 * Add form validations        DONE [use validator and formidable]
 * Add email notifications     DONE (add unsubscribe link)
 * Add user profile page       DONE
