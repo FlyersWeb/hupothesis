@@ -4,6 +4,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var flash = require('connect-flash');
 var methodOverride = require('method-override');
 var csrf = require('csurf');
 
@@ -13,11 +14,15 @@ var formidable = require('formidable');
 
 var global = require('./configuration/global.js');
 
+var passport = require('passport');
+passport = require('./configuration/passport');
+
 var mongoose = require('mongoose');
 mongoose.connect(global.db.uri);
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var logins = require('./routes/logins');
+var users  = require('./routes/users');
 
 var app = express();
 
@@ -31,20 +36,13 @@ app.use(cookieParser());
 app.use(session({ secret: "NK1zFuZp", resave:true, saveUninitialized:true}));
 app.use(bodyParser())
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({extended:true}));
 app.use(methodOverride());
 app.use(csrf());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-app.use('/users', users);
-
-/// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-});
 
 /// error handlers
 
@@ -118,5 +116,16 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(errorHandler);
+
+app.use('/', routes);
+app.use('/', logins);
+app.use('/users', users);
+
+/// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
 module.exports = app;
