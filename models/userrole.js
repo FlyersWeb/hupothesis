@@ -8,7 +8,8 @@ var userRoleSchema = new Schema({
     local: {
       email: { type: String, index: true },
       password: { type: String },
-      salt: { type: String },
+      salt: { type: String, default: null },
+      confirmToken: { type: String }
     },
     facebook: {
       id: { type: String },
@@ -29,7 +30,7 @@ var userRoleSchema = new Schema({
       token: { type: String },
       name: { type: String },
     },
-    confirmToken: { type: String },
+    active: { type: Boolean, default: false, index: true },
     optin: { type: Boolean, default: false },
     deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: Date.now() },

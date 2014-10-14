@@ -1,0 +1,21 @@
+extends global
+
+block content
+  h1 Activating your account
+  p.lead Welcome to Hupothesis. The tool that validate your hypothesis.
+
+  h3 Activation in progress
+
+  if notice.length > 0
+    p.notice.bg-info.text-info 
+      i.fa.fa-info
+      span &nbsp; #{notice}
+  
+  if error.length > 0
+    p.notice.bg-danger.text-danger 
+      i.fa.fa-exclamation-triangle  
+      span Error when activating : #{error}
+  else
+    p 
+      | You can now access our services to validate your hypothesis. Go and upload your questionnaire on our
+      a(href='/') Homepage

@@ -1,8 +1,8 @@
 extends global
 
 block content
-  h1= title
-  p.lead Register local account
+  h1 Create your account
+  p.lead Create your account to have full acces to hupothesis
 
   if error.length > 0
     p.notice.bg-danger.text-danger 
@@ -13,8 +13,11 @@ block content
     p.notice.bg-info.text-info 
       i.fa.fa-info
       span &nbsp; #{notice}
+    p
+      | You'll receive a mail with extra instructions. If not please 
+      a(href='/contact') contact us
   else
-    p Register a new account
+    p Please fill our form to create a new account
   
     form(method="POST", action="/register")
       input(type="hidden",name="_csrf",value="#{csrf}")

@@ -19,8 +19,8 @@ passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
   passReqToCallback: true
-}, function(req, username, password, done){
-  UserRole.findOne({'local.email':username,deleted:null}, function(err, user){
+}, function(req, email, password, done){
+  UserRole.findOne({'local.email':email,deleted:null}, function(err, user){
     if (err) return done(err);
     if(!user) return done(null, false, req.flash('loginError', 'No user found.'));
     user.validPassword(password,function(err,res){

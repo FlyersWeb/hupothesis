@@ -20,10 +20,6 @@ passport = require('./configuration/passport');
 var mongoose = require('mongoose');
 mongoose.connect(global.db.uri);
 
-var routes = require('./routes/index');
-var logins = require('./routes/logins');
-var users  = require('./routes/users');
-
 var app = express();
 
 // view engine setup
@@ -117,8 +113,17 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(errorHandler);
 
+var routes = require('./routes/index');
+var logins = require('./routes/logins');
+var registers = require('./routes/registers');
+var activate = require('./routes/activate');
+var users  = require('./routes/users');
+
 app.use('/', routes);
+app.use('/', registers);
+app.use('/', activate);
 app.use('/', logins);
+
 app.use('/users', users);
 
 /// catch 404 and forward to error handler

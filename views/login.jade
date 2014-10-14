@@ -7,7 +7,7 @@ block content
   if error.length > 0
     p.notice.bg-danger.text-danger 
       i.fa.fa-exclamation-triangle  
-      span Error when authenticating : #{error}
+      span &nbsp; Error when authenticating : #{error}
 
   if notice.length > 0
     p.notice.bg-info.text-info 
@@ -27,6 +27,13 @@ block content
           label(for="password") Password
         dd
           input.form-control(type="password",name="password",id="password",required="true")
+        dt
+        dd
+          script(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}')
+          noscript
+            iframe(src='http://www.google.com/recaptcha/api/challenge?k=#{captcha_key}', height="300", width="500", frameborder="0")
+            textarea(name='recaptcha_challenge_field', rows='3', cols='40')
+            input(type='hidden', name='recaptcha_response_field', value='manual_challenge')
         dt
         dd
           button.btn.btn-primary(type="submit") Login
