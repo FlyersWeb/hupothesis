@@ -1,14 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-var nodemailer = require('nodemailer');
-
 var validator = require('validator');
 
 var formidable = require('formidable');
 var fs = require('fs-extra');
-
-var mongoose = require('mongoose');
 
 var simple_recaptcha = require('simple-recaptcha');
 
@@ -27,153 +23,6 @@ validator.extend('isTimeUp', function(str){
 router.get('/', function(req, res) {
   // res.redirect('/launch');
   res.render('index', { title: 'Hupothesis', notice: null, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
-});
-
-/* GET FAQ page. */
-router.get('/faq', function(req, res) {
-  res.render('faq', { title: 'About us', notice: null, captcha_key: global.captcha.public_key  });
-});
-
-/* GET contact page. */
-router.get('/contact', function(req, res) {
-  res.render('contact', { title: 'Contact us', notice: null, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
-});
-
-/* GET launch page. */
-router.get('/launch', function(req, res) {
-  res.render('launch', { title: 'Launching', notice: null, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
-});
-
-router.get('/terms', function(req, res){
-  res.render('terms', { title: "Terms of use"});
-});
-
-// Post launch newsletter
-router.post('/launch', function(req, res, next) {
-
-  var email = req.body.email;
-
-  var ip = req.ip;
-  var challenge = req.body.recaptcha_challenge_field;
-  var response = req.body.recaptcha_response_field;
-  var private_key = global.captcha.private_key;
-
-  if ( !validator.isEmail(email) ) {
-    res.render('launch', {title: 'Launching - error', error: 'Invalid email'});
-  }
-
-  simple_recaptcha(private_key, ip, challenge, response, function(err) {
-    
-    if (err) next(err);
-    
-    User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
-      if (err) next(err);
-
-      if ( !user ) {
-        user = new User({email: email});
-        user.save(function(err){
-          if(err) next(err);
-        });
-      }
-
-      /* ------------- Email -------------- */
-      var mailOptions = {
-        from: global.email.user,
-        to: ''+email+', '+global.email.user+'',
-        subject: "[Hupothesis] Newsletter subscription",
-        text: "Congratulations, we've received your request to be informed when Hupothesis will be online. We're working hard to let you access our service as soon as possible.\nFeel free to contact us when you need.\nThanks.\nYou can unsubscribe to our service using the link : "+global.app.url+"/users/unsubscribe/"+user.id
-      };
-
-      global.email.transporter.sendMail(mailOptions, function(error, info){
-          if(err){
-            next(err);
-          }else{
-            console.log('Message sent: ' + info.response);
-          }
-      });
-      /* ------------ */
-
-      res.render('launch', { title: 'Hupothesis - launch soon', notice: 'Your request has been taken in account', captcha_key: global.captcha.public_key });
-
-    });
-
-  });
-
-});
-
-router.post('/contact', function(req, res, next) {
-
-  var email = req.body.email;
-  var subject = req.body.subject;
-  var comments = req.body.comments;
-
-  var ip = req.ip;
-  var challenge = req.body.recaptcha_challenge_field;
-  var response = req.body.recaptcha_response_field;
-  var private_key = global.captcha.private_key;
-
-  if ( !validator.isEmail(email) ) {
-    res.render('launch', {title: 'Contact us - error', error: 'Invalid email'});
-  }
-
-  subject = validator.toString(subject);
-  comments = validator.toString(comments);
-
-  simple_recaptcha(private_key, ip, challenge, response, function(err) {
-    
-    if (err) next(err);
-
-    User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
-      if (err) {
-        next(err);
-      }
-
-      if ( !user ) {
-        user = new User({email: email});
-        user.save(function(err){
-          if(err)
-            next(err);
-        });
-      }
-
-      /* ------------- Email -------------- */
-      var mailOptions = {
-        from: global.email.user,
-        to: ''+email+', '+global.email.user+'',
-        subject: "[Hupothesis] Message successfully sent",
-        text: "Congratulations, we've received your contact request we'll respond as soon as possible.\nThanks."
-      };
-
-      global.email.transporter.sendMail(mailOptions, function(err, info){
-          if(err){
-            next(err);
-          }else{
-            console.log('Message sent: ' + info.response);
-          }
-      });
-
-
-      var mailOptions = {
-        from: email,
-        to: ''+global.email.user+'',
-        subject: "[Hupothesis] "+subject,
-        text: comments
-      };
-
-      global.email.transporter.sendMail(mailOptions, function(err, info){
-          if(err){
-            next(err);
-          }else{
-            console.log('Message sent: ' + info.response);
-          }
-      });
-      /* ------------ */
-
-      res.render('contact', { title: 'Hupothesis - contact us', notice: "Message sent with success", captcha_key: global.captcha.public_key });
-
-    });
-
-  });
 });
 
 // Upload test

@@ -6,12 +6,12 @@ block content
 
   h3 What is Hupothesis ?
 
-  if error
+  if error.length > 0
     p.notice.bg-danger.text-danger 
       i.fa.fa-exclamation-triangle  
       span Error when subscribing : #{error}
 
-  if notice
+  if notice.length > 0
     p.notice.bg-info.text-info 
       i.fa.fa-info
       span &nbsp; #{notice}

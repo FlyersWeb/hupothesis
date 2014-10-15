@@ -117,11 +117,19 @@ var routes = require('./routes/index');
 var logins = require('./routes/logins');
 var registers = require('./routes/registers');
 var activate = require('./routes/activate');
+var launch = require('./routes/launch');
+var faq = require('./routes/faq');
+var term = require('./routes/term');
+var contact = require('./routes/contact');
 var users  = require('./routes/users');
 
 app.use('/', routes);
 app.use('/', registers);
+app.use('/', launch);
 app.use('/', activate);
+app.use('/', faq);
+app.use('/', term);
+app.use('/', contact);
 app.use('/', logins);
 
 app.use('/users', users);
