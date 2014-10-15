@@ -21,7 +21,7 @@ validator.extend('isTimeUp', function(str){
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  // res.redirect('/launch');
+  res.redirect('/launch');
   res.render('index', { title: 'Hupothesis', notice: null, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
