@@ -37,6 +37,7 @@ app.use(session({
     saveUninitialized:true,
     store: new MongoStore({
       url : global.db.uri,
+      auto_reconnect: true
     })
   }));
 app.use(bodyParser())
@@ -122,7 +123,9 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(errorHandler);
 
-var routes = require('./routes/index');
+var index = require('./routes/index');
+var answer = require('./routes/answer');
+var download = require('./routes/download');
 var logins = require('./routes/logins');
 var registers = require('./routes/registers');
 var activate = require('./routes/activate');
@@ -132,7 +135,9 @@ var term = require('./routes/term');
 var contact = require('./routes/contact');
 var users  = require('./routes/users');
 
-app.use('/', routes);
+app.use('/', index);
+app.use('/', answer);
+app.use('/', download);
 app.use('/', registers);
 app.use('/', launch);
 app.use('/', activate);

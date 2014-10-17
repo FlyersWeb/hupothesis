@@ -19,8 +19,9 @@ validator.extend('isTimeUp', function(str){
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.redirect('/launch');
-  res.render('index', { title: 'Hupothesis', options: req.flash('uploadOptions'), notice: req.flash('uploadNotice'), error: req.flash('uploadError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+  // res.redirect('/launch');
+
+  res.render('index', { options: req.flash('uploadOptions')[0], notice: req.flash('uploadNotice'), error: req.flash('uploadError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
 // Upload test

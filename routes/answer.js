@@ -28,9 +28,7 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
       return;
     }
 
-    var fileinfo = { id: fileInfo.id, anstime: fileInfo.anstime };
-
-    res.render('answer', { title: 'Hupothesis', error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: fileinfo, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+    res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: fileInfo.toObject(), user: req.session.contestant, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 
   });
 });
@@ -45,16 +43,18 @@ router.post('/answer', function(req, res, next) {
   form.parse(req, function(err,fields,files){
 
     var email     = fields.email;
+    var fileid    = fields.fileid;
 
     var ip        = req.ip;
     var challenge = fields.recaptcha_challenge_field;
     var response  = fields.recaptcha_response_field;
     var private_key = global.captcha.private_key;
 
+    fileid = validator.toString(fileid);
+
     if ( !validator.isEmail(email) ) {
       req.flash('answerError', 'Oops, invalid email');
-      res.redirect('/answer/'+)
-      res.render('answer', { title: 'Hupothesis', upload: false, error: "Invalid Email", captcha_key: global.captcha.public_keys });
+      res.redirect('/answer/'+fileid)
     }
 
     simple_recaptcha(private_key, ip, challenge, response, function(err) {  
@@ -73,7 +73,9 @@ router.post('/answer', function(req, res, next) {
           });
         }
 
-        FileInfo.findOne({'_id':fields.fileinfo,'deleted':null}, 'id userid', function(err,fileInfo){
+        req.session.contestant = user.toObject();
+
+        FileInfo.findOne({'_id':fileid,'deleted':null}, 'id userid', function(err,fileInfo){
           if(err)
             next(err);
 
@@ -105,7 +107,6 @@ router.post('/answer', function(req, res, next) {
             });
 
             /*  --- Email Notification ---  */
-            
             var mailOptions = {
               from: global.email.user,
               to: ''+user.email+', '+global.email.user+'',
@@ -120,6 +121,7 @@ router.post('/answer', function(req, res, next) {
                   console.log('Message sent: ' + info.response);
                 }
             });
+            /****************************************/
 
             User.findOne({'_id':fileInfo.userid,'deleted':null}, 'id email', function(err,fileUser){
               if ( err )
@@ -127,6 +129,7 @@ router.post('/answer', function(req, res, next) {
 
               if ( fileUser )
               {
+                /**********************************/
                 var mailOptions = {
                   from: global.email.user,
                   to: ''+fileUser.email+', '+global.email.user+'',
@@ -141,6 +144,7 @@ router.post('/answer', function(req, res, next) {
                       console.log('Message sent: ' + info.response);
                     }
                 });
+                /**********************************/
               }
             });
 

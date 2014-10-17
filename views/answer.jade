@@ -3,25 +3,29 @@ extends global
 block content
   h1= title
   p Welcome to #{title}
-  if upload
-    p.notice.bg-info.text-info Your answers have been uploaded with success. Your manager will be notified. Now upload <a href="/">your own exam</a>.
-  else
-    p!= '<a href="/download/'+fileinfo.id+'">Download the questions</a> and Upload them in expected time.'
-    p!= 'You have <strong>'+fileinfo.anstime+'</strong> to respond.'
-    p The time count begin when you start to download the test.
-    p Good Luck. 
-  if error
+
+  if error.length > 0
     p.notice.bg-danger.text-danger 
       i.fa.fa-exclamation-triangle  
       span Error when uploading answers : #{error}
+
+  if notice.length > 0
+    p.notice.bg-info.text-info Your answers have been uploaded with success. Your manager will be notified. Now upload <a href="/">your own exam</a>.
+  else
+    p!= '<a href="/download/'+fileinfo._id+'">Download the questions</a> and Upload them in expected time.'
+    p!= 'You have <strong>'+fileinfo.anstime+'</strong> to respond.'
+    p The time count begin when you start to download the test.
+    p Good Luck. 
   
-  if !upload
     form(method="POST", action="/answer?_csrf=#{csrf}", enctype="multipart/form-data")
       dl
-        dt
-          label(for="email") Please enter you email
-        dd
-          input.form-control(type="email",name="email",id="email",required="true")
+        if !user
+          dt
+            label(for="email") Please enter you email
+          dd
+            input.form-control(type="email",name="email",id="email",required="true")
+        else 
+          input(type="hidden",name="email",value="#{user.email}")
         dt
           label(for="answerinfo") Chose your answers
         dd
@@ -44,5 +48,5 @@ block content
             a(href="/terms") Please accept our terms of use
         dt
         dd
-          input(type="hidden", name="fileinfo", value="#{fileinfo.id}")
+          input(type="hidden", name="fileid", value="#{fileinfo.id}")
           button.btn.btn-primary(type="submit") Submit your answers
