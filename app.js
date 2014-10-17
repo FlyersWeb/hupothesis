@@ -20,6 +20,8 @@ passport = require('./configuration/passport');
 var mongoose = require('mongoose');
 mongoose.connect(global.db.uri);
 
+var MongoStore = require('connect-mongo')(session);
+
 var app = express();
 
 // view engine setup
@@ -29,7 +31,14 @@ app.set('view engine', 'jade');
 app.use(favicon());
 app.use(logger('dev'));
 app.use(cookieParser());
-app.use(session({ secret: "NK1zFuZp", resave:true, saveUninitialized:true}));
+app.use(session({ 
+    secret: "NK1zFuZp", 
+    resave:true, 
+    saveUninitialized:true,
+    store: new MongoStore({
+      url : global.db.uri,
+    })
+  }));
 app.use(bodyParser())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));

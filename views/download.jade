@@ -4,7 +4,7 @@ block content
   h1= title
   p Welcome to #{title}
   p Please enter you email to access the test
-  if error
+  if error.length > 0
     p.notice.bg-danger.text-danger 
       i.fa.fa-exclamation-triangle  
       span Error when downloading exam : #{error}

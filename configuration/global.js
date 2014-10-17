@@ -27,7 +27,7 @@ var global = {
 		url : "http://www.hupothesis.com"
 	},
 	db : {
-		uri: process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/timeup'
+		uri: process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/hupothesis'
 	},
 	email : {
 		user : "contact@hupothesis.com",
