@@ -8,6 +8,9 @@ var flash = require('connect-flash');
 var methodOverride = require('method-override');
 var csrf = require('csurf');
 
+var exphbs = require('express-handlebars');
+
+
 var path = require('path');
 var fs = require('fs-extra');
 var formidable = require('formidable');
@@ -25,8 +28,9 @@ var MongoStore = require('connect-mongo')(session);
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.engine('.html', exphbs({defaultLayout: 'main', extname: '.html'}));
+// app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', '.html');
 
 app.use(favicon());
 app.use(logger('dev'));

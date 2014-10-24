@@ -1,7 +1,7 @@
 IN PROGRESS
 -----------
 
-* Refacto
+* Refacto      (separate routings, better errors, handlebars)
 * Add register (Publisher/Webmaster) 
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
