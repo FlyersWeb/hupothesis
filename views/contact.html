@@ -1,0 +1,49 @@
+<h1>Contact Us</h1>
+<p class="lead">Contact Hupothesis team.</p>
+
+{{#if error}}
+<p class="notice bg-danger text-danger"><i class="fa fa-exclamation-triangle"><span>Error when sending message : {{error}}</span></i></p>
+{{/if}}
+
+{{#if notice}}
+<p class="notice bg-info text-info"><i class="fa fa-info"></i> <span>{{notice}}</span></p>
+
+{{else}}
+<p>Fill free to contact us for any Hupothesis related request and/or informations. We will get in touch as soon as possible.</p>
+<form method="POST" action="/contact">
+  <input type="hidden" name="_csrf" value="{{csrf}}"/>
+  <dl>
+    <dt>
+      <label for="email">Your email</label>
+    </dt>
+    <dd>
+      <input type="email" name="email" id="email" required="true" class="form-control"/>
+    </dd>
+    <dt>
+      <label for="subject">Subject</label>
+    </dt>
+    <dd>
+      <input type="text" name="subject" id="subject" required="true" class="form-control"/>
+    </dd>
+    <dt>
+      <label for="comments">Your message</label>
+    </dt>
+    <dd>
+      <textarea name="comments" id="comments" class="form-control"></textarea>
+    </dd>
+    <dt></dt>
+    <dd>
+      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+      <noscript>
+        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
+        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+      </noscript>
+    </dd>
+    <dt></dt>
+    <dd>
+      <button type="submit" class="btn btn-primary">Send</button>
+    </dd>
+  </dl>
+</form>
+{{/if}}
