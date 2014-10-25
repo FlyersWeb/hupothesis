@@ -13,9 +13,9 @@ var global = require('../configuration/global.js');
 var User = require('../models/user.js');
 var FileInfo = require('../models/fileinfo.js');
 
-validator.extend('isTimeUp', function(str){
-  return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
-});
+// validator.extend('isTimeUp', function(str){
+//   return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
+// });
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -43,12 +43,14 @@ router.post('/upload', function(req, res, next) {
     if ( !validator.isEmail(fields.email) ) {
       req.flash('uploadError', 'Oops, invalid email !');
       res.redirect('/');
+      return;
     }
 
-    if ( !validator.isTimeUp(fields.timeup) ) {
-      req.flash('uploadError', 'Oops, invalid answer time !');
-      res.redirect('/');
-    }
+    // if ( !validator.isTimeUp(fields.timeup) ) {
+    //   req.flash('uploadError', 'Oops, invalid answer time !');
+    //   res.redirect('/');
+    //   return;
+    // }
 
     simple_recaptcha(private_key, ip, challenge, response, function(err) {
 
@@ -67,7 +69,8 @@ router.post('/upload', function(req, res, next) {
           });
         }
 
-        var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
+        // var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
+        var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name});
         fileInfo.save(function(err){
           if(err)
             next(err);
@@ -100,6 +103,7 @@ router.post('/upload', function(req, res, next) {
         req.flash('uploadNotice', 'Your file was uploaded with success');
         req.flash('uploadOptions', options);
         res.redirect('/');
+        return;
       });
     });
   });
