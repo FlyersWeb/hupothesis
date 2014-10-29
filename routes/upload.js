@@ -84,8 +84,10 @@ router.post('/upload', function(req, res, next) {
         // var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
         var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name});
         fileInfo.save(function(err){
-          if(err)
+          if(err) {
             next(err);
+            return;
+          }
         });
 
         fs.rename(files.fileinfo.path, form.uploadDir+fileInfo.id, function(err){

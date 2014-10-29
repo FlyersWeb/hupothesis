@@ -13,12 +13,18 @@ router.get('/activate/:token', function(req,res,next){
   token = validator.toString(token);
 
   UserRole.findOne({'local.confirmToken':token,'deleted':null}, function(err,user){
-    if(err) next(err);
+    if(err) {
+      next(err);
+      return;
+    }
     if(user) {
       user.active = true;
       user.local.confirmToken = null;
       user.save(function(err){
-        if(err) next(err);
+        if(err) {
+          next(err);
+          return;
+        }
       })
 
       /* ------------- Email -------------- */
@@ -32,6 +38,7 @@ router.get('/activate/:token', function(req,res,next){
       global.email.transporter.sendMail(mailOptions, function(error, info){
           if(err){
             next(err);
+            return;
           }else{
             console.log('Message sent: ' + info.response);
           }

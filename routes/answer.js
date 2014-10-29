@@ -20,8 +20,10 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
   var fileinfoid = req.param('fileinfoid');
 
   FileInfo.findOne({'_id': fileinfoid, 'deleted':null}, 'filename uptime anstime', function(err, fileInfo){
-    if (err)
+    if (err) {
       next(err);
+      return;
+    }
 
     if ( !fileInfo ) {
       res.redirect('/');
@@ -54,30 +56,40 @@ router.post('/answer', function(req, res, next) {
 
     if ( !validator.isEmail(email) ) {
       req.flash('answerError', 'Oops, invalid email');
-      res.redirect('/answer/'+fileid)
+      res.redirect('/answer/'+fileid);
+      return;
     }
 
     simple_recaptcha(private_key, ip, challenge, response, function(err) {  
 
-      if (err) next(err);
+      if (err) {
+        next(err);
+        return;
+      }
 
       User.findOne({'email':email,'deleted':null},'id email',function(err,user){
-        if(err)
+        if(err) {
           next(err);
+          return;
+        }
 
         if ( !user ) {
           var user = new User({'email':email});
           user.save(function(err){
-            if(err)
+            if(err) {
               next(err);
+              return;
+            }
           });
         }
 
         req.session.contestant = user.toObject();
 
         FileInfo.findOne({'_id':fileid,'deleted':null}, 'id userid', function(err,fileInfo){
-          if(err)
+          if(err) {
             next(err);
+            return;
+          }
 
           if ( !fileInfo ) {
             res.redirect('/');
@@ -85,25 +97,33 @@ router.post('/answer', function(req, res, next) {
           }
 
           fs.rename(files.answerinfo.path, form.uploadDir+files.answerinfo.filename, function(err){
-            if (err)
+            if (err) {
               next(err);
+              return;
+            }
           });
 
           AnswerInfo.findOne({'fileid':fileInfo.id,'userid':user.id,'deleted':null}, 'id', function(err, answerInfo){
-            if(err)
+            if(err) {
               next(err);
+              return;
+            }
 
             if(!answerInfo) {
               answerInfo = new AnswerInfo({'fileid':fileInfo.id,'userid':user.id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
               answerInfo.save(function(err){
-                if(err)
+                if(err) {
                   next(err);
+                  return;
+                }
               });
             }
 
             AnswerInfo.update({'fileid':fileInfo.id,'userid':user.id}, {'filename':files.answerinfo.name,'comments':fields.comments}, {}, function(err){
-              if(err)
+              if(err) {
                 next(err);
+                return;
+              }
             });
 
             /*  --- Email Notification ---  */
@@ -117,6 +137,7 @@ router.post('/answer', function(req, res, next) {
             global.email.transporter.sendMail(mailOptions, function(err, info){
                 if(err){
                   next(err);
+                  return;
                 }else{
                   console.log('Message sent: ' + info.response);
                 }
@@ -124,8 +145,10 @@ router.post('/answer', function(req, res, next) {
             /****************************************/
 
             User.findOne({'_id':fileInfo.userid,'deleted':null}, 'id email', function(err,fileUser){
-              if ( err )
+              if ( err ) {
                 next(err);
+                return;
+              }
 
               if ( fileUser )
               {
@@ -140,6 +163,7 @@ router.post('/answer', function(req, res, next) {
                 global.email.transporter.sendMail(mailOptions, function(err, info){
                     if(err){
                       next(err);
+                      return;
                     }else{
                       console.log('Message sent: ' + info.response);
                     }
@@ -152,7 +176,7 @@ router.post('/answer', function(req, res, next) {
             
             req.flash('answerNotice', 'Answer uploaded with success');
             res.redirect('/answer/'+fileinfo.id);
-
+            return;
           });
         });
       });

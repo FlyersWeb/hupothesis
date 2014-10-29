@@ -1,0 +1,59 @@
+<h1>Answer the test</h1>
+<p class="lead">Answer the test</p>
+<p><a href="/download/{{fileinfo._id}}">Download the test</a> and Upload your response.</p>
+<p>Good Luck. </p>
+
+{{#if error }}
+<p class="notice bg-danger text-danger"> <i class="fa fa-exclamation-triangle"> </i><span>Error when uploading answers : {{error}}</span></p>
+{{/if}}
+
+{{#if notice }}
+
+<p class="notice bg-info text-info"> <i class="fa fa-exclamation-triangle"> </i>Your answers have been uploaded with success. {{notice}}</p>
+<p>Now upload <strong><a href="/">your own test</a></strong>.</p>
+
+{{else}}
+
+<form method="POST" action="/answer?_csrf={{csrf}}" enctype="multipart/form-data">
+  <dl>
+    <dt>
+      <label for="email">Please enter you email</label>
+    </dt>
+    <dd>
+      <input type="email" name="email" id="email" required="true" class="form-control"/>
+    </dd>
+    <dt>
+      <label for="answerinfo">Chose your answers</label>
+    </dt>
+    <dd>
+      <input type="file" name="answerinfo" id="answerinfo" required="true"/>
+    </dd>
+    <dt>
+      <label for="comments">Some comments for your reviewer ?</label>
+    </dt>
+    <dd>
+      <textarea name="comments" id="comments" class="form-control"></textarea>
+    </dd>
+    <dt></dt>
+    <dd>
+      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+      <noscript>
+        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
+        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+      </noscript>
+    </dd>
+    <dt></dt>
+    <dd>
+      <input type="checkbox" checked="true" required="true" name="cgu" id="cgu"/>
+      <label for="cgu"> &nbsp;<a href="/terms">Please accept our terms of use</a></label>
+    </dd>
+    <dt></dt>
+    <dd>
+      <input type="hidden" name="fileid" value="{{fileinfo.id}}"/>
+      <button type="submit" class="btn btn-primary">Submit your answers</button>
+    </dd>
+  </dl>
+</form>
+
+{{/if}}

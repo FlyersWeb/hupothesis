@@ -23,15 +23,19 @@ router.get('/getfile', function(req, res, next){
   if ( !validator.isEmail(email) ) {
     req.flash("answerError", "Oops, invalid email address");
     res.redirect('/answer/'+fileinfoid);
+    return;
   }
 
   User.findOne({'email':email,'deleted':null}, 'id email', function(err, user){
-    if (err)
+    if (err) {
       next(err);
+      return;
+    }
 
     if(!user) {
       req.flash('downloadError', 'Oops, unknown user');
       res.redirect('/download/'+fileinfo._id);
+      return;
     }
 
     FileInfo.findOne({'_id':fileinfo._id,'deleted':null}, 'id userid uptime anstime filename downloaded', function(err,fileInfo){
@@ -39,11 +43,14 @@ router.get('/getfile', function(req, res, next){
       if ( !fileInfo ) {
         req.flash('answerError', "Oops, invalid file identifier");
         res.redirect('/answer/'+fileinfo._id);
+        return;
       }
 
       AnswerInfo.update({'fileid':fileInfo.id,'userid':user.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
-        if(err)
+        if(err) {
           next(err);
+          return;
+        }
       });
 
       var filePath = './tmp/'+fileInfo.id;
@@ -68,11 +75,14 @@ router.get('/getfile', function(req, res, next){
       global.email.transporter.sendMail(mailOptions, function(err, info){
           if(err){
             next(err);
+            return;
           }else{
             console.log('Message sent: ' + info.response);
           }
       });
       /*  --- --- ---  */
+
+      return;
     });
 
   });
@@ -87,12 +97,15 @@ router.get('/download/:fileinfoid', function(req, res, next){
   fileinfoid = validator.toString(fileinfoid);
 
   FileInfo.findOne({'_id':fileinfoid,'deleted':null}, 'id userid uptime anstime filename downloaded', function(err,fileInfo){
-    if (err)
+    if (err) {
       next(err);
+      return;
+    }
 
     if( !fileInfo ) {
       req.flash('answerError', 'Oops, unknown file identifier !');
       res.redirect('/answer/'+fileinfoid);
+      return;
     }
 
     req.flash('fileinfo', fileInfo.toObject());
@@ -121,28 +134,36 @@ router.post('/download', function(req, res, next){
   if ( !validator.isEmail(email) ) {
     req.flash('answerError', 'Oops, invalid email address.');
     res.redirect('/answer/'+fileinfoid);
+    return;
   }
 
   simple_recaptcha(private_key, ip, challenge, response, function(err) {  
 
-    if (err) next(err);
+    if (err) {
+      next(err);
+      return;
+    }
 
     User.findOne({'email':email,'deleted':null}, 'id email', function(err, user){
-      if (err)
+      if (err) {
         next(err);
+        return;
+      }
 
       if( !user ) {
         user = new User({'email': email});
         user.save(function(err){
-          if(err)
+          if(err) {
             next(err);
+            return;
+          }
         });
       }
 
       req.session.contestant = user;
 
       res.redirect('/getfile');
-      
+      return;
     });
   });
 });
