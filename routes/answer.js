@@ -15,6 +15,11 @@ var FileInfo = require('../models/fileinfo.js');
 var AnswerInfo = require('../models/answerinfo.js');
 
 
+validator.extend('isExtSupported', function(str){
+  if (global.app.fileExts.indexOf(str)>-1) return true;
+  return false;
+});
+
 router.get('/answer/:fileinfoid', function(req, res, err) {
 
   var fileinfoid = req.param('fileinfoid');
@@ -42,6 +47,14 @@ router.post('/answer', function(req, res, next) {
   form.uploadDir = "./tmp/";
   form.keepExtensions = false;
 
+  form.on('progress', function(bReceived, bExpected) {
+    if (bReceived > global.app.fileLimit) {
+      req.pause();
+      res.status = 400;
+      res.end('upload limit exceeded');
+    }
+  });
+
   form.parse(req, function(err,fields,files){
 
     var email     = fields.email;
@@ -57,6 +70,13 @@ router.post('/answer', function(req, res, next) {
     if ( !validator.isEmail(email) ) {
       req.flash('answerError', 'Oops, invalid email');
       res.redirect('/answer/'+fileid);
+      return;
+    }
+
+    var extension = path.extname(files.fileinfo.name);
+    if( !validator.isExtSupported(extension) ) {
+      req.flash('uploadError', 'Oops, invalid file type, we only support '+global.app.fileExts.join(', '));
+      res.redirect('/upload');
       return;
     }
 
@@ -175,7 +195,7 @@ router.post('/answer', function(req, res, next) {
             /* ------------ */
             
             req.flash('answerNotice', 'Answer uploaded with success');
-            res.redirect('/answer/'+fileinfo.id);
+            res.redirect('/answer/'+fileInfo.id);
             return;
           });
         });

@@ -4,6 +4,7 @@ var router = express.Router();
 var validator = require('validator');
 
 var formidable = require('formidable');
+var path = require('path');
 var fs = require('fs-extra');
 
 var simple_recaptcha = require('simple-recaptcha');
@@ -16,6 +17,14 @@ var FileInfo = require('../models/fileinfo.js');
 // validator.extend('isTimeUp', function(str){
 //   return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
 // });
+
+validator.extend('isExtSupported', function(str){
+  console.log(str)
+  console.log(global.app.fileExts)
+  console.log(global.app.fileExts.indexOf(str))
+  if (global.app.fileExts.indexOf(str)>-1) return true;
+  return false;
+});
 
 /* GET home page. */
 router.get('/upload', function(req, res) {
@@ -48,6 +57,15 @@ router.post('/upload', function(req, res, next) {
 
     if ( !validator.isEmail(fields.email) ) {
       req.flash('uploadError', 'Oops, invalid email !');
+      res.redirect('/upload');
+      return;
+    }
+
+    var extension = path.extname(files.fileinfo.name);
+    console.log(extension)
+    if( !validator.isExtSupported(extension) ) {
+      console.log(global.app.fileExts)
+      req.flash('uploadError', 'Oops, invalid file type, we only support '+global.app.fileExts.join(', '));
       res.redirect('/upload');
       return;
     }
