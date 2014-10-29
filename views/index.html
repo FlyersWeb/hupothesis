@@ -1,97 +1,30 @@
-<h1>{{ title }}</h1>
-<p class="lead">Welcome to hupothesis</p>
+<h1>Welcome to hupothesis</h1>
+<p class="lead">Validate your hypothesis</p>
 
-<div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
-
-{{#if error }}
-<p class="notice bg-danger text-danger">
-  <i class="fa fa-exclamation-triangle"> <span>Error when uploading exam : {{error}}</span></i>
-</p>
-{{/if}}
-
-{{#if notice }}
-
-<p class="notice bg-info text-info">
-  <i class="fa fa-exclamation-triangle"> <span>File Uploaded with success get it on <a href="/answer/{{options.fileid}}">/answer/{{options.fileid}}</a></span></i>
-</p>
-<p>Now share your brand new file on your favourite social media : </p>
 <div class="row">
-  <div class="col-md-4">
-    <div class="fb-share-button" data-href="{{options.url}}/answer/{{options.userid}}" data-layout="button_count" data-width="100"></div>
-  </div>
-  <div class="col-md-4">
-    <div class="tw-share-button">
-      <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/answer/{{options.userid}}">Tweet</a>
-      <script>
-      !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-      </script>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="lk-share-button">
-      <script src="//platform.linkedin.com/in.js" type="text/javascript">lang: EN_US</script>
-      <script type="IN/Share" data-counter="right" data-url="{{options.url}}/answer/{{options.userid}}"></script>
-    </div>
-  </div>
+  <h3>What is Hupothesis ?</h3>
+  <p>
+    Hupothesis is a service designed to validate your hypothesis. The tool allows you to validate hypothesis using large scale persona sample thanks to the Internet to validate your hypothesis. You have some hypothesis and want to validate it ? We can help you.
+  </p>
+  <p>
+    Want to know more ? Check our <a href="/faq">FAQ</a>
+  </p>
 </div>
 
-<p>Or on your website by inserting our script where you want to insert widget :</p>
-<pre>
-  &lt;script class="hupothesis-script-{{options.userid}}"&gt;
-    (function() {
-    var s = document.createElement('script');
-    s.src = '#{options.url}/javascripts/hupothesis.js';
-    s.async = true;
-    window.hupothesis_options = (window.hupothesis_options || []).concat([{userid:"{{options.userid}}",fileid:"{{options.fileid}}",filetype:"{{options.filetype}}",url:"{{options.url}}"}]);
-    document.body.appendChild(s);
-    }());
-  &lt;/script&gt;
-</pre>
-
-{{else}}
-
-<form method="post" action="/upload?_csrf={{csrf}}" enctype="multipart/form-data">
-  <dl>
-    <dt>
-      <label for="email">Please enter your email address</label>
-    </dt>
-    <dd>
-      <input class="form-control" type="email" name="email" id="email" required="true">
-    </dd>
-    <dt>
-      <label for="fileinfo">Choose your exam file</label>
-    </dt>
-    <dd>
-      <input type="file" name="fileinfo" id="fileinfo" required="true">
-    </dd>
-    <dt></dt>
-    <dd>
-      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
-      <noscript>
-        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
-        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-        <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
-      </noscript>
-    </dd>
-    <dt></dt>
-    <dd>
-      <input type="checkbox" checked="true" required="true" name="cgu" id="cgu">
-      <label for="cgu"> <a href="/terms">Please accept our terms</a>
-    </dd>
-    <dt></dt>
-    <dd>
-      <button class="btn btn-primary" type="submit">Submit your test</button>
-    </dd>
-  </dl>
-</form>
-
-{{/if}}
+<div class="row">
+  <h3>
+    What do you need ?
+  </h3>
+</div>
+<div class="row">
+  <div class="col-xs-6">
+    <p class="text-center">
+      <a href="/upload">Upload a test</a>
+    </p>
+  </div>
+  <div class="col-xs-6">
+    <p class="text-center">
+      <a href="/poll">Create a poll</a>
+    </p>
+  </div>
+</div>

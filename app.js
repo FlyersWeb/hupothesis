@@ -128,6 +128,7 @@ if (app.get('env') === 'development') {
 app.use(errorHandler);
 
 var index = require('./routes/index');
+var upload = require('./routes/upload');
 var answer = require('./routes/answer');
 var download = require('./routes/download');
 var logins = require('./routes/logins');
@@ -140,6 +141,7 @@ var contact = require('./routes/contact');
 var users  = require('./routes/users');
 
 app.use('/', index);
+app.use('/', upload);
 app.use('/', answer);
 app.use('/', download);
 app.use('/', registers);

@@ -24,7 +24,8 @@ var global = {
 	app : {
 		regex : /(\d+)?d?(\d+)h(\d+)?m?/,
 		host : "hupothesis.com",
-		url : "http://www.hupothesis.com"
+		url : "http://www.hupothesis.com",
+		fileLimit : 2097152
 	},
 	db : {
 		uri: process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/hupothesis'
