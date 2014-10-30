@@ -129,6 +129,7 @@ app.use(errorHandler);
 
 var index = require('./routes/index');
 var upload = require('./routes/upload');
+var poll = require('./routes/poll');
 var answer = require('./routes/answer');
 var download = require('./routes/download');
 var logins = require('./routes/logins');
@@ -142,6 +143,7 @@ var users  = require('./routes/users');
 
 app.use('/', index);
 app.use('/', upload);
+app.use('/', poll);
 app.use('/', answer);
 app.use('/', download);
 app.use('/', registers);

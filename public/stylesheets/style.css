@@ -58,3 +58,21 @@ form dd.submit, dl.labels dd.submit {
 .muted {
   color: #999;
 }
+
+.fa-6x {
+  font-size: 6em;
+}
+
+.row {
+  margin: 0;
+}
+
+.link {
+  text-decoration: none !important;
+}
+.link.link-neutral {
+  color: #101010;
+}
+.link.link-neutral:hover {
+  color: #080808;
+}

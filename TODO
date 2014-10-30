@@ -1,7 +1,7 @@
 IN PROGRESS
 -----------
 
-* Refacto      (separate routings, better errors, handlebars)
+* Add formulary creation interface
 * Add register (Publisher/Webmaster) 
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
@@ -12,19 +12,20 @@ IN PROGRESS
 TODO
 ----
 
+* Refacto : use new model
 * Make GFX compatible mobile
-* Add Billing informations to model
-* Add formulary creation interface
 * Add publisher portal
   (upload file/questionary, social share, widget, payment, collected money)
 * Add webmaster portal 
   (widget integration, social share, bills, collected money)
-* Add launch page (for marketing)  ->  TODO (add promotional video)
 * Add UT e2e FT
+* Add launch page (for marketing)  ->  TODO (add promotional video)
+* Add Billing informations to model
 
 DONE
 ----
 
+* Refacto      (separate routings, better errors, handlebars)
 * Documentation new model     DONE
 * Edit model based on new one DONE [new model created]
 * Add form validations        DONE [use validator and formidable]
