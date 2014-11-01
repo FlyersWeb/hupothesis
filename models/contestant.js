@@ -3,7 +3,6 @@ var Schema = mongoose.Schema;
 
 var contestantSchema = new Schema({
     user: { type: Schema.Types.ObjectId, default: null, index: true },
-    segmentation : { type: Schema.Types.ObjectId, default: null },
     email: { type: String, default: null, index: true },
     optin: { type: Boolean, default: false },
     deleted: { type: Date, default: null, index: true },

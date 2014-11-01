@@ -54,6 +54,38 @@ app.use(passport.session());
 app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//// routes
+
+var index = require('./routes/index');
+var upload = require('./routes/upload');
+var poll = require('./routes/poll');
+var answer = require('./routes/answer');
+var download = require('./routes/download');
+var logins = require('./routes/logins');
+var registers = require('./routes/registers');
+var activate = require('./routes/activate');
+var launch = require('./routes/launch');
+var faq = require('./routes/faq');
+var term = require('./routes/term');
+var contact = require('./routes/contact');
+var users  = require('./routes/users');
+
+app.use('/', index);
+app.use('/', upload);
+app.use('/', poll);
+app.use('/', answer);
+app.use('/', download);
+app.use('/', registers);
+app.use('/', launch);
+app.use('/', activate);
+app.use('/', faq);
+app.use('/', term);
+app.use('/', contact);
+app.use('/', logins);
+
+app.use('/users', users);
+
+
 /// error handlers
 
 function logErrors(err, req, res, next) {
@@ -126,35 +158,6 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(errorHandler);
-
-var index = require('./routes/index');
-var upload = require('./routes/upload');
-var poll = require('./routes/poll');
-var answer = require('./routes/answer');
-var download = require('./routes/download');
-var logins = require('./routes/logins');
-var registers = require('./routes/registers');
-var activate = require('./routes/activate');
-var launch = require('./routes/launch');
-var faq = require('./routes/faq');
-var term = require('./routes/term');
-var contact = require('./routes/contact');
-var users  = require('./routes/users');
-
-app.use('/', index);
-app.use('/', upload);
-app.use('/', poll);
-app.use('/', answer);
-app.use('/', download);
-app.use('/', registers);
-app.use('/', launch);
-app.use('/', activate);
-app.use('/', faq);
-app.use('/', term);
-app.use('/', contact);
-app.use('/', logins);
-
-app.use('/users', users);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

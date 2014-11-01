@@ -12,16 +12,14 @@ var simple_recaptcha = require('simple-recaptcha');
 var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
-var FileInfo = require('../models/fileinfo.js');
+var File = require('../models/file.js');
+var Blob = require('../models/blob.js');
 
 // validator.extend('isTimeUp', function(str){
 //   return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
 // });
 
 validator.extend('isExtSupported', function(str){
-  console.log(str)
-  console.log(global.app.fileExts)
-  console.log(global.app.fileExts.indexOf(str))
   if (global.app.fileExts.indexOf(str)>-1) return true;
   return false;
 });
@@ -47,8 +45,10 @@ router.post('/upload', function(req, res, next) {
   });
 
   form.parse(req, function(err, fields, files){
-    if (err)
+    if (err) {
       next(err);
+      return;
+    }
 
     var ip        = req.ip;
     var challenge = fields.recaptcha_challenge_field;
@@ -62,13 +62,14 @@ router.post('/upload', function(req, res, next) {
     }
 
     var extension = path.extname(files.fileinfo.name);
-    console.log(extension)
     if( !validator.isExtSupported(extension) ) {
-      console.log(global.app.fileExts)
       req.flash('uploadError', 'Oops, invalid file type, we only support '+global.app.fileExts.join(', '));
       res.redirect('/upload');
       return;
     }
+
+    var tag = validator.toString(fields.tags);
+    var tags = tag.split(',');
 
     // if ( !validator.isTimeUp(fields.timeup) ) {
     //   req.flash('uploadError', 'Oops, invalid answer time !');
@@ -99,46 +100,65 @@ router.post('/upload', function(req, res, next) {
           });
         }
 
-        // var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
-        var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name});
-        fileInfo.save(function(err){
+        var blob = new Blob({user:user.id,tags:tags});
+        blob.save(function(err){
           if(err) {
             next(err);
             return;
           }
-        });
 
-        fs.rename(files.fileinfo.path, form.uploadDir+fileInfo.id, function(err){
-          if (err) {
-            next(err);
-            return;
-          }
-        });
-
-        /*  --- Email Notification ---  */
-        var mailOptions = {
-          from: global.email.user,
-          to: ''+fields.email+', '+global.email.user+'',
-          subject: "[Hupothesis] File uploaded with success",
-          text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+fileInfo.id+"."
-        };
-
-        global.email.transporter.sendMail(mailOptions, function(err, info){
-            if(err){
+          var file = new File({blob:blob.id,filename:files.fileinfo.name});
+          file.save(function(err){
+            if(err) {
               next(err);
               return;
-            }else{
-              console.log('Message sent: ' + info.response);
             }
+
+            fs.rename(files.fileinfo.path, form.uploadDir+file.id, function(err){
+              if (err) {
+                next(err);
+                return;
+              }
+            });
+
+            /*  --- Email Notification ---  */
+            var mailOptions = {
+              from: global.email.user,
+              to: ''+fields.email+', '+global.email.user+'',
+              subject: "[Hupothesis] File uploaded with success",
+              text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+file.id+"."
+            };
+
+            global.email.transporter.sendMail(mailOptions, function(err, info){
+                if(err){
+                  next(err);
+                  return;
+                }else{
+                  console.log('Message sent: ' + info.response);
+                }
+            });
+            /* ------------ */
+
+            var options = { fileid: file.id, userid: user.id, url:global.app.url, filetype: "download" };
+
+            req.flash('uploadNotice', 'Your file was uploaded with success');
+            req.flash('uploadOptions', options);
+            res.redirect('/upload');
+            return;
+
+          });
+
         });
-        /* ------------ */
 
-        var options = { fileid: fileInfo.id, userid: user.id, url:global.app.url, filetype: "download" };
+        // var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
+        // var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name});
+        // fileInfo.save(function(err){
+        //   if(err) {
+        //     next(err);
+        //     return;
+        //   }
+        // });
 
-        req.flash('uploadNotice', 'Your file was uploaded with success');
-        req.flash('uploadOptions', options);
-        res.redirect('/upload');
-        return;
       });
     });
   });

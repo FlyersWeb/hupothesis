@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var blobSchema = new Schema({
-    tags: { type: [Schema.Types.ObjectId], default: [] },
+    tags: { type: [String ], default: [] },
     user: { type: Schema.Types.ObjectId, index: true },
     uptime: { type: String, default: null },
     expectedanstime: { type: String, default: null },

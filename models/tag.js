@@ -5,7 +5,7 @@ var tagSchema = new Schema({
     segmentations: { type: [Schema.Types.ObjectId], default: null },
     parent: { type: Schema.Types.ObjectId, default: null, index: true },
     name: { type: String },
-    description: { type: String, default: '' },
+    description: { type: String, default: null },
     deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: Date.now() }
 });

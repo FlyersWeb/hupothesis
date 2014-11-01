@@ -13,6 +13,12 @@ var User = require('../models/user.js');
 var FileInfo = require('../models/fileinfo.js');
 var AnswerInfo = require('../models/answerinfo.js');
 
+var Blob = require('../models/blob.js');
+var File = require('../models/file.js');
+var Answer = require('../models/fileanswer.js');
+var Contestant = require('../models/contestant.js');
+
+
 router.get('/getfile', function(req, res, next){
 
   var fileinfo = req.flash('fileinfo')[0];
@@ -26,34 +32,34 @@ router.get('/getfile', function(req, res, next){
     return;
   }
 
-  User.findOne({'email':email,'deleted':null}, 'id email', function(err, user){
+  Contestant.findOne({'email':email,'deleted':null}, 'id email', function(err, contestant){
     if (err) {
       next(err);
       return;
     }
 
-    if(!user) {
-      req.flash('downloadError', 'Oops, unknown user');
+    if(!contestant) {
+      req.flash('answerError', 'Oops, unknown user');
       res.redirect('/download/'+fileinfo._id);
       return;
     }
 
-    FileInfo.findOne({'_id':fileinfo._id,'deleted':null}, 'id userid uptime anstime filename downloaded', function(err,fileInfo){
+    File.findOne({'_id':fileinfo._id,'deleted':null}, 'id filename', function(err,file){
 
-      if ( !fileInfo ) {
+      if ( !file ) {
         req.flash('answerError', "Oops, invalid file identifier");
         res.redirect('/answer/'+fileinfo._id);
         return;
       }
 
-      AnswerInfo.update({'fileid':fileInfo.id,'userid':user.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
+      Answer.update({'file':file.id,'contestant':contestant.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
         if(err) {
           next(err);
           return;
         }
       });
 
-      var filePath = './tmp/'+fileInfo.id;
+      var filePath = './tmp/'+file.id;
       var stat = fs.statSync(filePath);
 
       var rdStream = fs.createReadStream(filePath);
@@ -69,7 +75,7 @@ router.get('/getfile', function(req, res, next){
         from: global.email.user,
         to: ''+global.email.user+'',
         subject: "[Hupothesis] Exam downloaded with success",
-        text: "File "+fileInfo.filename+" downloaded with success. Downloaded by "+user.email+"."
+        text: "File "+file.filename+" downloaded with success. Downloaded by "+contestant.email+"."
       };
 
       global.email.transporter.sendMail(mailOptions, function(err, info){
@@ -96,25 +102,25 @@ router.get('/download/:fileinfoid', function(req, res, next){
 
   fileinfoid = validator.toString(fileinfoid);
 
-  FileInfo.findOne({'_id':fileinfoid,'deleted':null}, 'id userid uptime anstime filename downloaded', function(err,fileInfo){
+  File.findOne({'_id':fileinfoid,'deleted':null}, 'id filename', function(err,file){
     if (err) {
       next(err);
       return;
     }
 
-    if( !fileInfo ) {
+    if( !file ) {
       req.flash('answerError', 'Oops, unknown file identifier !');
       res.redirect('/answer/'+fileinfoid);
       return;
     }
 
-    req.flash('fileinfo', fileInfo.toObject());
+    req.flash('fileinfo', file.toObject());
     if (req.session.contestant) {
       res.redirect('/getfile');
       return;
     }
 
-    res.render('download', {error: req.flash('downloadError'), notice: req.flash('downloadNotice'), fileinfo: fileInfo.toObject(), captcha_key: global.captcha.public_key, csrf:req.csrfToken() });
+    res.render('download', {error: req.flash('downloadError'), notice: req.flash('downloadNotice'), fileinfo: file.toObject(), captcha_key: global.captcha.public_key, csrf:req.csrfToken() });
 
   });    
 
@@ -144,23 +150,31 @@ router.post('/download', function(req, res, next){
       return;
     }
 
-    User.findOne({'email':email,'deleted':null}, 'id email', function(err, user){
-      if (err) {
+    var contestant = new Contestant({'email':email});
+    contestant.save(function(err){
+      if(err) {
         next(err);
         return;
       }
 
-      if( !user ) {
-        user = new User({'email': email});
-        user.save(function(err){
-          if(err) {
-            next(err);
-            return;
-          }
-        });
-      }
+      User.findOne({'email':email,'deleted':null},'id email',function(err,user){
+        if(err) {
+          next(err);
+          return;
+        }
 
-      req.session.contestant = user;
+        if (user) {
+          Contestant.update({'_id':contestant.id,'deleted':null}, {'user':user.id}, {}, function(err){
+            if(err){
+              next(err);
+              return;
+            }
+          });
+        }
+
+      });
+
+      req.session.contestant = contestant;
 
       res.redirect('/getfile');
       return;

@@ -16,12 +16,16 @@
 
 <form method="POST" action="/answer?_csrf={{csrf}}" enctype="multipart/form-data">
   <dl>
+    {{#if contestant}}
     <dt>
       <label for="email">Please enter you email</label>
     </dt>
     <dd>
       <input type="email" name="email" id="email" required="true" class="form-control"/>
     </dd>
+    {{else}}
+    <input type="hidden" name="email" id="email" value="{{contestant.email}}">
+    {{/if}}
     <dt>
       <label for="answerinfo">Chose your answers</label>
     </dt>
