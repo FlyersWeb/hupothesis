@@ -1,0 +1,46 @@
+<h1>Login</h1>
+<p class="lead">Authenticate yourself</p>
+
+{{#if error}}
+<p class="notice bg-danger text-danger"> <i class="fa fa-exclamation-triangle"> </i><span>&nbsp; Error when authenticating : {{error}}</span></p>
+{{/if}}
+
+{{#if notice}}
+<p class="notice bg-info text-info"> <i class="fa fa-info"></i><span>&nbsp; {{notice}}</span></p>
+
+{{else}}
+
+<p>Please fill the form to have access to all our services</p>
+<p>If you do not have an account yet, you can <a href="/register">register yourself</a>.</p>
+<form method="POST" action="/login">
+  <input type="hidden" name="_csrf" value="{{csrf}}"/>
+  <dl>
+    <dt>
+      <label for="email">Your email</label>
+    </dt>
+    <dd>
+      <input type="email" name="email" id="email" required="true" class="form-control"/>
+    </dd>
+    <dt>
+      <label for="password">Password</label>
+    </dt>
+    <dd>
+      <input type="password" name="password" id="password" required="true" class="form-control"/>
+    </dd>
+    <dt></dt>
+    <dd>
+      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+      <noscript>
+        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
+        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+      </noscript>
+    </dd>
+    <dt></dt>
+    <dd>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </dd>
+  </dl>
+</form>
+
+{{/if}}

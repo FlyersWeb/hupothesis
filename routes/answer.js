@@ -12,9 +12,6 @@ var simple_recaptcha = require('simple-recaptcha');
 var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
-var FileInfo = require('../models/fileinfo.js');
-var AnswerInfo = require('../models/answerinfo.js');
-
 var Blob = require('../models/blob.js');
 var File = require('../models/file.js');
 var Answer = require('../models/fileanswer.js');

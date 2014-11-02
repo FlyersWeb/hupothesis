@@ -1,8 +1,8 @@
 IN PROGRESS
 -----------
 
-* Add formulary creation interface
-* Add register (Publisher/Webmaster) 
+* Add Logged in check [Error on login]
+* Add poll creation interface
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
   | http://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/
@@ -26,6 +26,7 @@ DONE
 ----
 
 * Refacto      (separate routings, better errors, handlebars)
+* Add register (Publisher/Webmaster) DONE
 * Documentation new model     DONE
 * Edit model based on new one DONE [new model created]
 * Add form validations        DONE [use validator and formidable]

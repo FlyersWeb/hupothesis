@@ -8,7 +8,7 @@ var simple_recaptcha = require('simple-recaptcha');
 
 var global = require('../configuration/global.js');
 
-var UserRole = require('../models/userrole');
+var User = require('../models/user');
 
 router.get('/login', function(req, res, next){
   res.render('login', { csrf: req.csrfToken(), captcha_key: global.captcha.public_key, error: req.flash('loginError'), notice: req.flash('loginNotice') } );
@@ -29,7 +29,7 @@ router.post('/login',
 
     simple_recaptcha(private_key, ip, challenge, response, function(err) {
       if(err) next(err);
-      UserRole.findOne({'_id':req.user.id,'deleted':null,'active':true}, function(err, user){
+      User.findOne({'_id':req.user.id,'deleted':null,'active':true}, function(err, user){
         if(err) next(err);
         if(user) {
           user.lastLogin = Date.now();

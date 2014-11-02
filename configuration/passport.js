@@ -1,7 +1,7 @@
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
-var UserRole      = require('../models/userrole');
+var User      = require('../models/user');
 
 // used to serialize the user for the session
 passport.serializeUser(function(user, done) {
@@ -10,7 +10,7 @@ passport.serializeUser(function(user, done) {
 
 // used to deserialize the user
 passport.deserializeUser(function(id, done) {
-  UserRole.findById(id, function(err, user) {
+  User.findById(id, function(err, user) {
     done(err, user);
   });
 });
@@ -20,7 +20,7 @@ passport.use(new LocalStrategy({
   passwordField: 'password',
   passReqToCallback: true
 }, function(req, email, password, done){
-  UserRole.findOne({'local.email':email,deleted:null}, function(err, user){
+  User.findOne({'local.email':email,deleted:null}, function(err, user){
     if (err) return done(err);
     if(!user) return done(null, false, req.flash('loginError', 'No user found.'));
     user.validPassword(password,function(err,res){

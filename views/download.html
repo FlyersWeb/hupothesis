@@ -10,12 +10,16 @@
 <form method="post" action="/download">
   <input type="hidden" name="_csrf" value="{{csrf}}"/>
   <dl>
+    {{#if contestant}}
+    <input type="hidden" name="email" id="email" value="{{contestant.email}}">    
+    {{else}}
     <dt>
       <label for="email">Enter your email</label>
     </dt>
     <dd>
       <input type="email" name="email" id="email" required="true" class="form-control"/>
     </dd>
+    {{/if}}
     <dt></dt>
     <dd>
       <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>

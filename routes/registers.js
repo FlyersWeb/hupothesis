@@ -8,12 +8,12 @@ var simple_recaptcha = require('simple-recaptcha');
 
 var global = require('../configuration/global.js');
 
-var UserRole = require('../models/userrole');
+var User = require('../models/user');
 
 var crypto = require('crypto');
 
 router.get('/register', function(req, res, next){
-  res.render('register', { csrf: req.csrfToken(), captcha_key: global.captcha.public_key, error: req.flash('loginError'), notice: req.flash('loginNotice') } );
+  res.render('register', { csrf: req.csrfToken(), captcha_key: global.captcha.public_key, error: req.flash('registerError'), notice: req.flash('registerNotice') } );
 });
 
 router.post('/register', function(req, res, next){
@@ -35,16 +35,16 @@ router.post('/register', function(req, res, next){
   }  
 
 
-  UserRole.findOne({'local.email':email,deleted:null},function(err,user){
+  User.findOne({'local.email':email,deleted:null},function(err,user){
     if(err) next(err);
     if(!user){
-      UserRole.generateHash(password, function(err,hash,salt){
+      User.generateHash(password, function(err,hash,salt){
         if (err) next(err);
         crypto.randomBytes(18, function(err,buf){
           if(err) next(err);
           var token = buf.toString('hex');
 
-          var newUser = new UserRole({'local.email':email,'local.password':hash,'local.salt':salt,'local.confirmToken':token});
+          var newUser = new User({'roles':['anonymous'],'local.email':email,'local.password':hash,'local.salt':salt,'local.confirmToken':token});
           newUser.save(function(err){
             if(err) next(err);
 

@@ -5,14 +5,14 @@ var validator = require('validator');
 
 var global = require('../configuration/global.js');
 
-var UserRole = require('../models/userrole');
+var User = require('../models/user');
 
 
 router.get('/activate/:token', function(req,res,next){
   var token = req.params.token;
   token = validator.toString(token);
 
-  UserRole.findOne({'local.confirmToken':token,'deleted':null}, function(err,user){
+  User.findOne({'local.confirmToken':token,'deleted':null}, function(err,user){
     if(err) {
       next(err);
       return;

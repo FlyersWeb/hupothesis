@@ -26,11 +26,19 @@ validator.extend('isExtSupported', function(str){
 
 /* GET home page. */
 router.get('/upload', function(req, res) {
+  if(!req.session.passport.user) {
+    res.redirect('/login');
+    return;
+  }
   res.render('upload', { options: req.flash('uploadOptions')[0], notice: req.flash('uploadNotice'), error: req.flash('uploadError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
 // Upload test
 router.post('/upload', function(req, res, next) {
+  if(!req.session.passport.user) {
+    res.redirect('/login');
+    return;
+  }
 
   var form = new formidable.IncomingForm();
   form.uploadDir = "./tmp/";
