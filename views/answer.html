@@ -1,7 +1,5 @@
 <h1>Answer the test</h1>
 <p class="lead">Answer the test</p>
-<p><a href="/download/{{fileinfo._id}}">Download the test</a> and <a href="/answer/{{fileinfo._id}}">Upload your answers</a> as soon as possible.</p>
-<p>Good Luck. </p>
 
 {{#if error }}
 <p class="notice bg-danger text-danger"> <i class="fa fa-exclamation-triangle"> </i><span>Error when uploading answers : {{error}}</span></p>
@@ -14,17 +12,20 @@
 
 {{else}}
 
+<p><a href="/download/{{fileinfo._id}}">Download the test</a> and <a href="/answer/{{fileinfo._id}}">Upload your answers</a> as soon as possible.</p>
+<p>Good Luck. </p>
+
 <form method="POST" action="/answer?_csrf={{csrf}}" enctype="multipart/form-data">
   <dl>
     {{#if contestant}}
+    <input type="hidden" name="email" id="email" value="{{contestant.email}}">
+    {{else}}
     <dt>
       <label for="email">Please enter you email</label>
     </dt>
     <dd>
       <input type="email" name="email" id="email" required="true" class="form-control"/>
     </dd>
-    {{else}}
-    <input type="hidden" name="email" id="email" value="{{contestant.email}}">
     {{/if}}
     <dt>
       <label for="answerinfo">Chose your answers</label>

@@ -41,8 +41,6 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
       return;
     }
 
-    console.log(req.session)
-
     res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: file.toObject(), contestant: req.session.contestant, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 
   });
@@ -121,7 +119,7 @@ router.post('/answer', function(req, res, next) {
 
         req.session.contestant = contestant.toObject();
 
-        File.findOne({'_id':fileid,'deleted':null}, 'id filename', function(err,file){
+        File.findOne({'_id':fileid,'deleted':null}, 'id blob filename', function(err,file){
           if(err) {
             next(err);
             return;
