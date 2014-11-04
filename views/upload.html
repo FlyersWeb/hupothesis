@@ -61,12 +61,18 @@
 
 <form method="post" action="/upload?_csrf={{csrf}}" enctype="multipart/form-data">
   <dl>
+    {{#if user}}
+    {{#if user.local.email}}
+    <input type="hidden" name="email" value="{{user.local.email}}">
+    {{/if}}
+    {{else}}
     <dt>
       <label for="email">Please enter your email address</label>
     </dt>
     <dd>
       <input class="form-control" type="email" name="email" id="email" required="true">
     </dd>
+    {{/if}}
     <dt>
       <label for="fileinfo">Choose your exam file</label>
     </dt>

@@ -30,7 +30,15 @@ router.get('/upload', function(req, res) {
     res.redirect('/login');
     return;
   }
-  res.render('upload', { options: req.flash('uploadOptions')[0], notice: req.flash('uploadNotice'), error: req.flash('uploadError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+
+  User.findOne({'_id':req.session.passport.user}, function(err, user){
+    if(err) {
+      next(err);
+      return;
+    }
+    res.render('upload', { options: req.flash('uploadOptions')[0], notice: req.flash('uploadNotice'), error: req.flash('uploadError'), user: user.toObject(), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+  });
+
 });
 
 // Upload test
