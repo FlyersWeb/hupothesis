@@ -7,6 +7,8 @@ var formidable = require('formidable');
 var path = require('path');
 var fs = require('fs-extra');
 
+var _ = require('underscore');
+
 var simple_recaptcha = require('simple-recaptcha');
 
 var global = require('../configuration/global.js');
@@ -86,6 +88,7 @@ router.post('/upload', function(req, res, next) {
 
     var tag = validator.toString(fields.tags);
     var tags = tag.split(',');
+    tags = _.map(tags,function(el){return el.trim();});
 
     // if ( !validator.isTimeUp(fields.timeup) ) {
     //   req.flash('uploadError', 'Oops, invalid answer time !');
@@ -100,20 +103,16 @@ router.post('/upload', function(req, res, next) {
         return;
       } 
 
-      User.findOne({'email':fields.email, deleted:null}, 'id email deleted updated added', function(err, user){
+      User.findOne({'local.email':fields.email, deleted:null}, function(err, user){
         if (err) {
           next(err);
           return;
         }
 
-        if ( !user ) {
-          user = new User({email:fields.email});
-          user.save(function(err){
-            if(err) {
-              next(err);
-              return;
-            }
-          });
+        if(!user) {
+          req.flash('uploadError', 'Oops ! Unknown User');
+          res.redirect('/upload');
+          return;
         }
 
         var blob = new Blob({user:user.id,tags:tags});

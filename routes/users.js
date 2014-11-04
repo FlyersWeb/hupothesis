@@ -46,7 +46,7 @@ router.get('/unsubscribe/:userid', function(req, res, next){
   var userid = req.param('userid');
   userid = validator.toString(userid);
 
-  User.findOne({'_id':userid, 'deleted':null}, 'id email newsletter', function(err, user){
+  User.findOne({'_id':userid, 'deleted':null}, function(err, user){
 
     if(err) {
       next(err);
@@ -76,12 +76,12 @@ router.get('/profile/:userid', function(req, res, next){
 
   async.waterfall([
     function(callback) {
-      User.findOne({'_id':userid, 'deleted':null}, 'id email', function(err, user){
+      User.findOne({'_id':userid, 'deleted':null}, function(err, user){
         callback(null, user);
       });
     },
     function(user,callback) {
-      FileInfo.find({'userid':user._id,'deleted':null}, 'id filename uptime anstime added', function(err, fileInfos) {
+      FileInfo.find({'userid':user._id,'deleted':null}, function(err, fileInfos) {
         callback(null, user, fileInfos);
       });
     },
@@ -92,7 +92,7 @@ router.get('/profile/:userid', function(req, res, next){
         ids.push(fileInfo._id);
       });
 
-      AnswerInfo.find({'fileid':{$in:ids},'deleted':null}, 'id userid fileid filename downloaded added comments', function(err, answerInfos) {
+      AnswerInfo.find({'fileid':{$in:ids},'deleted':null}, function(err, answerInfos) {
           callback(null, user, fileInfos, answerInfos);
       });
     },
@@ -103,7 +103,7 @@ router.get('/profile/:userid', function(req, res, next){
         ids.push(answerInfo.userid);
       });
 
-      User.find({'_id':{$in:ids},'deleted':null}, 'id email', function(err, answerUsers) {
+      User.find({'_id':{$in:ids},'deleted':null}, function(err, answerUsers) {
         callback(null, user, fileInfos, answerInfos, answerUsers);
       });
     }

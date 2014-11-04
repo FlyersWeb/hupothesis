@@ -27,7 +27,7 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
 
   var fileinfoid = req.param('fileinfoid');
 
-  File.findOne({'_id': fileinfoid, 'deleted':null}, 'filename uptime anstime', function(err, file){
+  File.findOne({'_id': fileinfoid, 'deleted':null}, function(err, file){
     if (err) {
       next(err);
       return;
@@ -38,7 +38,28 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
       return;
     }
 
-    res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: file.toObject(), contestant: req.session.contestant, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+    if (req.session.contestant) {
+      console.log(req.session.contestant)
+      console.log(file)
+      Answer.findOne({'contestant':req.session.contestant._id,'file':file.id},function(err,answer){
+        if(err) {
+          next(err);
+          return;
+        }
+
+        console.log(answer)
+
+        if(answer) {
+          req.flash('answerNotice', "You've already answered the test.");
+          res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice')});
+        } else {
+          res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: file.toObject(), contestant: req.session.contestant, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });    
+        }
+      });
+    }
+    else {
+      res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: file.toObject(), contestant: req.session.contestant, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+    }
 
   });
 });
@@ -90,14 +111,21 @@ router.post('/answer', function(req, res, next) {
         return;
       }
 
-      var contestant = new Contestant({'email':email});
-      contestant.save(function(err){
+      Contestant.findOne({'email':email,'deleted':null},function(err,contestant){
         if(err) {
           next(err);
           return;
         }
-
-        User.findOne({'email':email,'deleted':null},'id email',function(err,user){
+        if(!contestant){
+          var contestant = new Contestant({'email':email});
+          contestant.save(function(err){
+            if(err) {
+              next(err);
+              return;
+            }    
+          });
+        }
+        User.findOne({'local.email':email,'deleted':null},function(err,user){
           if(err) {
             next(err);
             return;
@@ -111,12 +139,9 @@ router.post('/answer', function(req, res, next) {
               }
             });
           }
-
         });
 
-        req.session.contestant = contestant.toObject();
-
-        File.findOne({'_id':fileid,'deleted':null}, 'id blob filename', function(err,file){
+        File.findOne({'_id':fileid,'deleted':null}, function(err,file){
           if(err) {
             next(err);
             return;
@@ -157,6 +182,9 @@ router.post('/answer', function(req, res, next) {
               }
             });
 
+            if(!req.session.contestant)
+            req.session.contestant = contestant;
+
             /*  --- Email Notification ---  */
             var mailOptions = {
               from: global.email.user,
@@ -175,7 +203,7 @@ router.post('/answer', function(req, res, next) {
             });
             /****************************************/
 
-            Blob.findOne({'_id':file.blob,'deleted':null}, 'id user', function(err,blob){
+            Blob.findOne({'_id':file.blob,'deleted':null}, function(err,blob){
 
               if(err) {
                 next(err);
@@ -189,7 +217,7 @@ router.post('/answer', function(req, res, next) {
                 return;
               }
 
-              User.findOne({'_id':blob.user,'deleted':null}, 'id email', function(err,fileUser){
+              User.findOne({'_id':blob.user,'deleted':null}, function(err,fileUser){
                 if ( err ) {
                   next(err);
                   return;

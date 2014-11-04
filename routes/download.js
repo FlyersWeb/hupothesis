@@ -29,7 +29,7 @@ router.get('/getfile', function(req, res, next){
     return;
   }
 
-  Contestant.findOne({'email':email,'deleted':null}, 'id email', function(err, contestant){
+  Contestant.findOne({'email':email,'deleted':null}, function(err, contestant){
     if (err) {
       next(err);
       return;
@@ -41,7 +41,7 @@ router.get('/getfile', function(req, res, next){
       return;
     }
 
-    File.findOne({'_id':fileinfo._id,'deleted':null}, 'id filename', function(err,file){
+    File.findOne({'_id':fileinfo._id,'deleted':null}, function(err,file){
 
       if ( !file ) {
         req.flash('answerError', "Oops, invalid file identifier");
@@ -99,7 +99,7 @@ router.get('/download/:fileinfoid', function(req, res, next){
 
   fileinfoid = validator.toString(fileinfoid);
 
-  File.findOne({'_id':fileinfoid,'deleted':null}, 'id filename', function(err,file){
+  File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
     if (err) {
       next(err);
       return;
@@ -154,7 +154,7 @@ router.post('/download', function(req, res, next){
         return;
       }
 
-      User.findOne({'email':email,'deleted':null},'id email',function(err,user){
+      User.findOne({'email':email,'deleted':null}, function(err,user){
         if(err) {
           next(err);
           return;

@@ -7,8 +7,8 @@
 
 {{#if notice}}
 <p class="notice bg-info text-info"><i class="fa fa-info"></i> <span>{{notice}}</span></p>
+{{/if}}
 
-{{else}}
 <p>Fill free to contact us for any Hupothesis related request and/or informations. We will get in touch as soon as possible.</p>
 <form method="POST" action="/contact">
   <input type="hidden" name="_csrf" value="{{csrf}}"/>
@@ -46,4 +46,3 @@
     </dd>
   </dl>
 </form>
-{{/if}}

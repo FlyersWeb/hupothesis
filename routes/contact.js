@@ -38,7 +38,7 @@ router.post('/contact', function(req, res, next) {
     
     if (err) next(err);
 
-    User.findOne({'email':email, deleted:null}, 'id email deleted updated added', function(err, user){
+    User.findOne({'email':email, deleted:null}, function(err, user){
       if (err) {
         next(err);
       }

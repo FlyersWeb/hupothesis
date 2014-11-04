@@ -29,17 +29,10 @@ router.post('/login',
 
     simple_recaptcha(private_key, ip, challenge, response, function(err) {
       if(err) next(err);
-      User.findOne({'_id':req.user.id,'deleted':null,'active':true}, function(err, user){
-        if(err) next(err);
-        if(user) {
-          user.lastLogin = Date.now();
-          user.save(function(err){
-            if(err) next(err);
-          });
-          req.flash('loginNotice', 'Logged in with succes.');
-          res.redirect('/login');
-        } 
-      });
+
+      req.flash('loginNotice', 'Logged in with succes.');
+      res.redirect('/login');
+
     });
   });
 
