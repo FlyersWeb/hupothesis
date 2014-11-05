@@ -38,6 +38,15 @@ var global = {
 	captcha : {
 		private_key: process.env.OPENSHIFT_RECAPTCHA_PRIVATE_KEY || '6LeGQPUSAAAAAA9JjXnT6yqbEIFPRPj6jjdN-P3k',
 		public_key: process.env.OPENSHIFT_RECAPTCHA_PUBLIC_KEY || '6LeGQPUSAAAAALTh6FWNUf96BnAWAkD2gswYbPJx',
+	},
+	requireAuth: function(req, res, next){
+	  // check if the user is logged in
+	  if(!req.isAuthenticated()){
+	    req.flash.messages = "You need to login to view this page";
+	    res.redirect('/login');
+	    return;
+	  }
+	  next();
 	}
 };
 

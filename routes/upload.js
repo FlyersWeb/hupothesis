@@ -27,11 +27,7 @@ validator.extend('isExtSupported', function(str){
 });
 
 /* GET home page. */
-router.get('/upload', function(req, res) {
-  if(!req.session.passport.user) {
-    res.redirect('/login');
-    return;
-  }
+router.get('/upload', global.requireAuth, function(req, res) {
 
   User.findOne({'_id':req.session.passport.user}, function(err, user){
     if(err) {
@@ -44,7 +40,7 @@ router.get('/upload', function(req, res) {
 });
 
 // Upload test
-router.post('/upload', function(req, res, next) {
+router.post('/upload', global.requireAuth, function(req, res, next) {
   if(!req.session.passport.user) {
     res.redirect('/login');
     return;

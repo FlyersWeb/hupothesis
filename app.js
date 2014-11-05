@@ -54,6 +54,14 @@ app.use(passport.session());
 app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use(function(req, res, next) {
+  res.locals.session = req.session;
+  res.locals.authenticated = req.isAuthenticated();
+  next();
+});
+
+
 //// routes
 
 var index = require('./routes/index');
@@ -88,7 +96,7 @@ app.use('/', tags);
 app.use('/users', users);
 
 
-/// error handlers
+/// middlewares
 
 function logErrors(err, req, res, next) {
   var url = req.protocol + '://' + req.get('host') + req.originalUrl;

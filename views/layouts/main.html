@@ -27,6 +27,13 @@
                 <li class="active" id="faq"><a href="/faq"><i class="fa fa-question fa-fw"></i> About us</a></li>
                 <li class="active" id="terms"><a href="/terms"><i class="fa fa-legal fa-fw"></i> Terms of use</a></li>
                 <li class="active" id="contact"><a href="/contact"><i class="fa fa-envelope-o fa-fw"></i> Contact us</a></li>
+                {{#if authenticated}}
+                <li class="active" id="profile"><a href="/profile"><i class="fa fa-pie-chart fa-fw"></i> Profile</a></li>
+                <li class="active" id="logout"><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+                {{else}}
+                <li class="active" id="login"><a href="/login"><i class="fa fa-key fa-fw"></i> Login</a></li>
+                <li class="active" id="register"><a href="/register"><i class="fa fa-sign-in fa-fw"></i> Register</a></li>
+                {{/if}}
               </ul>
             </div>
           </div>
