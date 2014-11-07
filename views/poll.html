@@ -15,9 +15,37 @@
 
 <div class="row">
   <h3>
-    Fill the form
+    Fill the form to create your poll.
   </h3>
+  <p>
+    You can define up to <strong>4 questions</strong>. Expected answers can be open, consumer feeling, multiple or unique choices.
+  </p>
 </div>
-<div class="row">
-  <p>TO BE DONE</p>
-</div>
+
+<form method="post" action="/poll">
+  <div class="question">
+    <div class="row">
+      <div class="col-md-2">
+        <label>Question title : </label>
+      </div>
+      <div class="col-md-6">
+        <input type="text" name="question_title[]">
+      </div>
+      <div class="col-md-4">
+        <input type="radio" name="question_type[]" value="open"> Open
+        <input type="radio" name="question_type[]" value="feel"> Feeling
+        <input type="radio" name="question_type[]" value="multiple"> Multiple choices
+        <input type="radio" name="question_type[]" value="unique"> Unique choice
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="preview"></div>
+      </div>
+      <div class="col-md-4">
+        <button class="question_add">Add question</button>
+        <button class="question_rm">Remove question</button>
+      </div>
+    </div>
+  </div>
+</form>

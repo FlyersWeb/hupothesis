@@ -1,7 +1,6 @@
 IN PROGRESS
 -----------
 
-* Add Logged in check [Error on login]
 * Add poll creation interface
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
@@ -25,6 +24,7 @@ TODO
 DONE
 ----
 
+* Add Logged in check [Error on login]
 * Refacto      (separate routings, better errors, handlebars)
 * Add register (Publisher/Webmaster) DONE
 * Documentation new model     DONE

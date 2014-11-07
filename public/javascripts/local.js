@@ -31,4 +31,22 @@ $(function(){
     },
     focus: function(evt,ui){evt.preventDefault();return false;}
   });
+
+
+  //// poll
+  $(".question_add").on('click', function(evt){
+    evt.preventDefault();
+    var $question = $(this).parent().parent().parent();
+    console.log($question)
+    $question.next($question);
+    return false;
+  });
+  $(".question_rm").on('click', function(evt){
+    evt.preventDefault();
+    var $question = $(this).parent().parent().parent();
+    console.log($question)
+    $question.remove();
+    return false;
+  });
+
 });
