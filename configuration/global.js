@@ -42,7 +42,7 @@ var global = {
 	requireAuth: function(req, res, next){
 	  // check if the user is logged in
 	  if(!req.isAuthenticated()){
-	    req.flash.messages = "You need to login to view this page";
+	  	req.session.toRedirect = req.path
 	    res.redirect('/login');
 	    return;
 	  }

@@ -65,8 +65,12 @@ router.post('/register', function(req, res, next){
             });
             /* ------------ */
 
-            req.flash('registerNotice', 'Account registered with success');
-            res.redirect('/register');
+            if(!req.session.toRedirect) {
+              req.flash('registerNotice', 'Account registered with success');
+              res.redirect('/register');
+            } else {
+              res.redirect(req.session.toRedirect);
+            }
           });
         });
       });

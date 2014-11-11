@@ -30,8 +30,12 @@ router.post('/login',
     simple_recaptcha(private_key, ip, challenge, response, function(err) {
       if(err) next(err);
 
-      req.flash('loginNotice', 'Logged in with succes.');
-      res.redirect('/login');
+      if(!req.session.toRedirect) {
+        req.flash('loginNotice', 'Logged in with succes.');
+        res.redirect('/login');
+      } else {
+        res.redirect(req.session.toRedirect);
+      }
 
     });
   });
