@@ -1,0 +1,94 @@
+<div class="page-header">
+  <h1>Answer the poll</h1>
+  <p class="lead">Create your poll and it will be shared with our partners</p>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    {{#if poll.title}}
+    <h3>{{title}}</h3>
+    {{/if}}
+  </div>
+</div>
+
+{{#if notice }}
+
+<p class="notice bg-info text-info">
+  <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
+</p>
+
+{{/if}}
+
+{{#if error }}
+
+<p class="notice bg-danger text-danger">
+  <i class="fa fa-exclamation-triangle"> <span>{{error}}</span></i>
+</p>
+
+{{else}}
+
+<form action="/poll/answer" method="post">
+  <input type="hidden" name="_csrf" value="{{csrf}}">  
+  <input type="hidden" name="pollid" value="{{poll._id}}">
+{{#each poll.questions}}
+  <div class="question">
+    <div class="row">
+      <input type="text" class="form-control" name="question_prompt[]" value="{{prompt}}" placeholder="{{prompt}}" readonly>
+    </div>
+    <div class="row">
+      {{#ifCond type "open"}}
+      <div class="col-md-12">
+        <input type="text" class="form-control" name="question_answer_{{id}}[]">
+      </div>
+      {{/ifCond}}
+
+      {{#ifCond type "unique"}}
+      {{#each choices}}
+      <div class="col-md-3">
+        <div class="radio">
+          <label>
+            <input type="radio" name="question_answer_{{../id}}[]" value="{{this}}">
+            {{this}}
+          </label>
+        </div>
+      </div>
+      {{/each}}
+      {{/ifCond}}
+
+      {{#ifCond type "multiple"}}
+      {{#each choices}}
+      <div class="col-md-3">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="question_answer_{{../id}}[]" value="{{this}}">
+            {{this}}
+          </label>
+        </div>
+      </div>
+      {{/each}}
+      {{/ifCond}}
+      
+      {{#ifCond type "feel"}}
+      {{#each choices}}
+      <div class="col-md-3">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="question_answer_{{../id}}[]" value="{{this}}">
+            {{this}}
+          </label>
+        </div>
+      </div>
+      {{/each}}
+      {{/ifCond}}
+    </div>
+  </div>
+  <p>&nbsp;</p>
+{{/each}}
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary" type="submit">Send your opinion</button>
+    </div>
+  </div>
+</form>
+
+{{/if}}

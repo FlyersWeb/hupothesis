@@ -5,16 +5,12 @@ var global = require('../configuration/global.js');
 
 var validator = require('validator');
 
-var _ = require('underscore');
-
 var User = require('../models/user.js');
 var Blob = require('../models/blob.js');
 var Poll = require('../models/poll.js');
 var PollQuestion = require('../models/pollquestion.js');
-var PollQuestion = require('../models/pollquestion.js');
 
 
-/* GET home page. */
 router.get('/poll', global.requireAuth, function(req, res) {
   res.render('poll', { notice: req.flash('pollNotice'), error: req.flash('pollError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });

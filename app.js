@@ -9,7 +9,18 @@ var methodOverride = require('method-override');
 var csrf = require('csurf');
 
 var exphbs = require('express-handlebars');
-
+var hbs = exphbs.create({
+  defaultLayout: 'main', 
+  extname: '.html',
+  helpers: {
+    ifCond: function (v1, v2, options) { 
+      if(v1 === v2) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    }
+  }
+})
 
 var path = require('path');
 var fs = require('fs-extra');
@@ -28,7 +39,7 @@ var MongoStore = require('connect-mongo')(session);
 var app = express();
 
 // view engine setup
-app.engine('.html', exphbs({defaultLayout: 'main', extname: '.html'}));
+app.engine('.html', hbs.engine);
 // app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', '.html');
 
@@ -68,6 +79,7 @@ var index = require('./routes/index');
 var upload = require('./routes/upload');
 var poll = require('./routes/poll');
 var answer = require('./routes/answer');
+var pollanswer = require('./routes/pollanswer');
 var download = require('./routes/download');
 var logins = require('./routes/logins');
 var registers = require('./routes/registers');
@@ -82,6 +94,7 @@ var tags  = require('./routes/tag');
 app.use('/', index);
 app.use('/', upload);
 app.use('/', poll);
+app.use('/', pollanswer);
 app.use('/', answer);
 app.use('/', download);
 app.use('/', registers);
