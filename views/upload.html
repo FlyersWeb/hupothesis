@@ -1,16 +1,7 @@
-<h1>Test upload</h1>
-<p class="lead">Upload your file</p>
-
-<div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
+<div class="page-header">
+  <h1>Exam upload</h1>
+  <p class="lead">Upload your exam</p>
+</div>
 
 {{#if error }}
 <p class="notice bg-danger text-danger">
@@ -23,7 +14,19 @@
 <p class="notice bg-info text-info">
   <i class="fa fa-exclamation-triangle"> <span>File Uploaded with success get it on <a href="/answer/{{options.fileid}}">/answer/{{options.fileid}}</a></span></i>
 </p>
-<p>Now share your brand new test on your favourite social media : </p>
+
+<div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<p>Now share your exam test on your favourite social media : </p>
 <div class="row">
   <div class="col-md-4 text-left">
     <div class="fb-share-button" data-href="{{options.url}}/answer/{{options.userid}}" data-layout="button_count" data-width="100"></div>

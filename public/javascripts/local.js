@@ -63,7 +63,7 @@ $(function(){
   });
   var kinds = ['open','unique','multiple','feel'];
   $(document.body).on('click',"input.question_type",function(evt){
-    var $question = $(this).parent().parent().parent();
+    var $question = $(this).parent().parent().parent().parent().parent();
     var kind = $(this).attr('value');
     for(var i=0;i<kinds.length;i++){
       var ckind = kinds[i];

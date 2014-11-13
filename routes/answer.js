@@ -39,15 +39,11 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
     }
 
     if (req.session.contestant) {
-      console.log(req.session.contestant)
-      console.log(file)
-      Answer.findOne({'contestant':req.session.contestant._id,'file':file.id},function(err,answer){
+      Answer.findOne({'contestant':req.session.contestant._id,'file':file.id,'filename':{$exists:true}},function(err,answer){
         if(err) {
           next(err);
           return;
         }
-
-        console.log(answer)
 
         if(answer) {
           req.flash('answerNotice', "You've already answered the test.");

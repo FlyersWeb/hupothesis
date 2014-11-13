@@ -1,7 +1,8 @@
 IN PROGRESS
 -----------
 
-* Add poll creation interface
+* Add Poll answer interface
+* Profile page interface      (polls, exams, quizz)
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
   | http://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/
@@ -11,7 +12,6 @@ IN PROGRESS
 TODO
 ----
 
-* Refacto : use new model
 * Make GFX compatible mobile
 * Add publisher portal
   (upload file/questionary, social share, widget, payment, collected money)
@@ -20,12 +20,14 @@ TODO
 * Add UT e2e FT
 * Add launch page (for marketing)  ->  TODO (add promotional video)
 * Add Billing informations to model
+* Pay per display bidder
 
 DONE
 ----
 
-* Add Logged in check [Error on login]
-* Refacto      (separate routings, better errors, handlebars)
+* Add poll creation interface ADD ANSWER LINK
+* Add Logged in check         DONE
+* Refacto      (separate routings, better errors, handlebars) DONE
 * Add register (Publisher/Webmaster) DONE
 * Documentation new model     DONE
 * Edit model based on new one DONE [new model created]

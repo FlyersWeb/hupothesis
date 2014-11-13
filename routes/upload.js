@@ -14,8 +14,8 @@ var simple_recaptcha = require('simple-recaptcha');
 var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
-var File = require('../models/file.js');
 var Blob = require('../models/blob.js');
+var File = require('../models/file.js');
 
 // validator.extend('isTimeUp', function(str){
 //   return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
@@ -29,7 +29,7 @@ validator.extend('isExtSupported', function(str){
 /* GET home page. */
 router.get('/upload', global.requireAuth, function(req, res) {
 
-  User.findOne({'_id':req.session.passport.user}, function(err, user){
+  User.findOne({'_id':req.session.passport.user,'deleted':null}, function(err, user){
     if(err) {
       next(err);
       return;
@@ -41,10 +41,6 @@ router.get('/upload', global.requireAuth, function(req, res) {
 
 // Upload test
 router.post('/upload', global.requireAuth, function(req, res, next) {
-  if(!req.session.passport.user) {
-    res.redirect('/login');
-    return;
-  }
 
   var form = new formidable.IncomingForm();
   form.uploadDir = "./tmp/";
@@ -99,7 +95,8 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
         return;
       } 
 
-      User.findOne({'local.email':fields.email, deleted:null}, function(err, user){
+      // TODO change fields email to req.session.passport.user id
+      User.findOne({'local.email':fields.email, 'deleted':null}, function(err, user){
         if (err) {
           next(err);
           return;
