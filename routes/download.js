@@ -19,13 +19,12 @@ var Contestant = require('../models/contestant.js');
 router.get('/getfile', function(req, res, next){
 
   var fileinfo = req.flash('fileinfo')[0];
-  var user = req.session.contestant;
 
-  var email = user.email;
+  var email = req.session.contestant.email;
 
   if ( !validator.isEmail(email) ) {
     req.flash("answerError", "Oops, invalid email address");
-    res.redirect('/answer/'+fileinfoid);
+    res.redirect('/upload/answer/'+fileinfoid);
     return;
   }
 
@@ -45,7 +44,7 @@ router.get('/getfile', function(req, res, next){
 
       if ( !file ) {
         req.flash('answerError', "Oops, invalid file identifier");
-        res.redirect('/answer/'+fileinfo._id);
+        res.redirect('/upload/answer/'+fileinfo._id);
         return;
       }
 
@@ -107,7 +106,7 @@ router.get('/download/:fileinfoid', function(req, res, next){
 
     if( !file ) {
       req.flash('answerError', 'Oops, unknown file identifier !');
-      res.redirect('/answer/'+fileinfoid);
+      res.redirect('/upload/answer/'+fileinfoid);
       return;
     }
 
@@ -136,7 +135,7 @@ router.post('/download', function(req, res, next){
 
   if ( !validator.isEmail(email) ) {
     req.flash('answerError', 'Oops, invalid email address.');
-    res.redirect('/answer/'+fileinfoid);
+    res.redirect('/upload/answer/'+fileinfoid);
     return;
   }
 

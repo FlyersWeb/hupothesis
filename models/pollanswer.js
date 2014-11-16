@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var pollAnswerSchema = new Schema({
     question: { type: Schema.Types.ObjectId, index: true },
     contestant: { type: Schema.Types.ObjectId, index: true },
-    value: { type: String },
+    value: { type: [String] },
     deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: Date.now() }
 });

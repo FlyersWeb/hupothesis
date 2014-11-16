@@ -23,7 +23,7 @@ validator.extend('isExtSupported', function(str){
   return false;
 });
 
-router.get('/answer/:fileinfoid', function(req, res, err) {
+router.get('/upload/answer/:fileinfoid', function(req, res, err) {
 
   var fileinfoid = req.param('fileinfoid');
 
@@ -61,7 +61,7 @@ router.get('/answer/:fileinfoid', function(req, res, err) {
 });
 
 // Upload answers
-router.post('/answer', function(req, res, next) {
+router.post('/upload/answer', function(req, res, next) {
 
   var form = new formidable.IncomingForm();
   form.uploadDir = "./tmp/";
@@ -89,7 +89,7 @@ router.post('/answer', function(req, res, next) {
 
     if ( !validator.isEmail(email) ) {
       req.flash('answerError', 'Oops, invalid email');
-      res.redirect('/answer/'+fileid);
+      res.redirect('/upload/answer/'+fileid);
       return;
     }
 
@@ -244,7 +244,7 @@ router.post('/answer', function(req, res, next) {
               /* ------------ */
               
               req.flash('answerNotice', 'Answer uploaded with success');
-              res.redirect('/answer/'+file.id);
+              res.redirect('/upload/answer/'+file.id);
               return;
 
             });

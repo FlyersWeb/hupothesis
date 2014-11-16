@@ -11,18 +11,19 @@
   </div>
 </div>
 
-{{#if notice }}
-
-<p class="notice bg-info text-info">
-  <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
-</p>
-
-{{/if}}
-
 {{#if error }}
 
 <p class="notice bg-danger text-danger">
   <i class="fa fa-exclamation-triangle"> <span>{{error}}</span></i>
+</p>
+
+{{/if}}
+
+
+{{#if notice }}
+
+<p class="notice bg-info text-info">
+  <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
 </p>
 
 {{else}}
@@ -30,15 +31,26 @@
 <form action="/poll/answer" method="post">
   <input type="hidden" name="_csrf" value="{{csrf}}">  
   <input type="hidden" name="pollid" value="{{poll._id}}">
+  <div class="row">
+    <dl>
+      <dt>
+        <label for="email">Please provide your email</label>
+      </dt>
+      <dd>
+        <input type="email" class="form-control" name="email" id="email" placeholder="john.doe@unknown.com">
+      </dd>
+    </dl>
+  </div>
 {{#each poll.questions}}
   <div class="question">
     <div class="row">
-      <input type="text" class="form-control" name="question_prompt[]" value="{{prompt}}" placeholder="{{prompt}}" readonly>
+      <input type="text" class="form-control" name="question_prompts[]" value="{{prompt}}" placeholder="{{prompt}}" readonly>
+      <input type="hidden" name="question_ids[]" value="{{_id}}">
     </div>
     <div class="row">
       {{#ifCond type "open"}}
       <div class="col-md-12">
-        <input type="text" class="form-control" name="question_answer_{{id}}[]">
+        <input type="text" class="form-control" name="question_answer_{{id}}">
       </div>
       {{/ifCond}}
 
@@ -47,7 +59,7 @@
       <div class="col-md-3">
         <div class="radio">
           <label>
-            <input type="radio" name="question_answer_{{../id}}[]" value="{{this}}">
+            <input type="radio" name="question_answer_{{../id}}" value="{{this}}">
             {{this}}
           </label>
         </div>
@@ -60,7 +72,7 @@
       <div class="col-md-3">
         <div class="checkbox">
           <label>
-            <input type="checkbox" name="question_answer_{{../id}}[]" value="{{this}}">
+            <input type="checkbox" name="question_answer_{{../id}}" value="{{this}}">
             {{this}}
           </label>
         </div>
@@ -73,7 +85,7 @@
       <div class="col-md-3">
         <div class="checkbox">
           <label>
-            <input type="checkbox" name="question_answer_{{../id}}[]" value="{{this}}">
+            <input type="checkbox" name="question_answer_{{../id}}" value="{{this}}">
             {{this}}
           </label>
         </div>
@@ -84,10 +96,23 @@
   </div>
   <p>&nbsp;</p>
 {{/each}}
+
   <div class="row">
-    <div class="col-md-12">
-      <button class="btn btn-primary" type="submit">Send your opinion</button>
-    </div>
+    <dl>
+      <dt>
+        <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+        <noscript>
+          <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
+          <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+          <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+        </noscript>
+      </dt>
+      <dd></dd>
+      <dt>
+        <button class="btn btn-primary" type="submit">Send your opinion</button>
+      </dt>
+      <dd></dd>
+    </dl>
   </div>
 </form>
 

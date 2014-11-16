@@ -76,9 +76,9 @@ app.use(function(req, res, next) {
 //// routes
 
 var index = require('./routes/index');
+var uploadanswer = require('./routes/uploadanswer');
 var upload = require('./routes/upload');
 var poll = require('./routes/poll');
-var answer = require('./routes/answer');
 var pollanswer = require('./routes/pollanswer');
 var download = require('./routes/download');
 var logins = require('./routes/logins');
@@ -95,7 +95,7 @@ app.use('/', index);
 app.use('/', upload);
 app.use('/', poll);
 app.use('/', pollanswer);
-app.use('/', answer);
+app.use('/', uploadanswer);
 app.use('/', download);
 app.use('/', registers);
 app.use('/', launch);

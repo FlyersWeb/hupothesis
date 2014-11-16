@@ -1,7 +1,7 @@
 IN PROGRESS
 -----------
 
-* Add Poll answer interface   [parse poll post]
+* Add Poll answer interface   [parse poll post, add double answer check using session]
 * Profile page interface      (polls, exams, quizz)
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)

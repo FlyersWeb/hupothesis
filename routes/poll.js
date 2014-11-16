@@ -11,11 +11,11 @@ var Poll = require('../models/poll.js');
 var PollQuestion = require('../models/pollquestion.js');
 
 
-router.get('/poll', global.requireAuth, function(req, res) {
+router.get('/poll', global.requireAuth, function(req, res, next) {
   res.render('poll', { notice: req.flash('pollNotice'), error: req.flash('pollError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
-router.post('/poll', global.requireAuth, function(req, res){
+router.post('/poll', global.requireAuth, function(req, res, next){
 
   // TODO add check question_title empty
   // TODO add poll answer link and share widget
