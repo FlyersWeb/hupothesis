@@ -38,6 +38,7 @@ $(function(){
   $(document.body).on('click',"button.question_add",function(evt){
     evt.preventDefault();
     var $question = $(this).parent().parent().parent();
+    var qTitleValue = $question.find('input[name="question_title[]"]')[0].value;
     var $origin   = $question.parent();
     var id = parseInt($question.attr('data-id'));
     if(id >= 39) return false;
