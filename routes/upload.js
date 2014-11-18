@@ -77,87 +77,74 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
     //   return;
     // }
 
-      // TODO change fields email to req.session.passport.user id
-      User.findOne({'_id':req.session.passport.user, 'deleted':null}, function(err, user){
-        if (err) {
+    User.findOne({'_id':req.session.passport.user, 'deleted':null}, function(err, user){
+      if (err) {
+        next(err);
+        return;
+      }
+
+      if(!user) {
+        req.flash('uploadError', 'Oops ! Unknown User');
+        res.redirect('/upload');
+        return;
+      }
+
+      if ( !validator.isEmail(user.local.email) ) {
+        req.flash('uploadError', 'Oops, invalid email !');
+        res.redirect('/upload');
+        return;
+      }
+
+      var blob = new Blob({'user':user.id,'tags':tags});
+      blob.save(function(err){
+        if(err) {
           next(err);
           return;
         }
 
-        if(!user) {
-          req.flash('uploadError', 'Oops ! Unknown User');
-          res.redirect('/upload');
-          return;
-        }
-
-        if ( !validator.isEmail(user.local.email) ) {
-          req.flash('uploadError', 'Oops, invalid email !');
-          res.redirect('/upload');
-          return;
-        }
-
-        var blob = new Blob({user:user.id,tags:tags});
-        blob.save(function(err){
+        var file = new File({'blob':blob.id,'filename':files.fileinfo.name});
+        file.save(function(err){
           if(err) {
             next(err);
             return;
           }
 
-          var file = new File({blob:blob.id,filename:files.fileinfo.name});
-          file.save(function(err){
-            if(err) {
+          fs.rename(files.fileinfo.path, form.uploadDir+file.id, function(err){
+            if (err) {
               next(err);
               return;
             }
-
-            fs.rename(files.fileinfo.path, form.uploadDir+file.id, function(err){
-              if (err) {
-                next(err);
-                return;
-              }
-            });
-
-            /*  --- Email Notification ---  */
-            var mailOptions = {
-              from: global.email.user,
-              to: ''+user.local.email+', '+global.email.user+'',
-              subject: "[Hupothesis] File uploaded with success",
-              text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+file.id+"."
-            };
-
-            global.email.transporter.sendMail(mailOptions, function(err, info){
-                if(err){
-                  next(err);
-                  return;
-                }else{
-                  console.log('Message sent: ' + info.response);
-                }
-            });
-            /* ------------ */
-
-            var options = { fileid: file.id, userid: user.id, url:global.app.url };
-
-            req.flash('uploadNotice', 'Your file was uploaded with success');
-            req.flash('uploadOptions', options);
-            res.redirect('/upload');
-            return;
-
           });
 
+          /*  --- Email Notification ---  */
+          var mailOptions = {
+            from: global.email.user,
+            to: ''+user.local.email+', '+global.email.user+'',
+            subject: "[Hupothesis] File uploaded with success",
+            text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+file.id+"."
+          };
+
+          global.email.transporter.sendMail(mailOptions, function(err, info){
+              if(err){
+                next(err);
+                return;
+              }else{
+                console.log('Message sent: ' + info.response);
+              }
+          });
+          /* ------------ */
+
+          var options = { fileid: file.id, userid: user.id, url:global.app.url };
+
+          req.flash('uploadNotice', 'Your file was uploaded with success');
+          req.flash('uploadOptions', options);
+          res.redirect('/upload');
+          return;
+
         });
-
-        // var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name,anstime:fields.timeup});
-        // var fileInfo = new FileInfo({userid:user.id,filename:files.fileinfo.name});
-        // fileInfo.save(function(err){
-        //   if(err) {
-        //     next(err);
-        //     return;
-        //   }
-        // });
-
       });
+    });
   });
-
 });
 
 module.exports = router;

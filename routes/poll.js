@@ -5,6 +5,8 @@ var global = require('../configuration/global.js');
 
 var validator = require('validator');
 
+var _ = require('underscore');
+
 var User = require('../models/user.js');
 var Blob = require('../models/blob.js');
 var Poll = require('../models/poll.js');
@@ -26,8 +28,14 @@ router.get('/poll', global.requireAuth, function(req, res, next) {
 router.post('/poll', global.requireAuth, function(req, res, next){
 
   // TODO add check question_title empty
-  // TODO add poll answer link and share widget
   var question_titles = req.body.question_title;
+
+  var polltitle = req.body.title;
+  polltitle = validator.toString(polltitle);
+
+  var tag = validator.toString(req.body.tags);
+  var tags = tag.split(',');
+  tags = _.map(tags,function(el){return el.trim();});
 
   User.findOne({'_id':req.session.passport.user,'deleted':null},function(err,user){
     if(err){
@@ -41,14 +49,14 @@ router.post('/poll', global.requireAuth, function(req, res, next){
       return;
     }
 
-    var blob = new Blob({'user':user.id});
+    var blob = new Blob({'user':user.id,'tags':tags});
     blob.save(function(err){
       if(err){
         next(err);
         return; 
       }
 
-      var poll = new Poll({'blob':blob.id});
+      var poll = new Poll({'blob':blob.id,'title':polltitle});
       poll.save(function(err){
         if(err){
           next(err);

@@ -1,6 +1,6 @@
 <div class="page-header">
   <h1>Create your poll</h1>
-  <p class="lead">Create your poll and it will be shared with our partners</p>
+  <p class="lead">Create your poll so you can share it on our partners website</p>
 </div>
 
 <div class="row">
@@ -81,12 +81,28 @@
     Fill the form to create your poll.
   </h3>
   <p>
-    You can define up to <strong>4 questions</strong>. Expected answers can be open, consumer feeling, multiple or unique choices.
+    Define your questions, you'll be able to share your poll on our partners websites. Be concise so people answer all your questions. Expected answers can be open, consumer feeling, multiple or unique choices.
   </p>
 </div>
 
 <form method="post" action="/poll">
   <input type="hidden" name="_csrf" value="{{csrf}}">
+  <div class="row">
+    <dl>
+      <dt>
+        <label for="title">Please enter your poll title</label>
+      </dt>
+      <dd>
+        <input class="form-control" type="text" name="title" id="title" required>
+      </dd>
+      <dt>
+        <label for="tags">Enter some tags separated by commas defining your poll</label>
+      </dt>
+      <dd>
+        <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
+      </dd>
+    </dl>
+  </div>
   <div>
     <div class="question" data-id="0">
       <div class="row">
@@ -136,7 +152,7 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <div class="preview"></div>
+          <div class="preview"><p>&nbsp;</p></div>
         </div>
       </div>
     </div>

@@ -40,17 +40,15 @@ $(function(){
     var $question = $(this).parent().parent().parent();
     var $origin   = $question.parent();
     var id = parseInt($question.attr('data-id'));
-    if(id>=3) return false;
+    if(id >= 39) return false;
     $qQuestion = $question.clone();$qQuestion.attr('data-id',(id+1));
     var question = $qQuestion[0].outerHTML;
     for(var i=0;i<replaces.length;i++){
       var replace=replaces[i];
       var toreplace=replace+'_'+(id+1);
       replace += '_'+id;
-      console.log(replace)
       question=question.replace(new RegExp(replace,'g'),toreplace);
     }
-    console.log(question)
     $origin.html($origin.html()+question);
     return false;
   });
