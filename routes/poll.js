@@ -12,7 +12,15 @@ var PollQuestion = require('../models/pollquestion.js');
 
 
 router.get('/poll', global.requireAuth, function(req, res, next) {
-  res.render('poll', { notice: req.flash('pollNotice'), error: req.flash('pollError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+
+  User.findOne({'_id':req.session.passport.user,'deleted':null}, function(err, user){
+    if(err) {
+      next(err);
+      return;
+    }
+
+    res.render('poll', { options: req.flash('pollOptions')[0], user: user.toObject(), notice: req.flash('pollNotice'), error: req.flash('pollError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+  });
 });
 
 router.post('/poll', global.requireAuth, function(req, res, next){
@@ -61,7 +69,10 @@ router.post('/poll', global.requireAuth, function(req, res, next){
           });
         }
 
-        req.flash('pollNotice', 'Your Poll was saved with success');
+        var options = { pollid: poll.id, userid: user.id, url:global.app.url };        
+
+        req.flash('pollNotice', 'Your Poll was successfully created.');
+        req.flash('pollOptions', options);        
         res.redirect('/poll');
         return;
 

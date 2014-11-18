@@ -41,34 +41,53 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
         return;
       }
 
+      var question_ids = [];
       for(var i=0;i<pollquestions.length;i++){
         var pollquestion = pollquestions[i];
         var pollquestionObj = pollquestion.toObject();
         pollquestionObj.id = i;
         pollObj.questions.push(pollquestionObj);
+        question_ids.push(pollquestion.id);
       }
 
-      res.render('pollanswer', { poll: pollObj, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+      if (req.session.contestant) {
+        PollAnswer.find({'question':{$in:question_ids},'contestant':req.session.contestant._id,'deleted':null},function(err,answers){
+          if(err){
+            next(err);
+            return;
+          }
+
+          if(answers.length >= question_ids.length) {
+            req.flash('pollAnswerNotice', "You've already answered the poll. Thanks.")
+          }
+
+          res.render('pollanswer', { 'contestant': req.session.contestant, 'poll': pollObj, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+        });
+      } else {
+        res.render('pollanswer', { 'poll': pollObj, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+      }
+
     });
 
   });
 });
 
 router.post('/poll/answer', function(req, res, next){
-  console.log(req.body)
-
   var qids = req.body.question_ids;
 
   var pollid = req.body.pollid;
   pollid=validator.toString(pollid);
 
-  if ( !validator.isEmail(req.body.email) ) {
+  var email = req.body.email;
+  if(req.session.contestant){
+    email=req.session.contestant.email;
+  }
+
+  if ( !validator.isEmail(email) ) {
     req.flash('pollAnswerError', 'Oops, invalid email !');
     res.redirect('/poll/answer/'+pollid);
     return;
   }
-
-  var email = req.body.email;
   
   var ip = req.ip;
   var challenge = req.body.recaptcha_challenge_field;
@@ -134,7 +153,7 @@ router.post('/poll/answer', function(req, res, next){
           for(var i=0;i<questions.length;i++){
             var question=questions[i];
             var avalue=req.body['question_answer_'+i];
-            var answer={'question':question.id,'contestant':contestant.id,'value':avalue};
+            var answer={'poll':poll.id,'question':question.id,'contestant':contestant.id,'value':avalue};
             answers.push(answer);
           }
 
@@ -151,7 +170,7 @@ router.post('/poll/answer', function(req, res, next){
             SHOULD SEND EMAIL
           ***************/
 
-            req.flash('pollAnswerNotice','Thank you for your time, your answers were received');
+            req.flash('pollAnswerNotice','Your opinion was successfully received.');
             res.redirect('/poll/answer/'+poll.id);
             return;
           });

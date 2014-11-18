@@ -7,15 +7,15 @@
 
 {{#if notice }}
 
-<p class="notice bg-info text-info"> <i class="fa fa-exclamation-triangle"> </i>Your answers have been uploaded with success. {{notice}}</p>
-<p>Now upload <strong><a href="/">your own test</a></strong>.</p>
+<p class="notice bg-info text-info"> <i class="fa fa-exclamation-triangle"> </i><span>Thank you for time. {{notice}}</span></p>
+<p>Now upload <strong><a href="/upload">your own test</a></strong>.</p>
 
 {{else}}
 
 <p><a href="/download/{{fileinfo._id}}">Download the test</a> and <a href="/answer/{{fileinfo._id}}">Upload your answers</a> as soon as possible.</p>
 <p>Good Luck. </p>
 
-<form method="POST" action="/answer?_csrf={{csrf}}" enctype="multipart/form-data">
+<form method="POST" action="/upload/answer?_csrf={{csrf}}" enctype="multipart/form-data">
   <dl>
     {{#if contestant}}
     <input type="hidden" name="email" id="email" value="{{contestant.email}}">

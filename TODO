@@ -1,7 +1,6 @@
 IN PROGRESS
 -----------
 
-* Add Poll answer interface   [parse poll post, add double answer check using session]
 * Profile page interface      (polls, exams, quizz)
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
@@ -12,6 +11,8 @@ IN PROGRESS
 TODO
 ----
 
+* Poll feeling 3 or 5 options
+* Poll widget creation
 * Make GFX compatible mobile
 * Better emailing with HTML
 * Add publisher portal
@@ -26,6 +27,7 @@ TODO
 DONE
 ----
 
+* Add Poll answer interface   [parse poll post, add double answer check using session]
 * Add poll creation interface ADD ANSWER LINK
 * Add Logged in check         DONE
 * Refacto      (separate routings, better errors, handlebars) DONE

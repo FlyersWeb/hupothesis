@@ -4,21 +4,12 @@
 </div>
 
 <div class="row">
-  <h3>How to create your form</h3>
+  <h3>How to create your poll</h3>
   <p>
-    Just fill the form and chose poll category and it will be displayed on our partners website. You can also share it with your friends !
+    Just fill the form and chose poll categories and it will be displayed on our partners website. You can also share it with your friends !
   </p>
   <p>
-    Want to get back ? Click <a href="/">here</a>
-  </p>
-</div>
-
-<div class="row">
-  <h3>
-    Fill the form to create your poll.
-  </h3>
-  <p>
-    You can define up to <strong>4 questions</strong>. Expected answers can be open, consumer feeling, multiple or unique choices.
+    Want to know more ? See our <a href="/faq">FAQ</a>
   </p>
 </div>
 
@@ -34,7 +25,65 @@
   <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
 </p>
 
-{{/if}}
+<p>
+  You can now share your poll using <a href="/poll/answer/{{options.pollid}}">/poll/answer/{{options.pollid}}</a>
+</p>
+
+<div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<p>Now share your exam test on your favourite social media : </p>
+<div class="row">
+  <div class="col-md-4 text-left">
+    <div class="fb-share-button" data-href="{{options.url}}/poll/answer/{{options.pollid}}" data-layout="button_count" data-width="100"></div>
+  </div>
+  <div class="col-md-4 text-center">
+    <div class="tw-share-button">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/poll/answer/{{options.pollid}}">Tweet</a>
+      <script>
+      !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+      </script>
+    </div>
+  </div>
+  <div class="col-md-4 text-right">
+    <div class="lk-share-button">
+      <script src="//platform.linkedin.com/in.js" type="text/javascript">lang: EN_US</script>
+      <script type="IN/Share" data-counter="right" data-url="{{options.url}}/poll/answer/{{options.pollid}}"></script>
+    </div>
+  </div>
+</div>
+
+<p>Or on your website by inserting our script where you want to insert widget :</p>
+<pre>
+  &lt;script class="hupothesis-script-{{options.userid}}"&gt;
+    (function() {
+    var s = document.createElement('script');
+    s.src = '{{options.url}}/javascripts/hupothesis.js';
+    s.async = true;
+    window.hupothesis_options = (window.hupothesis_options || []).concat([{userid:"{{options.userid}}",blobid:"{{options.pollid}}",url:"{{options.url}}"}]);
+    document.body.appendChild(s);
+    }());
+  &lt;/script&gt;
+</pre>
+
+{{else}}
+
+<div class="row">
+  <h3>
+    Fill the form to create your poll.
+  </h3>
+  <p>
+    You can define up to <strong>4 questions</strong>. Expected answers can be open, consumer feeling, multiple or unique choices.
+  </p>
+</div>
 
 <form method="post" action="/poll">
   <input type="hidden" name="_csrf" value="{{csrf}}">
@@ -99,3 +148,4 @@
   </div>
 </form>
 
+{{/if}}

@@ -14,7 +14,7 @@
 {{#if error }}
 
 <p class="notice bg-danger text-danger">
-  <i class="fa fa-exclamation-triangle"> <span>{{error}}</span></i>
+  <i class="fa fa-exclamation-triangle"> </i><span>{{error}}</span></i>
 </p>
 
 {{/if}}
@@ -23,14 +23,18 @@
 {{#if notice }}
 
 <p class="notice bg-info text-info">
-  <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
+  <i class="fa fa-exclamation-triangle"> </i><span>Thank you for your time. {{notice}}</span></i>
 </p>
+<p>Now create <strong><a href="/poll">your own poll</a></strong>.</p>
 
 {{else}}
 
 <form action="/poll/answer" method="post">
   <input type="hidden" name="_csrf" value="{{csrf}}">  
   <input type="hidden" name="pollid" value="{{poll._id}}">
+  {{#if contestant}}
+  <input type="hidden" name="email" value="{{contestant.email}}">
+  {{else}}
   <div class="row">
     <dl>
       <dt>
@@ -41,6 +45,7 @@
       </dd>
     </dl>
   </div>
+  {{/if}}
 {{#each poll.questions}}
   <div class="question">
     <div class="row">

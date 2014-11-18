@@ -34,7 +34,7 @@ router.get('/upload', global.requireAuth, function(req, res) {
       next(err);
       return;
     }
-    res.render('upload', { options: req.flash('uploadOptions')[0], notice: req.flash('uploadNotice'), error: req.flash('uploadError'), user: user.toObject(), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+    res.render('upload', { options: req.flash('uploadOptions')[0], user: user.toObject(), notice: req.flash('uploadNotice'), error: req.flash('uploadError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
   });
 
 });
@@ -60,17 +60,6 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
       return;
     }
 
-    var ip        = req.ip;
-    var challenge = fields.recaptcha_challenge_field;
-    var response  = fields.recaptcha_response_field;
-    var private_key = global.captcha.private_key;
-
-    if ( !validator.isEmail(fields.email) ) {
-      req.flash('uploadError', 'Oops, invalid email !');
-      res.redirect('/upload');
-      return;
-    }
-
     var extension = path.extname(files.fileinfo.name);
     if( !validator.isExtSupported(extension) ) {
       req.flash('uploadError', 'Oops, invalid file type, we only support '+global.app.fileExts.join(', '));
@@ -88,15 +77,8 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
     //   return;
     // }
 
-    simple_recaptcha(private_key, ip, challenge, response, function(err) {
-
-      if (err) {
-        next(err);
-        return;
-      } 
-
       // TODO change fields email to req.session.passport.user id
-      User.findOne({'local.email':fields.email, 'deleted':null}, function(err, user){
+      User.findOne({'_id':req.session.passport.user, 'deleted':null}, function(err, user){
         if (err) {
           next(err);
           return;
@@ -104,6 +86,12 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
 
         if(!user) {
           req.flash('uploadError', 'Oops ! Unknown User');
+          res.redirect('/upload');
+          return;
+        }
+
+        if ( !validator.isEmail(user.local.email) ) {
+          req.flash('uploadError', 'Oops, invalid email !');
           res.redirect('/upload');
           return;
         }
@@ -132,7 +120,7 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
             /*  --- Email Notification ---  */
             var mailOptions = {
               from: global.email.user,
-              to: ''+fields.email+', '+global.email.user+'',
+              to: ''+user.local.email+', '+global.email.user+'',
               subject: "[Hupothesis] File uploaded with success",
               text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+file.id+"."
             };
@@ -147,7 +135,7 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
             });
             /* ------------ */
 
-            var options = { fileid: file.id, userid: user.id, url:global.app.url, filetype: "download" };
+            var options = { fileid: file.id, userid: user.id, url:global.app.url };
 
             req.flash('uploadNotice', 'Your file was uploaded with success');
             req.flash('uploadOptions', options);
@@ -168,7 +156,6 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
         // });
 
       });
-    });
   });
 
 });

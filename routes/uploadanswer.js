@@ -47,14 +47,12 @@ router.get('/upload/answer/:fileinfoid', function(req, res, err) {
 
         if(answer) {
           req.flash('answerNotice', "You've already answered the test.");
-          res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice')});
-        } else {
-          res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: file.toObject(), contestant: req.session.contestant, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });    
         }
+        
+        res.render('answer', { fileinfo: file.toObject(), contestant: req.session.contestant, error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
       });
-    }
-    else {
-      res.render('answer', { error: req.flash('answerError'), notice: req.flash('answerNotice'), fileinfo: file.toObject(), contestant: req.session.contestant, captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+    } else {
+      res.render('answer', { fileinfo: file.toObject(), error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });      
     }
 
   });
@@ -243,7 +241,7 @@ router.post('/upload/answer', function(req, res, next) {
 
               /* ------------ */
               
-              req.flash('answerNotice', 'Answer uploaded with success');
+              req.flash('answerNotice', 'Your answers were successfully uploaded.');
               res.redirect('/upload/answer/'+file.id);
               return;
 
