@@ -56,9 +56,9 @@
   &lt;script class="hupothesis-script-{{options.userid}}"&gt;
     (function() {
     var s = document.createElement('script');
-    s.src = '{{options.url}}/javascripts/hupothesis.js';
+    s.src = '{{options.url}}/1.0/widget?b={{options.fileid}}';
     s.async = true;
-    window.hupothesis_options = (window.hupothesis_options || []).concat([{userid:"{{options.userid}}",blobid:"{{options.fileid}}",url:"{{options.url}}"}]);
+    window.hupothesis_options = (window.hupothesis_options || []).concat([{u:"{{options.userid}}",b:"{{options.fileid}}",r:"{{options.url}}"}]);
     document.body.appendChild(s);
     }());
   &lt;/script&gt;

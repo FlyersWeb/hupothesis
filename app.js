@@ -89,7 +89,10 @@ var faq = require('./routes/faq');
 var term = require('./routes/term');
 var contact = require('./routes/contact');
 var users  = require('./routes/users');
+var profile  = require('./routes/profile');
 var tags  = require('./routes/tag');
+
+var widgets = require('./routes/widget');
 
 app.use('/', index);
 app.use('/', upload);
@@ -105,6 +108,8 @@ app.use('/', term);
 app.use('/', contact);
 app.use('/', logins);
 app.use('/', tags);
+app.use('/', profile);
+app.use('/', widgets);
 
 app.use('/users', users);
 

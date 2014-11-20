@@ -27,7 +27,7 @@ validator.extend('isExtSupported', function(str){
 });
 
 /* GET home page. */
-router.get('/upload', global.requireAuth, function(req, res) {
+router.get('/upload', global.requireAuth, function(req, res, next) {
 
   User.findOne({'_id':req.session.passport.user,'deleted':null}, function(err, user){
     if(err) {

@@ -22,13 +22,13 @@
   }
   for(var i=0; i<options.length; i++)  {
     var c_opt = options[i];
-    if (typeof c_opt.userid !== 'undefined') {
+    if (typeof c_opt.u !== 'undefined') {
       options = options[0];
       break;
     }
   }
   
-  var scriptid = 'hupothesis-script-'+options.userid;
+  var scriptid = 'hupothesis-script-'+options.u;
   var scripts = document.getElementsByClassName(scriptid);
 
   // DOM
@@ -36,7 +36,7 @@
   {
     var script = scripts[i];
 
-    var divid = 'hupothesis-'+options.fileid;
+    var divid = 'hupothesis-'+options.blobid;
     var div = document.createElement('div');
     div.className = divid;
     var h4 = document.createElement('h4');
@@ -45,8 +45,8 @@
     var p2 = document.createElement('p');
     p2.className = 'hupothesis-slogan';
     h4.innerHTML = 'Hupothesis download';
-    p1.innerHTML = 'File available to download at <a class="download" href="'+options.url+'/answer/'+options.fileid+'"><i class="fa fa-cloud-download"></i><span class="download-inner">Hupothesis</span></a>';
-    p2.innerHTML = 'Offered with <a href="'+options.url+'">Hupothesis</a> <i class="fa fa-copyright"></i> courtesy';
+    p1.innerHTML = '{{grip}} <a class="download" href="'+options.r+'{{suffix}}{{blobid}}"><i class="fa fa-cloud-download"></i><span class="download-inner">Hupothesis</span></a>';
+    p2.innerHTML = 'Offered with <a href="'+options.r+'">Hupothesis</a> <i class="fa fa-copyright"></i> courtesy';
 
     div.appendChild(h4);
     div.appendChild(p1);
@@ -57,7 +57,7 @@
 
   // Style
   var sBody = '\
-  div.hupothesis-'+options.fileid+'{  \
+  div.hupothesis-'+options.blobid+'{  \
     font-size:1em;                    \
   }                                   \
   .hupothesis-download .download {\

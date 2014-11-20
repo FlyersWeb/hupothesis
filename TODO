@@ -11,8 +11,8 @@ IN PROGRESS
 TODO
 ----
 
+* Review Copy
 * Poll feeling 3 or 5 options
-* Poll widget creation
 * Make GFX compatible mobile
 * Better emailing with HTML
 * Add publisher portal
@@ -22,13 +22,15 @@ TODO
 * Add UT e2e FT
 * Add launch page (for marketing)  ->  TODO (add promotional video)
 * Add Billing informations to model
+* Review legal for bidder
 * Pay per display bidder
 
 DONE
 ----
 
-* Add Poll answer interface   [parse poll post, add double answer check using session]
-* Add poll creation interface ADD ANSWER LINK
+* Poll widget                 [versioning + dynamic types]
+* Add Poll answer interface   DONE
+* Add poll creation interface DONE
 * Add Logged in check         DONE
 * Refacto      (separate routings, better errors, handlebars) DONE
 * Add register (Publisher/Webmaster) DONE
