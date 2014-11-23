@@ -1,0 +1,60 @@
+=============================================================
+
+Un utilisateur veut savoir quels sont les fichiers qu'il a en ligne...
+   Difficulté : 2
+   Avancement : 
+
+Un utilisateur veut savoir combien de fois son fichier a été vu...
+   Difficulté : 5
+   Avancement : 
+
+Un utilisateur veut savoir quelles sont les personnes ayant répondues au fichier...
+   Difficulté : 3
+   Avancement : 
+
+Un utilisateur veut savoir quelles sont les réponses associées au fichier...
+   Difficulté : 5
+   Avancement : 
+
+Un utilisateur veut savoir quels sont les temps de réponse à ses examens...
+   Difficulté : 2
+   Avancement : 
+
+Un utilisateur veut pouvoir télécharger l'ensemble des examens mis en ligne...
+   Difficulté : 8
+   Avancement : 
+
+Un utilisateur veut pouvoir télécharger l'ensemble des réponses d'un examen...
+   Difficulté : 8
+   Avancement : 
+
+=============================================================
+
+Un utilisateur veut savoir quels sont les sondages qu'il a en ligne...
+   Difficulté : 2
+   Avancement : 
+
+Un utilisateur veut savoir quelles sont les personnes ayant répondues au sondage...
+   Difficulté : 3
+   Avancement : 
+
+Un utilisateur veut savoir quelles sont les réponses du sondage...
+   Difficulté : 5
+   Avancement : 
+
+Un utilisateur veut savoir quels sont les tendances des réponses du sondage...
+   Difficulté : 13
+   Avancement : 
+
+Un utilisateur veut savoir en combien de temps le sondage a-t-il été complété...
+   Difficulté : 2
+   Avancement : 
+
+Un utilisateur veut pouvoir télécharger l'ensemble des sondages en ligne...
+   Difficulté : 8
+   Avancement : 
+
+Un utilisateur veut pouvoir télécharger un sondage au format pdf remplissable...
+   Difficulté : 13
+   Avancement : 
+
