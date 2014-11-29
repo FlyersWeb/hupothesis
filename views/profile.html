@@ -1,46 +1,60 @@
-<h1>Uploaded tests</h1>
-<p class="lead">View uploaded tests and answers</p>
+<h1>Profile</h1>
+<p class="lead">Manage your profile, polls and exams</p>
 
 {{#if notice}}
 <p class="notice bg-danger text-danger"> <i class="fa fa-exclamation-triangle"> </i><span> {{notice}}</span></p>
 {{/if}}
 
-{{#if info}}
-<p>You can follow your uploaded exams next :</p>
-{{#each infos}}
-<h4>Exams {{filename}}</h4>
-<ul>
-  <li>Exam name : {{filename}}</li>
-  {{#if anstime}}
-  <li>Max answer time : {{anstime}}</li>
-  {{/if}}
-  {{#if uptime}}
-  <li>File Up Time : {{uptime}}        
-  {{/if}}
-  {{#each answers}}
-    <h4>Answer {{filename}}</h4>
-    <ul>
-      {{#if filename}}
-      <li>Answer name : {{filename}}</li>
-      {{/if}}
-      {{#if downloaded}}
-      <li>Downloaded on : {{downloaded}}</li>
-      {{/if}}
-      {{#if added}}
-      <li>Uploaded on : {{added}}</li>
-      {{/if}}
-      {{#if ansTime}}
-      <li>Answered in   {{ansTime[0]}}d{{ansTime[1]}}h{{ansTime[2]}}m</li>
-      {{/if}}
-      {{#if comments}}
-      <li>Comments : {{comments}}</li>
-      {{/if}}
-      {{#if user}}
-      <li>Uploaded by : {{user.email}}</li>
-      {{/if}}
+<div class="row">
+  <div class="col-md-12">
+    <p>Welcome, <a href="#">{{data.user.local.email}}</a>. You can manage your polls and exams on this page.</p>
+  </div>
+</div>
+
+<div class="row">
+  <div role="tabpanel">
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#exam" aria-controls="exam" role="tab" data-toggle="tab">Exams</a>
+      </li>
+      <li role="presentation">
+        <a href="#poll" aria-controls="poll" role="tab" data-toggle="tab">Polls</a>
+      </li>
+      <li role="presentation">
+        <a href="#account" aria-controls="account" role="tab" data-toggle="tab">Account</a>
+      </li>
     </ul>
-  {{/each}}
-  </li>
-</ul>
-{{/each}}
-{{/if}}
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="exam">
+        {{#if data.user.files}}
+        <ul>
+          {{#each data.user.files}}
+          <li>
+            <h4>{{filename}}</h4>
+            {{#if answers}}
+            <ul>
+              {{#each answers}}
+              <li>Name : {{filename}}</li>
+              {{#if contestant.email}}
+              <li>Sent by : {{contestant.email}}</li>
+              {{/if}}
+              <li>{{comments}}</li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <p>not answered</p>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </div>
+      <div role="tabpanel" class="tab-pane" id="poll">
+        poll
+      </div>
+      <div role="tabpanel" class="tab-pane" id="account">
+        profile
+      </div>
+    </div>
+  </div>
+</div>
