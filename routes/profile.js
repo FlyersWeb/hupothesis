@@ -34,10 +34,8 @@ function prepareDatas(user, files, fanswers, polls, pquestions, panswers, contes
       fanswer = fanswer.toObject();
       for(var k=0; k<contestants.length; k++){
         var contestant = contestants[k];
-        console.log(fanswer.contestant.toString()+" == "+contestant._id.toString())
         if(fanswer.contestant.toString() == contestant._id.toString()) {
           fanswer.contestant = contestant.toObject();
-          console.log(fanswer)
         }
       }
       if(fanswer.file.toString() == file._id.toString()){
@@ -155,8 +153,6 @@ router.get('/profile/:userid', global.requireAuth, function(req, res, next){
                 Contestant.find({'_id':{$in:contestantids},'deleted':null},function(err,contestants){
 
                   var data = prepareDatas(user, files, fanswers, polls, pquestions, panswers, contestants);
-
-                  console.log(data.user.files)
 
                   /**
                   * data format

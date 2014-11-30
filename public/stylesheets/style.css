@@ -76,3 +76,7 @@ form dd.submit, dl.labels dd.submit {
 .link.link-neutral:hover {
   color: #080808;
 }
+
+.tab-pane .row {
+  margin-top: 25px;
+}

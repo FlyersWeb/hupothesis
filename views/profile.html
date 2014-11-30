@@ -5,6 +5,8 @@
 <p class="notice bg-danger text-danger"> <i class="fa fa-exclamation-triangle"> </i><span> {{notice}}</span></p>
 {{/if}}
 
+
+{{#if data.user}}
 <div class="row">
   <div class="col-md-12">
     <p>Welcome, <a href="#">{{data.user.local.email}}</a>. You can manage your polls and exams on this page.</p>
@@ -12,7 +14,7 @@
 </div>
 
 <div class="row">
-  <div role="tabpanel">
+  <div role="tabpanel" class="tabbable tab-left">
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
         <a href="#exam" aria-controls="exam" role="tab" data-toggle="tab">Exams</a>
@@ -25,7 +27,32 @@
       </li>
     </ul>
     <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="exam">
+      <div role="tabpanel" class="tab-pane fade in active" id="exam">
+        <div class="row">
+          {{#if data.user.files}}
+          {{#each data.user.files}}
+          <div class="col-md-4">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                {{filename}}
+              </div>
+              <div class="panel-body">
+                Answers received : {{answers.length}}
+              </div>
+              <div class="panel-footer">
+                <div class="btn-group" role="group" aria-label="exam-btn">
+                  <button type="button" class="btn btn-default">More...</button>
+                  <button type="button" class="btn btn-primary">Share</button>
+                  <button type="button" class="btn btn-primary">Export</button>
+                  <button type="button" class="btn btn-danger">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+        </div>
+        <!-- to delete for test purpose
         {{#if data.user.files}}
         <ul>
           {{#each data.user.files}}
@@ -48,13 +75,92 @@
           {{/each}}
         </ul>
         {{/if}}
+        -->
       </div>
-      <div role="tabpanel" class="tab-pane" id="poll">
-        poll
+      <div role="tabpanel" class="tab-pane fade" id="poll">
+        <div class="row">
+          {{#if data.user.polls}}
+          {{#each data.user.polls}}
+          <div class="col-md-4">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                {{title}}
+              </div>
+              <div class="panel-body">
+                Questions registered : {{questions.length}}
+              </div>
+              <div class="panel-footer">
+                <div class="btn-group" role="group" aria-label="poll-btn">
+                  <button type="button" class="btn btn-default">More...</button>
+                  <button type="button" class="btn btn-primary">Share</button>
+                  <button type="button" class="btn btn-primary">Export</button>
+                  <button type="button" class="btn btn-danger">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+          {{/if}}
+        </div>
+
+        <!-- to remove for test purpose
+        {{#if data.user.polls}}
+        <ul>
+          {{#each data.user.polls}}
+          <li>
+            <h4>{{title}}</h4>
+            {{#if questions}}
+            <ul>
+              {{#each questions}}
+              <li>{{prompt}}</li>
+              <li>Options : {{#each choices}} {{this}} {{/each}}</li>
+              {{#if answers}}
+              <ul>
+                {{#each answers}}
+                {{#if contestant}}
+                <li>{{contestant.email}} answered </li>
+                {{/if}}
+                <li>{{#each value}} {{this}} {{/each}}</li>
+                {{/each}}
+              </ul>
+              {{/if}}
+              {{/each}}
+            </ul>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+        -->
       </div>
-      <div role="tabpanel" class="tab-pane" id="account">
-        profile
+      <div role="tabpanel" class="tab-pane fade" id="account">
+        <div class="row">
+          <p>Manage your account settings.</p>
+          <div class="panel panel-danger">
+            <div class="panel-heading">
+              Edit your password
+            </div>
+            <div class="panel-body">
+              <form role="form">
+                <div class="form-group">
+                  <label for="password1">Current password</label>
+                  <input type="password" name="password1" id="password1" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="password2">New password</label>
+                  <input type="password" name="password2" id="password2" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="password3">Confirm password</label>
+                  <input type="password" name="password3" id="password3" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-danger">Change password</button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+{{/if}}
