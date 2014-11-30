@@ -6,7 +6,7 @@ IN PROGRESS
     Add share link clipboard
     Add notice and errors display
     Add diagrams
-    
+
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
   | http://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/
@@ -17,6 +17,7 @@ TODO
 ----
 
 * Review Copy
+* Change form layouts, use "form-group" bootstrap like
 * Poll feeling 3 or 5 options
 * Make GFX compatible mobile
 * Better emailing with HTML
