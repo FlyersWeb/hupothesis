@@ -141,7 +141,8 @@
               Edit your password
             </div>
             <div class="panel-body">
-              <form role="form">
+              <form role="form" action="/reset" method="post">
+                <input type="hidden" name="_csrf" value="{{csrf}}">
                 <div class="form-group">
                   <label for="password1">Current password</label>
                   <input type="password" name="password1" id="password1" class="form-control">

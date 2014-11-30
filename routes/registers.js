@@ -82,4 +82,18 @@ router.post('/register', function(req, res, next){
 
 });
 
+router.post('/reset', global.requireAuth, function(req, res, next){
+  var password = req.body.password1;
+  var newPassword = req.body.password2;
+  var confPassword = req.body.password3;
+
+  var userid = req.session.passport.user;
+
+  User.findById(userid,function(err,user){
+
+  });
+
+  res.redirect('/profile/'+userid);
+});
+
 module.exports = router;

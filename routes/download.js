@@ -16,9 +16,11 @@ var Answer = require('../models/fileanswer.js');
 var Contestant = require('../models/contestant.js');
 
 
-router.get('/getfile', function(req, res, next){
+router.get('/getfile/:fileinfoid', function(req, res, next){
 
-  var fileinfo = req.flash('fileinfo')[0];
+
+  var fileinfoid = req.param('fileinfoid');
+  fileinfoid = validator.toString(fileinfoid);
 
   var email = req.session.contestant.email;
 
@@ -36,15 +38,15 @@ router.get('/getfile', function(req, res, next){
 
     if(!contestant) {
       req.flash('answerError', 'Oops, unknown user');
-      res.redirect('/download/'+fileinfo._id);
+      res.redirect('/download/'+fileinfoid);
       return;
     }
 
-    File.findOne({'_id':fileinfo._id,'deleted':null}, function(err,file){
+    File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
 
       if ( !file ) {
         req.flash('answerError', "Oops, invalid file identifier");
-        res.redirect('/upload/answer/'+fileinfo._id);
+        res.redirect('/upload/answer/'+fileinfoid);
         return;
       }
 
@@ -110,9 +112,8 @@ router.get('/download/:fileinfoid', function(req, res, next){
       return;
     }
 
-    req.flash('fileinfo', file.toObject());
     if (req.session.contestant) {
-      res.redirect('/getfile');
+      res.redirect('/getfile/'+fileinfoid);
       return;
     }
 
@@ -172,7 +173,7 @@ router.post('/download', function(req, res, next){
 
       req.session.contestant = contestant;
 
-      res.redirect('/getfile');
+      res.redirect('/getfile/'+fileinfoid);
       return;
     });
   });
