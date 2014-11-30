@@ -90,4 +90,30 @@ router.post('/poll', global.requireAuth, function(req, res, next){
 
 });
 
+router.get('/poll/delete/:pollid', global.requireAuth, function(req, res, next){
+  var userid = req.session.passport.user;
+
+  var pollid = req.param('pollid');
+  pollid = validator.toString(pollid);
+
+  Poll.findById(pollid,function(err,poll){
+    if(err){
+      next(err);
+      return;
+    }
+
+    Poll.update({'_id':poll.id},{'deleted':new Date()},{},function(err,poll){
+      if(err){
+        next(err);
+        return;
+      }
+
+      req.flash('profileNotice','Poll deleted successfully');
+      res.redirect('/profile/'+userid);
+      return;
+    });
+  });
+
+});
+
 module.exports = router;

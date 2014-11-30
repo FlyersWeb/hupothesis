@@ -159,7 +159,7 @@ router.get('/profile/:userid', global.requireAuth, function(req, res, next){
                   * data.user.files.answers.contestant
                   * data.user.polls.questions.answers.contestant
                   */
-                  res.render('profile', { 'data':data, csrf: req.csrfToken() });
+                  res.render('profile', { 'data':data, notice: req.flash('profileNotice'), error: req.flash('profileError'), csrf: req.csrfToken() });
 
                 });
               });

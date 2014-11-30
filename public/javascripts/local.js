@@ -71,4 +71,18 @@ $(function(){
     $question.find('.'+kind).show();
   });
 
+
+  //// profile
+  // more
+  $('.more').on('click',function(evt){
+    evt.preventDefault();
+    var id = $(this).data('id');
+    $('.answer').hide();
+    $('#'+id).fadeToggle();
+    return false;
+  });
+  // modal redirection
+  $("#confirmModal").on("show.bs.modal",function(e){
+    $(this).find('.btn-danger').attr('href',$(e.relatedTarget).data('href'));
+  });
 });

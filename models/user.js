@@ -39,12 +39,18 @@ var userSchema = new Schema({
 });
 
 // generate Hash based on clear pass and salt
-userSchema.statics.generateHash = function(password, cb) {
-  bcrypt.genSalt(10,function(err,salt){
+userSchema.statics.generateHash = function(password, salt, cb) {
+  if(!salt){
+    bcrypt.genSalt(10,function(err,salt){
+      bcrypt.hash(password, salt, function(err, hash){
+        cb(err,hash,salt);
+      });
+    });
+  } else {
     bcrypt.hash(password, salt, function(err, hash){
       cb(err,hash,salt);
     });
-  });
+  }
 };
 
 // checking if password is valid

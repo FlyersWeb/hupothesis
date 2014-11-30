@@ -179,4 +179,37 @@ router.post('/download', function(req, res, next){
   });
 });
 
+
+router.get('/file/getanswer/:answerid', function(req, res, next){
+  var userid = req.session.passport.user;
+
+  var answerid = req.param('answerid');
+  answerid = validator.toString(answerid);
+
+  Answer.findById(answerid,function(err,answer){
+    if(err){
+      next(err);
+      return;
+    }
+
+    var filePath = './tmp/'+answer.id;
+    if(!fs.existsSync(filePath)) {
+      req.flash('profileError','Oops! Answer not available');
+      res.redirect('/profile/'+userid);
+      return;
+    }
+    
+    var stat = fs.statSync(filePath);
+
+    var rdStream = fs.createReadStream(filePath);
+
+    res.writeHead(200, {
+      'Content-Length': stat.size
+    });
+
+    rdStream.pipe(res);
+    return;
+  });
+});
+
 module.exports = router;

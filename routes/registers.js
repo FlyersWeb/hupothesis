@@ -38,7 +38,7 @@ router.post('/register', function(req, res, next){
   User.findOne({'local.email':email,deleted:null},function(err,user){
     if(err) next(err);
     if(!user){
-      User.generateHash(password, function(err,hash,salt){
+      User.generateHash(password, null, function(err,hash,salt){
         if (err) next(err);
         crypto.randomBytes(18, function(err,buf){
           if(err) next(err);
@@ -83,17 +83,47 @@ router.post('/register', function(req, res, next){
 });
 
 router.post('/reset', global.requireAuth, function(req, res, next){
+  var userid = req.session.passport.user;
+
   var password = req.body.password1;
   var newPassword = req.body.password2;
   var confPassword = req.body.password3;
 
-  var userid = req.session.passport.user;
+  if(newPassword != confPassword) {
+    req.flash('profileError', 'Oops! Invalid password confirmation');
+    res.redirect('/profile/'+userid);
+    return;
+  }
 
   User.findById(userid,function(err,user){
+    if(err){
+      next(err);
+      return;
+    }
 
+    User.generateHash(password,user.local.salt,function(err,hash,salt){
+      if(err){
+        next(err);
+        return;
+      }
+      if(hash != user.local.password) {
+        req.flash('profileError', 'Oops! Invalid password');
+        res.redirect('/profile/'+userid);
+        return;
+      }
+      User.generateHash(newPassword,null,function(err,hash,salt){
+        User.update({'_id':user.id},{'local.password':hash,'local.salt':salt},function(err,user){
+          if(err){
+            next(err);
+            return;
+          }
+          req.flash('profileNotice','Password updated successfully');
+          res.redirect('/profile/'+userid);
+          return;
+        });
+      });
+    });
   });
-
-  res.redirect('/profile/'+userid);
 });
 
 module.exports = router;

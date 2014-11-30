@@ -147,4 +147,30 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
   });
 });
 
+router.get('/file/delete/:fileid', global.requireAuth, function(req, res, next){
+  var userid = req.session.passport.user;
+
+  var fileid = req.param('fileid');
+  fileid = validator.toString(fileid);
+
+  File.findById(fileid,function(err,file){
+    if(err){
+      next(err);
+      return;
+    }
+
+    File.update({'_id':file.id},{'deleted':new Date()},{},function(err,file){
+      if(err){
+        next(err);
+        return;
+      }
+
+      req.flash('profileNotice','File deleted successfully');
+      res.redirect('/profile/'+userid);
+      return;
+    });
+  });
+
+});
+
 module.exports = router;

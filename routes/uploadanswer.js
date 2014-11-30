@@ -254,4 +254,30 @@ router.post('/upload/answer', function(req, res, next) {
 
 });
 
+router.get('/file/answer/delete/:answerid', global.requireAuth, function(req, res, next){
+  var userid = req.session.passport.user;
+
+  var answerid = req.param('answerid');
+  answerid = validator.toString(answerid);
+
+  Answer.findById(answerid,function(err,answer){
+    if(err){
+      next(err);
+      return;
+    }
+
+    Answer.update({'_id':answer.id},{'deleted':new Date()},{},function(err,answer){
+      if(err){
+        next(err);
+        return;
+      }
+
+      req.flash('profileNotice','Answer deleted successfully');
+      res.redirect('/profile/'+userid);
+      return;
+    });
+  });
+
+});
+
 module.exports = router;

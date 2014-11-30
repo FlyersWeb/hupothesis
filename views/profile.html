@@ -1,8 +1,16 @@
 <h1>Profile</h1>
 <p class="lead">Manage your profile, polls and exams</p>
 
+{{#if error }}
+<p class="notice bg-danger text-danger">
+  <i class="fa fa-exclamation-triangle"> <span>{{error}}</span></i>
+</p>
+{{/if}}
+
 {{#if notice}}
-<p class="notice bg-danger text-danger"> <i class="fa fa-exclamation-triangle"> </i><span> {{notice}}</span></p>
+<p class="notice bg-info text-info">
+  <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
+</p>
 {{/if}}
 
 
@@ -41,10 +49,10 @@
               </div>
               <div class="panel-footer">
                 <div class="btn-group" role="group" aria-label="exam-btn">
-                  <button type="button" class="btn btn-default">More...</button>
-                  <button type="button" class="btn btn-primary">Share</button>
-                  <button type="button" class="btn btn-primary">Export</button>
-                  <button type="button" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-default more" data-id="{{_id}}">More...</button>
+                  <button type="button" class="btn btn-primary" data-id="{{_id}}">Share</button>
+                  <button type="button" class="btn btn-primary" data-id="{{_id}}">Export</button>
+                  <button type="button" class="btn btn-danger delete" data-href="/file/delete/{{_id}}" data-toggle="modal" data-target="#confirmModal" data-id="{{_id}}">Delete</button>
                 </div>
               </div>
             </div>
@@ -52,31 +60,47 @@
           {{/each}}
           {{/if}}
         </div>
-        <!-- to delete for test purpose
         {{#if data.user.files}}
-        <ul>
-          {{#each data.user.files}}
-          <li>
-            <h4>{{filename}}</h4>
-            {{#if answers}}
-            <ul>
-              {{#each answers}}
-              <li>Name : {{filename}}</li>
-              {{#if contestant.email}}
-              <li>Sent by : {{contestant.email}}</li>
-              {{/if}}
-              <li>{{comments}}</li>
-              {{/each}}
-            </ul>
-            {{else}}
-            <p>not answered</p>
-            {{/if}}
-          </li>
+        {{#each data.user.files}}
+        <div class="row answer" id="{{_id}}" style="display: none;">
+          {{#if answers}}
+          {{#each answers}}
+          <div class="col-md-6">
+            <div class="panel panel-success">
+              <div class="panel-heading">
+                {{filename}}
+              </div>
+              <div class="panel-body">
+                <div class="col-md-6">
+                  {{#if contestant.email}}
+                  <p>Answered by : {{contestant.email}}</p>
+                  {{/if}}
+                  {{#if comments}}
+                  <p>{{comments}}</p>
+                  {{/if}}
+                </div>
+                <div class="col-md-6">
+                  <a class="btn btn-primary btn-block" data-id="{{_id}}" href="/file/getanswer/{{_id}}">Download</a>
+                  <button class="btn btn-danger btn-block delete" data-href="/file/answer/delete/{{_id}}" data-toggle="modal" data-target="#confirmModal" data-id="{{_id}}">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
           {{/each}}
-        </ul>
+          {{else}}
+          <div class="col-md-12">
+            <div class="panel panel-success">
+              <div class="panel-body">
+                <h4>No answers</h4>
+              </div>
+            </div>
+          </div>
+          {{/if}}
+        </div>
+        {{/each}}
         {{/if}}
-        -->
       </div>
+
       <div role="tabpanel" class="tab-pane fade" id="poll">
         <div class="row">
           {{#if data.user.polls}}
@@ -91,10 +115,10 @@
               </div>
               <div class="panel-footer">
                 <div class="btn-group" role="group" aria-label="poll-btn">
-                  <button type="button" class="btn btn-default">More...</button>
+                  <button type="button" class="btn btn-default more" data-id="{{_id}}">More...</button>
                   <button type="button" class="btn btn-primary">Share</button>
                   <button type="button" class="btn btn-primary">Export</button>
-                  <button type="button" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-danger" data-href="/poll/delete/{{_id}}" data-toggle="modal" data-target="#confirmModal" data-id="{{_id}}">Delete</button>
                 </div>
               </div>
             </div>
@@ -103,36 +127,44 @@
           {{/if}}
         </div>
 
-        <!-- to remove for test purpose
         {{#if data.user.polls}}
-        <ul>
-          {{#each data.user.polls}}
-          <li>
-            <h4>{{title}}</h4>
-            {{#if questions}}
-            <ul>
-              {{#each questions}}
-              <li>{{prompt}}</li>
-              <li>Options : {{#each choices}} {{this}} {{/each}}</li>
-              {{#if answers}}
-              <ul>
-                {{#each answers}}
-                {{#if contestant}}
-                <li>{{contestant.email}} answered </li>
+        {{#each data.user.polls}}
+        <div class="row answer" id="{{_id}}" style="display: none;">
+          <div class="col-md-12">
+            <div class="panel panel-success">
+              <div class="panel-heading">
+                {{title}}
+              </div>
+              <div class="panel-body">
+                {{#if questions}}
+                <div class="col-md-6">
+                  {{#each questions}}
+                  <h4>{{prompt}}</h4>
+                  {{#if answers}}
+                  <ul>
+                    {{#each answers}}
+                    <li>{{contestant.email}} answered :{{#each value}} {{this}} {{/each}}</li>
+                    {{/each}}
+                  </ul>
+                  {{else}}
+                  <p>No answer</p>
+                  {{/if}}
+                  {{/each}}
+                </div>
+                <div class="col-md-6">
+                  <!-- graphics -->
+                </div>
+                {{else}}
+                <p>No questions</p>
                 {{/if}}
-                <li>{{#each value}} {{this}} {{/each}}</li>
-                {{/each}}
-              </ul>
-              {{/if}}
-              {{/each}}
-            </ul>
-            {{/if}}
-          </li>
-          {{/each}}
-        </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
         {{/if}}
-        -->
       </div>
+      
       <div role="tabpanel" class="tab-pane fade" id="account">
         <div class="row">
           <p>Manage your account settings.</p>
@@ -155,7 +187,7 @@
                   <label for="password3">Confirm password</label>
                   <input type="password" name="password3" id="password3" class="form-control">
                 </div>
-                <button type="submit" class="btn btn-danger">Change password</button>
+                <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Change password</button>
               </form>
             </div>
           </div>
@@ -165,3 +197,22 @@
   </div>
 </div>
 {{/if}}
+
+<!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="confirmModalLabel">Confirm action</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to do this ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <a href="#" class="btn btn-danger">Confirm</a>
+      </div>
+    </div>
+  </div>
+</div>
