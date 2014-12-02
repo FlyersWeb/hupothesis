@@ -1,12 +1,11 @@
 IN PROGRESS
 -----------
 
+* Poll creation remember values
+* Error in download answer not working
 * Profile page interface      (polls, exams, quizz)
-    Add details
     Add share link clipboard
-    Add notice and errors display
-    Add diagrams
-
+    Add diagrams (Percent poll)
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
   | http://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/
