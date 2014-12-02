@@ -146,13 +146,6 @@ router.post('/upload/answer', function(req, res, next) {
             return;
           }
 
-          fs.rename(files.answerinfo.path, form.uploadDir+files.answerinfo.filename, function(err){
-            if (err) {
-              next(err);
-              return;
-            }
-          });
-
           Answer.findOne({'file':file.id,'contestant':contestant.id,'deleted':null}, 'id', function(err, answer){
             if(err) {
               next(err);
@@ -168,83 +161,91 @@ router.post('/upload/answer', function(req, res, next) {
                 }
               });
             }
-
-            Answer.update({'file':file.id,'contestant':contestant.id}, {'filename':files.answerinfo.name,'comments':fields.comments}, {}, function(err){
-              if(err) {
-                next(err);
-                return;
-              }
-            });
-
-            if(!req.session.contestant)
-            req.session.contestant = contestant;
-
-            /*  --- Email Notification ---  */
-            var mailOptions = {
-              from: global.email.user,
-              to: ''+contestant.email+', '+global.email.user+'',
-              subject: "[Hupothesis] Answers uploaded with success",
-              text: "Congratulations, you've successfully uploaded "+files.answerinfo.name+". Your administrator will be notified."
-            };
-
-            global.email.transporter.sendMail(mailOptions, function(err, info){
-                if(err){
+            else {
+              Answer.update({'file':file.id,'contestant':contestant.id}, {'filename':files.answerinfo.name,'comments':fields.comments}, {}, function(err){
+                if(err) {
                   next(err);
                   return;
-                }else{
-                  console.log('Message sent: ' + info.response);
-                }
-            });
-            /****************************************/
-
-            Blob.findOne({'_id':file.blob,'deleted':null}, function(err,blob){
-
-              if(err) {
-                next(err);
-                return;
-              }
-
-              if(!blob){
-                var err = new Error("Invalid file blob");
-                err.status = 500;
-                next(err);
-                return;
-              }
-
-              User.findOne({'_id':blob.user,'deleted':null}, function(err,fileUser){
-                if ( err ) {
-                  next(err);
-                  return;
-                }
-
-                if ( fileUser )
-                {
-                  /**********************************/
-                  var mailOptions = {
-                    from: global.email.user,
-                    to: ''+fileUser.email+', '+global.email.user+'',
-                    subject: "[Hupothesis] Answers uploaded",
-                    text: "You've received answers for your file "+file.filename+". You can view your files status on "+global.app.url+"/users/profile/"+fileUser.id+"."
-                  };
-
-                  global.email.transporter.sendMail(mailOptions, function(err, info){
-                      if(err){
-                        next(err);
-                        return;
-                      }else{
-                        console.log('Message sent: ' + info.response);
-                      }
-                  });
-                  /**********************************/
                 }
               });
+            }
 
-              /* ------------ */
-              
-              req.flash('answerNotice', 'Your answers were successfully uploaded.');
-              res.redirect('/upload/answer/'+file.id);
-              return;
+            fs.rename(files.answerinfo.path, form.uploadDir+answer.id, function(err){
+              if (err) {
+                next(err);
+                return;
+              }
+            
 
+              if(!req.session.contestant)
+              req.session.contestant = contestant;
+
+              /*  --- Email Notification ---  */
+              var mailOptions = {
+                from: global.email.user,
+                to: ''+contestant.email+', '+global.email.user+'',
+                subject: "[Hupothesis] Answers uploaded with success",
+                text: "Congratulations, you've successfully uploaded "+files.answerinfo.name+". Your administrator will be notified."
+              };
+
+              global.email.transporter.sendMail(mailOptions, function(err, info){
+                  if(err){
+                    next(err);
+                    return;
+                  }else{
+                    console.log('Message sent: ' + info.response);
+                  }
+              });
+              /****************************************/
+
+              Blob.findOne({'_id':file.blob,'deleted':null}, function(err,blob){
+
+                if(err) {
+                  next(err);
+                  return;
+                }
+
+                if(!blob){
+                  var err = new Error("Invalid file blob");
+                  err.status = 500;
+                  next(err);
+                  return;
+                }
+
+                User.findOne({'_id':blob.user,'deleted':null}, function(err,fileUser){
+                  if ( err ) {
+                    next(err);
+                    return;
+                  }
+
+                  if ( fileUser )
+                  {
+                    /**********************************/
+                    var mailOptions = {
+                      from: global.email.user,
+                      to: ''+fileUser.email+', '+global.email.user+'',
+                      subject: "[Hupothesis] Answers uploaded",
+                      text: "You've received answers for your file "+file.filename+". You can view your files status on "+global.app.url+"/users/profile/"+fileUser.id+"."
+                    };
+
+                    global.email.transporter.sendMail(mailOptions, function(err, info){
+                        if(err){
+                          next(err);
+                          return;
+                        }else{
+                          console.log('Message sent: ' + info.response);
+                        }
+                    });
+                    /**********************************/
+                  }
+                });
+
+                /* ------------ */
+                
+                req.flash('answerNotice', 'Your answers were successfully uploaded.');
+                res.redirect('/upload/answer/'+file.id);
+                return;
+              });
             });
           });
         });

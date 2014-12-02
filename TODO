@@ -2,7 +2,6 @@ IN PROGRESS
 -----------
 
 * Poll creation remember values
-* Error in download answer not working
 * Profile page interface      (polls, exams, quizz)
     Add share link clipboard
     Add diagrams (Percent poll)
@@ -15,20 +14,23 @@ IN PROGRESS
 TODO
 ----
 
-* Review Copy
+* Add UT e2e FT
+* Add Fixtures
 * Change form layouts, use "form-group" bootstrap like
 * Poll feeling 3 or 5 options
 * Make GFX compatible mobile
 * Better emailing with HTML
+* Review Copy
+
 * Add publisher portal
   (upload file/questionary, social share, widget, payment, collected money)
 * Add webmaster portal 
   (widget integration, social share, bills, collected money)
-* Add UT e2e FT
 * Add launch page (for marketing)  ->  TODO (add promotional video)
 * Add Billing informations to model
 * Review legal for bidder
 * Pay per display bidder
+* Credits buying
 
 DONE
 ----

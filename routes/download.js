@@ -97,10 +97,9 @@ router.get('/getfile/:fileinfoid', function(req, res, next){
 router.get('/download/:fileinfoid', function(req, res, next){
 
   var fileinfoid = req.param('fileinfoid');
-
   fileinfoid = validator.toString(fileinfoid);
 
-  File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
+  File.findById(fileinfoid, function(err,file){
     if (err) {
       next(err);
       return;
@@ -116,6 +115,8 @@ router.get('/download/:fileinfoid', function(req, res, next){
       res.redirect('/getfile/'+fileinfoid);
       return;
     }
+
+    console.log(file.toObject());
 
     res.render('download', {error: req.flash('downloadError'), notice: req.flash('downloadNotice'), fileinfo: file.toObject(), captcha_key: global.captcha.public_key, csrf:req.csrfToken() });
 
