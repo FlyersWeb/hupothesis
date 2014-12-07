@@ -33,14 +33,27 @@ $(function(){
   });
 
   //// poll
+  function loadValues($question){
+    var id = parseInt($question.attr('data-id'));
+    var qTitleValue = $question.find('input[name="question_title[]"]').val();
+    var qTypeValue = $question.find('input[name="question_type_'+id+'"]:checked').val();
+    var qAnswerValues = [];
+    $question.find('input[name="question_answer_'+id+'[]"]').each(function(i){
+      qAnswerValues.push($(this).val());
+    });
+    var qValues = {'title':qTitleValue, 'type':qTypeValue, 'answers': qAnswerValues};
+  }
   // bind dynamic DOM
   var replaces = ['question_title','question_type','question_answer'];
+  var pollQuestions = {};
   $(document.body).on('click',"button.question_add",function(evt){
     evt.preventDefault();
     var $question = $(this).parent().parent().parent();
-    var qTitleValue = $question.find('input[name="question_title[]"]')[0].value;
     var $origin   = $question.parent();
     var id = parseInt($question.attr('data-id'));
+
+    pollQuestions[id] = loadValues($question);
+
     if(id >= 39) return false;
     $qQuestion = $question.clone();$qQuestion.attr('data-id',(id+1));
     var question = $qQuestion[0].outerHTML;
@@ -50,13 +63,16 @@ $(function(){
       replace += '_'+id;
       question=question.replace(new RegExp(replace,'g'),toreplace);
     }
-    $origin.html($origin.html()+question);
+    $origin.append(question);
     return false;
   });
   $(document.body).on('click',"button.question_rm",function(evt){
     evt.preventDefault();
     var $question = $(this).parent().parent().parent();
     var id = parseInt($question.attr('data-id'));
+
+    delete pollQuestions[id];
+
     if (id) $question.remove();
     return false;
   });
