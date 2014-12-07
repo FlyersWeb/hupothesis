@@ -51,6 +51,7 @@ app.use(session({
     resave:true, 
     saveUninitialized:true,
     store: new MongoStore({
+      db: global.db.name,
       url : global.db.uri,
       auto_reconnect: true
     })

@@ -29,6 +29,7 @@ var global = {
 		fileLimit : 2097152
 	},
 	db : {
+		name: 'hupothesis',
 		uri: process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/hupothesis'
 	},
 	email : {
