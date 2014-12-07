@@ -11,6 +11,7 @@ var moment = require('moment');
 var async = require('async');
 
 var User = require('../models/user.js');
+var Contestant = require('../models/contestant.js');
 var File = require('../models/file.js');
 var Answer = require('../models/fileanswer.js');
 
@@ -46,17 +47,17 @@ router.get('/unsubscribe/:userid', function(req, res, next){
   var userid = req.param('userid');
   userid = validator.toString(userid);
 
-  User.findOne({'_id':userid, 'deleted':null}, function(err, user){
+  Contestant.findOne({'_id':userid, 'deleted':null}, function(err, contestant){
 
     if(err) {
       next(err);
     }
 
-    if ( !user ) {
+    if ( !contestant ) {
       res.render('unsubscribe', {title:'Unsubscription', notice:'User not present in our newsletters'});
     }
 
-    User.update({'_id':user.id}, {'newsletter':false}, {}, function(err){
+    Contestant.update({'_id':contestant.id}, {'optin':false}, {}, function(err){
       if(err)
         next(err);
 

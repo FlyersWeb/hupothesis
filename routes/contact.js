@@ -7,7 +7,7 @@ var simple_recaptcha = require('simple-recaptcha');
 
 var global = require('../configuration/global.js');
 
-var Contestant = require('../models/user.js');
+var Contestant = require('../models/contestant.js');
 
 /* GET contact page. */
 router.get('/contact', function(req, res) {
@@ -38,14 +38,14 @@ router.post('/contact', function(req, res, next) {
     
     if (err) next(err);
 
-    Contestant.findOne({'email':email, deleted:null}, function(err, user){
+    Contestant.findOne({'email':email, deleted:null}, function(err, contestant){
       if (err) {
         next(err);
       }
 
-      if ( !user ) {
-        user = new User({email: email});
-        user.save(function(err){
+      if ( !contestant ) {
+        contestant = new Contestant({'email': email});
+        contestant.save(function(err){
           if(err)
             next(err);
         });

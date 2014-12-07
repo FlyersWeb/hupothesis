@@ -7,7 +7,7 @@ var simple_recaptcha = require('simple-recaptcha');
 
 var validator = require('validator');
 
-var User = require('../models/user.js');
+var Contestant = require('../models/contestant.js');
 
 /* GET launch page. */
 router.get('/launch', function(req, res) {
@@ -33,12 +33,12 @@ router.post('/launch', function(req, res, next) {
     
     if (err) next(err);
     
-    User.findOne({'local.email':email, 'deleted':null},function(err, user){
+    Contestant.findOne({'email':email},function(err, contestant){
       if (err) next(err);
 
-      if ( !user ) {
-        user = new User({'local.email': email,'newsletter':true});
-        user.save(function(err){
+      if ( !contestant ) {
+        contestant = new Contestant({'email': email,'optin':true});
+        contestant.save(function(err){
           if(err) next(err);
         });
       }
@@ -48,7 +48,7 @@ router.post('/launch', function(req, res, next) {
         from: global.email.user,
         to: ''+email+', '+global.email.user+'',
         subject: "[Hupothesis] Newsletter subscription",
-        text: "Congratulations, we've received your request to be informed when Hupothesis will be online. We're working hard to let you access our service as soon as possible.\nFeel free to contact us when you need.\nThanks.\nYou can unsubscribe to our service using the link : "+global.app.url+"/users/unsubscribe/"+user.id
+        text: "Congratulations, we've received your request to be informed when Hupothesis will be online. We're working hard to let you access our service as soon as possible.\nFeel free to contact us when you need.\nThanks.\nYou can unsubscribe to our service using the link : "+global.app.url+"/users/unsubscribe/"+contestant.id
       };
 
       global.email.transporter.sendMail(mailOptions, function(error, info){
