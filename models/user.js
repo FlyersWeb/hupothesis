@@ -5,7 +5,7 @@ var bcrypt = require('bcrypt');
 
 var userSchema = new Schema({
     //// anonymous, webmaster, distributor
-    roles: { type: [String], default: null },
+    roles: { type: [String], default: ["visitor"] },
     local: {
       email: { type: String, index: true },
       password: { type: String },
@@ -35,7 +35,7 @@ var userSchema = new Schema({
     newsletter: { type: Boolean, default: false },
     deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: Date.now() },
-    lastLogin: { type: Date, default: Date.now() }
+    lastLogin: { type: Date, default: null }
 });
 
 // generate Hash based on clear pass and salt

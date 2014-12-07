@@ -33,11 +33,11 @@ router.post('/launch', function(req, res, next) {
     
     if (err) next(err);
     
-    User.findOne({'email':email, 'deleted':null},function(err, user){
+    User.findOne({'local.email':email, 'deleted':null},function(err, user){
       if (err) next(err);
 
       if ( !user ) {
-        user = new User({email: email});
+        user = new User({'local.email': email,'newsletter':true});
         user.save(function(err){
           if(err) next(err);
         });
