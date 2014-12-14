@@ -7,6 +7,7 @@ var pollAnswerSchema = new Schema({
     contestant: { type: Schema.Types.ObjectId, index: true },
     value: { type: [String] },
     deleted: { type: Date, default: null, index: true },
+    viewed: { type: Date, default: null },
     added: { type: Date, default: Date.now() }
 });
 

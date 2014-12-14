@@ -83,8 +83,6 @@ router.post('/upload/answer', function(req, res, next) {
     var response  = fields.recaptcha_response_field;
     var private_key = global.captcha.private_key;
 
-    var contestant = req.session.contestant;
-
     fileid = validator.toString(fileid);
 
     if ( !validator.isEmail(email) ) {
@@ -100,6 +98,13 @@ router.post('/upload/answer', function(req, res, next) {
       return;
     }
 
+    var contestant = req.session.contestant;
+    if(!contestant){
+      req.flash('answerError', "Oops! you need to download the exam before answering");
+      res.redirect('/upload/answer/'+fileid);
+      return;
+    }
+
     simple_recaptcha(private_key, ip, challenge, response, function(err) {  
 
       if (err) {
@@ -107,18 +112,12 @@ router.post('/upload/answer', function(req, res, next) {
         return;
       }
 
-      if(!contestant){
-        req.flash('answerError', "Oops! you need to download the exam before answering");
-        res.redirect('/upload/answer/'+fileid);
-        return;
-      }
-
-      Contestant.update({'_id':contestant.id,'deleted':null},{'email':email},function(err){
+      Contestant.update({'_id':contestant._id,'deleted':null},{$set:{'email':email}},function(err){
         if(err){
           next(err);
           return;
         }
-      })
+      });
 
         User.findOne({'local.email':email,'deleted':null},function(err,user){
           if(err) {
@@ -127,7 +126,7 @@ router.post('/upload/answer', function(req, res, next) {
           }
 
           if (user) {
-            Contestant.update({'_id':contestant.id,'deleted':null}, {'user':user.id}, {}, function(err){
+            Contestant.update({'_id':contestant._id,'deleted':null}, {$set:{'user':user._id}}, function(err){
               if(err){
                 next(err);
                 return;
@@ -147,14 +146,14 @@ router.post('/upload/answer', function(req, res, next) {
             return;
           }
 
-          Answer.findOne({'file':file.id,'contestant':contestant.id,'deleted':null}, 'id', function(err, answer){
+          Answer.findOne({'file':file.id,'contestant':contestant._id,'deleted':null}, 'id', function(err, answer){
             if(err) {
               next(err);
               return;
             }
 
             if(!answer) {
-              answer = new Answer({'file':file.id,'contestant':contestant.id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
+              answer = new Answer({'file':file.id,'contestant':contestant._id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
               answer.save(function(err){
                 if(err) {
                   next(err);
@@ -163,7 +162,7 @@ router.post('/upload/answer', function(req, res, next) {
               });
             }
             else {
-              Answer.update({'file':file.id,'contestant':contestant.id}, {'filename':files.answerinfo.name,'comments':fields.comments}, {}, function(err){
+              Answer.update({'file':file.id,'contestant':contestant._id}, {'filename':files.answerinfo.name,'comments':fields.comments}, function(err){
                 if(err) {
                   next(err);
                   return;
@@ -248,7 +247,6 @@ router.post('/upload/answer', function(req, res, next) {
             });
           });
         });
-      });
     });
   });
 
@@ -266,7 +264,7 @@ router.get('/file/answer/delete/:answerid', global.requireAuth, function(req, re
       return;
     }
 
-    Answer.update({'_id':answer.id},{'deleted':new Date()},{},function(err,answer){
+    Answer.update({'_id':answer.id},{$set:{'deleted':new Date()}},function(err,answer){
       if(err){
         next(err);
         return;

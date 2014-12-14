@@ -1,6 +1,6 @@
 <div class="page-header">
   <h1>Answer the poll</h1>
-  <p class="lead">Create your poll and it will be shared with our partners</p>
+  <p class="lead">Answer the poll {{poll.title}}</p>
 </div>
 
 <div class="row">
@@ -32,9 +32,6 @@
 <form action="/poll/answer" method="post">
   <input type="hidden" name="_csrf" value="{{csrf}}">  
   <input type="hidden" name="pollid" value="{{poll._id}}">
-  {{#if contestant}}
-  <input type="hidden" name="email" value="{{contestant.email}}">
-  {{else}}
   <div class="row">
     <dl>
       <dt>
@@ -45,7 +42,6 @@
       </dd>
     </dl>
   </div>
-  {{/if}}
 {{#each poll.questions}}
   <div class="question">
     <div class="row">

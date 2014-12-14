@@ -18,170 +18,80 @@ var Contestant = require('../models/contestant.js');
 
 router.get('/getfile/:fileinfoid', function(req, res, next){
 
-
   var fileinfoid = req.param('fileinfoid');
   fileinfoid = validator.toString(fileinfoid);
 
-  // var email = req.session.contestant.email;
+  var callback = function(contestant) {
 
-  // if ( !validator.isEmail(email) ) {
-  //   req.flash("answerError", "Oops, invalid email address");
-  //   res.redirect('/upload/answer/'+fileinfoid);
-  //   return;
-  // }
-
-  var contestant = null;
-  if (!req.session.contestant)
-  {
-    contestant = new Contestant({});
-    contestant.save(function(err){
-      if(err) {
-        next(err);
-        return;
-      }
-      req.session.contestant = contestant;
-    });
-  }
-  contestant = req.session.contestant;
-
-  if(!contestant){
-    req.flash("answerError","Oops! Invalid temporary user creation");
-    res.redirect('/upload/answer/'+fileinfoid);
-    return;
-  }
-
-  File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
-    if ( !file ) {
-      req.flash('answerError', "Oops, invalid file identifier");
+    if(!contestant){
+      req.flash("answerError","Oops! Invalid temporary user creation");
       res.redirect('/upload/answer/'+fileinfoid);
       return;
     }
 
-    Answer.update({'file':file.id,'contestant':contestant.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
-      if(err) {
-        next(err);
-        return;
-      }
-    });
-
-    var filePath = './tmp/'+file.id;
-    var stat = fs.statSync(filePath);
-
-    var rdStream = fs.createReadStream(filePath);
-
-    res.writeHead(200, {
-      'Content-Length': stat.size
-    });
-
-    rdStream.pipe(res);
-
-    /*  --- Email Notification ---  */   
-    var mailOptions = {
-      from: global.email.user,
-      to: ''+global.email.user+'',
-      subject: "[Hupothesis] Exam downloaded with success",
-      text: "File "+file.filename+" downloaded with success. Downloaded by "+contestant.email+"."
-    };
-
-    global.email.transporter.sendMail(mailOptions, function(err, info){
-        if(err){
-          next(err);
-          return;
-        }else{
-          console.log('Message sent: ' + info.response);
-        }
-    });
-    /*  --- --- ---  */
-
-    return;
-  });
-});
-
-/*
-router.get('/download/:fileinfoid', function(req, res, next){
-
-  var fileinfoid = req.param('fileinfoid');
-  fileinfoid = validator.toString(fileinfoid);
-
-  File.findById(fileinfoid, function(err,file){
-    if (err) {
-      next(err);
-      return;
-    }
-
-    if( !file ) {
-      req.flash('answerError', 'Oops, unknown file identifier !');
-      res.redirect('/upload/answer/'+fileinfoid);
-      return;
-    }
-
-    if (req.session.contestant) {
-      res.redirect('/getfile/'+fileinfoid);
-      return;
-    }
-
-    res.render('download', {error: req.flash('downloadError'), notice: req.flash('downloadNotice'), fileinfo: file.toObject(), captcha_key: global.captcha.public_key, csrf:req.csrfToken() });
-
-  });    
-
-});
-
-
-router.post('/download', function(req, res, next){
-
-  var fileinfoid = req.body.fileinfoid;
-  var email = req.body.email;
-
-  var ip = req.ip;
-  var challenge = req.body.recaptcha_challenge_field;
-  var response = req.body.recaptcha_response_field;
-  var private_key = global.captcha.private_key;
-
-  if ( !validator.isEmail(email) ) {
-    req.flash('answerError', 'Oops, invalid email address.');
-    res.redirect('/upload/answer/'+fileinfoid);
-    return;
-  }
-
-  simple_recaptcha(private_key, ip, challenge, response, function(err) {  
-
-    if (err) {
-      next(err);
-      return;
-    }
-
-    var contestant = new Contestant({'email':email});
-    contestant.save(function(err){
-      if(err) {
-        next(err);
+    File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
+      if ( !file ) {
+        req.flash('answerError', "Oops, invalid file identifier");
+        res.redirect('/upload/answer/'+fileinfoid);
         return;
       }
 
-      User.findOne({'email':email,'deleted':null}, function(err,user){
+      Answer.update({'file':file.id,'contestant':contestant._id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
         if(err) {
           next(err);
           return;
         }
-
-        if (user) {
-          Contestant.update({'_id':contestant.id,'deleted':null}, {'user':user.id}, {}, function(err){
-            if(err){
-              next(err);
-              return;
-            }
-          });
-        }
-
       });
 
-      req.session.contestant = contestant;
+      var filePath = './tmp/'+file.id;
+      var stat = fs.statSync(filePath);
 
-      res.redirect('/getfile/'+fileinfoid);
-      return;
+      var rdStream = fs.createReadStream(filePath);
+
+      res.writeHead(200, {
+        'Content-Length': stat.size
+      });
+
+      rdStream.pipe(res);
+
+      /*  --- Email Notification ---  */   
+      var mailOptions = {
+        from: global.email.user,
+        to: ''+global.email.user+'',
+        subject: "[Hupothesis] Exam downloaded with success",
+        text: "File "+file.filename+" downloaded with success. Downloaded by "+contestant.email+"."
+      };
+
+      global.email.transporter.sendMail(mailOptions, function(err, info){
+          if(err){
+            next(err);
+            return;
+          }else{
+            console.log('Message sent: ' + info.response);
+          }
+      });
+      /*  --- --- ---  */
     });
-  });
+  };
+
+  if (!req.session.contestant)
+  {
+    var contestant = new Contestant({});
+    contestant.save(function(err){
+      if(err) {
+        next(err);
+        return;
+      }
+      req.session.contestant = contestant;
+      callback(contestant);
+    });
+  }
+  else
+  {
+    var contestant = req.session.contestant;
+    callback(contestant);
+  }
 });
-*/
 
 router.get('/file/getanswer/:answerid', function(req, res, next){
   var userid = req.session.passport.user;
