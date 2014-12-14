@@ -22,78 +22,82 @@ router.get('/getfile/:fileinfoid', function(req, res, next){
   var fileinfoid = req.param('fileinfoid');
   fileinfoid = validator.toString(fileinfoid);
 
-  var email = req.session.contestant.email;
+  // var email = req.session.contestant.email;
 
-  if ( !validator.isEmail(email) ) {
-    req.flash("answerError", "Oops, invalid email address");
+  // if ( !validator.isEmail(email) ) {
+  //   req.flash("answerError", "Oops, invalid email address");
+  //   res.redirect('/upload/answer/'+fileinfoid);
+  //   return;
+  // }
+
+  var contestant = null;
+  if (!req.session.contestant)
+  {
+    contestant = new Contestant({});
+    contestant.save(function(err){
+      if(err) {
+        next(err);
+        return;
+      }
+      req.session.contestant = contestant;
+    });
+  }
+  contestant = req.session.contestant;
+
+  if(!contestant){
+    req.flash("answerError","Oops! Invalid temporary user creation");
     res.redirect('/upload/answer/'+fileinfoid);
     return;
   }
 
-  Contestant.findOne({'email':email,'deleted':null}, function(err, contestant){
-    if (err) {
-      next(err);
+  File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
+    if ( !file ) {
+      req.flash('answerError', "Oops, invalid file identifier");
+      res.redirect('/upload/answer/'+fileinfoid);
       return;
     }
 
-    if(!contestant) {
-      req.flash('answerError', 'Oops, unknown user');
-      res.redirect('/download/'+fileinfoid);
-      return;
-    }
-
-    File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
-
-      if ( !file ) {
-        req.flash('answerError', "Oops, invalid file identifier");
-        res.redirect('/upload/answer/'+fileinfoid);
+    Answer.update({'file':file.id,'contestant':contestant.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
+      if(err) {
+        next(err);
         return;
       }
-
-      Answer.update({'file':file.id,'contestant':contestant.id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
-        if(err) {
-          next(err);
-          return;
-        }
-      });
-
-      var filePath = './tmp/'+file.id;
-      var stat = fs.statSync(filePath);
-
-      var rdStream = fs.createReadStream(filePath);
-
-      res.writeHead(200, {
-        'Content-Length': stat.size
-      });
-
-      rdStream.pipe(res);
-
-      /*  --- Email Notification ---  */   
-      var mailOptions = {
-        from: global.email.user,
-        to: ''+global.email.user+'',
-        subject: "[Hupothesis] Exam downloaded with success",
-        text: "File "+file.filename+" downloaded with success. Downloaded by "+contestant.email+"."
-      };
-
-      global.email.transporter.sendMail(mailOptions, function(err, info){
-          if(err){
-            next(err);
-            return;
-          }else{
-            console.log('Message sent: ' + info.response);
-          }
-      });
-      /*  --- --- ---  */
-
-      return;
     });
 
-  });
+    var filePath = './tmp/'+file.id;
+    var stat = fs.statSync(filePath);
 
+    var rdStream = fs.createReadStream(filePath);
+
+    res.writeHead(200, {
+      'Content-Length': stat.size
+    });
+
+    rdStream.pipe(res);
+
+    /*  --- Email Notification ---  */   
+    var mailOptions = {
+      from: global.email.user,
+      to: ''+global.email.user+'',
+      subject: "[Hupothesis] Exam downloaded with success",
+      text: "File "+file.filename+" downloaded with success. Downloaded by "+contestant.email+"."
+    };
+
+    global.email.transporter.sendMail(mailOptions, function(err, info){
+        if(err){
+          next(err);
+          return;
+        }else{
+          console.log('Message sent: ' + info.response);
+        }
+    });
+    /*  --- --- ---  */
+
+    return;
+  });
 });
 
-
+/*
 router.get('/download/:fileinfoid', function(req, res, next){
 
   var fileinfoid = req.param('fileinfoid');
@@ -115,8 +119,6 @@ router.get('/download/:fileinfoid', function(req, res, next){
       res.redirect('/getfile/'+fileinfoid);
       return;
     }
-
-    console.log(file.toObject());
 
     res.render('download', {error: req.flash('downloadError'), notice: req.flash('downloadNotice'), fileinfo: file.toObject(), captcha_key: global.captcha.public_key, csrf:req.csrfToken() });
 
@@ -179,7 +181,7 @@ router.post('/download', function(req, res, next){
     });
   });
 });
-
+*/
 
 router.get('/file/getanswer/:answerid', function(req, res, next){
   var userid = req.session.passport.user;

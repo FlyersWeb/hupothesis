@@ -12,7 +12,7 @@
 
 {{else}}
 
-<p><a href="/download/{{fileinfo._id}}">Download the test</a> and <a href="/answer/{{fileinfo._id}}">Upload your answers</a> as soon as possible.</p>
+<p><a href="/getfile/{{fileinfo._id}}">Download the test</a> and POST your answer using the form.</p>
 <p>Good Luck. </p>
 
 <form method="POST" action="/upload/answer?_csrf={{csrf}}" enctype="multipart/form-data">

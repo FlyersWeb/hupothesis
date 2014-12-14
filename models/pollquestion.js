@@ -7,6 +7,7 @@ var pollQuestionSchema = new Schema({
     type: { type: String },
     choices: { type: [String], default: null },
     deleted: { type: Date, default: null, index: true },
+    viewed : { type: Date, default: null },
     added: { type: Date, default: Date.now() }
 });
 

@@ -83,6 +83,8 @@ router.post('/upload/answer', function(req, res, next) {
     var response  = fields.recaptcha_response_field;
     var private_key = global.captcha.private_key;
 
+    var contestant = req.session.contestant;
+
     fileid = validator.toString(fileid);
 
     if ( !validator.isEmail(email) ) {
@@ -94,7 +96,7 @@ router.post('/upload/answer', function(req, res, next) {
     var extension = path.extname(files.answerinfo.name);
     if( !validator.isExtSupported(extension) ) {
       req.flash('answerError', 'Oops, invalid file type, we only support '+global.app.fileExts.join(', '));
-      res.redirect('/upload');
+      res.redirect('/upload/answer/'+fileid);
       return;
     }
 
@@ -105,20 +107,19 @@ router.post('/upload/answer', function(req, res, next) {
         return;
       }
 
-      Contestant.findOne({'email':email,'deleted':null},function(err,contestant){
-        if(err) {
+      if(!contestant){
+        req.flash('answerError', "Oops! you need to download the exam before answering");
+        res.redirect('/upload/answer/'+fileid);
+        return;
+      }
+
+      Contestant.update({'_id':contestant.id,'deleted':null},{'email':email},function(err){
+        if(err){
           next(err);
           return;
         }
-        if(!contestant){
-          var contestant = new Contestant({'email':email});
-          contestant.save(function(err){
-            if(err) {
-              next(err);
-              return;
-            }    
-          });
-        }
+      })
+
         User.findOne({'local.email':email,'deleted':null},function(err,user){
           if(err) {
             next(err);
@@ -175,10 +176,6 @@ router.post('/upload/answer', function(req, res, next) {
                 next(err);
                 return;
               }
-            
-
-              if(!req.session.contestant)
-              req.session.contestant = contestant;
 
               /*  --- Email Notification ---  */
               var mailOptions = {
@@ -242,6 +239,8 @@ router.post('/upload/answer', function(req, res, next) {
 
                 /* ------------ */
                 
+                req.session.contestant = contestant;
+
                 req.flash('answerNotice', 'Your answers were successfully uploaded.');
                 res.redirect('/upload/answer/'+file.id);
                 return;
