@@ -1,6 +1,6 @@
 <div class="page-header">
   <h1>Create your poll</h1>
-  <p class="lead">Create your poll so you can share it on our partners website</p>
+  <p class="lead">Create your poll for people to answer.</p>
 </div>
 
 <div class="row">
@@ -88,20 +88,14 @@
 <form method="post" action="/poll">
   <input type="hidden" name="_csrf" value="{{csrf}}">
   <div class="row">
-    <dl>
-      <dt>
-        <label for="title">Please enter your poll title</label>
-      </dt>
-      <dd>
-        <input class="form-control" type="text" name="title" id="title" required>
-      </dd>
-      <dt>
-        <label for="tags">Enter some tags separated by commas defining your poll</label>
-      </dt>
-      <dd>
-        <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
-      </dd>
-    </dl>
+    <div class="form-group">
+      <label for="title">Please enter your poll title</label>
+      <input class="form-control" type="text" name="title" id="title" required>
+    </div>
+    <div class="form-group">
+      <label for="tags">Enter some tags separated by commas defining your poll</label>
+      <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
+    </div>
   </div>
   <div>
     <div class="question" data-id="0">
@@ -158,8 +152,15 @@
     </div>
   </div>
   <div class="row">
+    <div class="checkbox">
+      <label for="cgu">
+        <input type="checkbox" checked="true" required="true" name="cgu" id="cgu"> <a href="/terms">Please accept our terms</a>
+      </label>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-md-12">
-      <p><button class="btn btn-primary" type="submit">Save Poll</button></p>
+      <button class="btn btn-primary" type="submit">Save Poll</button>
     </div>
   </div>
 </form>

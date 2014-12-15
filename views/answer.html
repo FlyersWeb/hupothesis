@@ -1,5 +1,7 @@
-<h1>Answer the test</h1>
-<p class="lead">Answer the test</p>
+<div class="page-header">
+  <h1>Download exam</h1>
+  <p class="lead">Answer the exam as quickly as you can.</p>
+</div>
 
 {{#if error }}
 <p class="notice bg-danger text-danger"> <i class="fa fa-exclamation-triangle"> </i><span>Error when uploading answers : {{error}}</span></p>
@@ -15,46 +17,32 @@
 <p><a href="/getfile/{{fileinfo._id}}">Download the test</a> and POST your answer using the form.</p>
 <p>Good Luck. </p>
 
-<form method="POST" action="/upload/answer?_csrf={{csrf}}" enctype="multipart/form-data">
-  <dl>
-    <dt>
-      <label for="email">Please enter you email</label>
-    </dt>
-    <dd>
-      <input type="email" name="email" id="email" required="true" class="form-control"/>
-    </dd>
-    <dt>
-      <label for="answerinfo">Chose your answers</label>
-    </dt>
-    <dd>
-      <input type="file" name="answerinfo" id="answerinfo" required="true"/>
-    </dd>
-    <dt>
-      <label for="comments">Some comments for your reviewer ?</label>
-    </dt>
-    <dd>
-      <textarea name="comments" id="comments" class="form-control"></textarea>
-    </dd>
-    <dt></dt>
-    <dd>
-      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+<form method="POST" action="/upload/answer?_csrf={{csrf}}" enctype="multipart/form-data" role="form">
+  <input type="hidden" name="fileid" value="{{fileinfo._id}}"/>
+  <div class="form-group">
+    <label for="email">Please enter you email</label>
+    <input type="email" name="email" id="email" required="true" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="answerinfo">Chose your answers</label>
+    <input type="file" name="answerinfo" id="answerinfo" required="true"/>
+    <p class="help-block">docx,xlsx,odt,pdf only</p>
+  </div>
+  <div class="form-group">
+    <label for="comments">Some comments for your reviewer ?</label>
+    <textarea name="comments" id="comments" class="form-control"></textarea>
+  </div>
+  <div class="form-group">
+    <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
       <noscript>
         <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
         <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
         <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
       </noscript>
-    </dd>
-    <dt></dt>
-    <dd>
-      <input type="checkbox" checked="true" required="true" name="cgu" id="cgu"/>
-      <label for="cgu"> &nbsp;<a href="/terms">Please accept our terms of use</a></label>
-    </dd>
-    <dt></dt>
-    <dd>
-      <input type="hidden" name="fileid" value="{{fileinfo._id}}"/>
-      <button type="submit" class="btn btn-primary">Submit your answers</button>
-    </dd>
-  </dl>
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary">Submit your answers</button>
+  </div>
 </form>
 
 {{/if}}

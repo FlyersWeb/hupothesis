@@ -3,9 +3,6 @@ IN PROGRESS
 
 * Add contestant check if email already exists
 
-* Change form layouts, use "form-group" bootstrap like
-* Make GFX compatible mobile
-
 * Poll feeling 5 options
 * Poll feeling rendering
 
@@ -61,3 +58,6 @@ DONE
 * Add social share            DONE 
 * Investigate ses mailing     DONE [using sendgrid]
 * Add XSS/CSRF protection     DONE
+
+* Change form layouts, use "form-group" bootstrap like
+* Make GFX compatible mobile

@@ -12,8 +12,32 @@
 {{/if}}
 
 <p>Fill free to contact us for any Hupothesis related request and/or informations. We will get in touch as soon as possible.</p>
-<form method="POST" action="/contact">
+<form method="POST" action="/contact" role="form">
   <input type="hidden" name="_csrf" value="{{csrf}}"/>
+  <div class="form-group">
+    <label for="email">Your email</label>
+    <input type="email" name="email" id="email" required="true" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="subject">Subject</label>
+    <input type="text" name="subject" id="subject" required="true" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="comments">Your message</label>
+    <textarea name="comments" id="comments" class="form-control"></textarea>
+  </div>
+  <div class="form-group">
+    <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+      <noscript>
+        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
+        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+      </noscript>
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary">Send</button>
+  </div>
+  <!--
   <dl>
     <dt>
       <label for="email">Your email</label>
@@ -47,4 +71,5 @@
       <button type="submit" class="btn btn-primary">Send</button>
     </dd>
   </dl>
+  -->
 </form>

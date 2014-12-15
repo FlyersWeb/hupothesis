@@ -1,5 +1,7 @@
-<h1>Some news about the project</h1>
-<p class="lead">Welcome to Hupothesis. The tool that validate your hypothesis.</p>
+<div class="page-header">
+  <h1>Welcome to Hupothesis</h1>
+  <p class="lead">The tool that validate your hypothesis.</p>
+</div>
 
 <h3>What is Hupothesis ?</h3>
 
@@ -15,6 +17,21 @@
 <p>You'll be able to use this same email address to use our service.</p>
 <form method="POST" action="/launch">
   <input type="hidden" name="_csrf" value="{{csrf}}"/>
+  <div class="form-group">
+    <label for="email">Please enter you email</label>
+    <input type="email" name="email" id="email" required="true" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+      <noscript>
+        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
+        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+      </noscript>
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary">Notify me</button>
+  </div>
   <dl>
     <dt>
       <label for="email">Please enter you email</label>

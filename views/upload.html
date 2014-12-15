@@ -66,42 +66,33 @@
 
 {{else}}
 
-<form method="post" action="/upload?_csrf={{csrf}}" enctype="multipart/form-data">
-  <dl>
-    {{#if user}}
-    {{#if user.local.email}}
-    <input type="hidden" name="email" value="{{user.local.email}}">
-    {{/if}}
-    {{else}}
-    <dt>
-      <label for="email">Please enter your email address</label>
-    </dt>
-    <dd>
-      <input class="form-control" type="email" name="email" id="email" required="true">
-    </dd>
-    {{/if}}
-    <dt>
-      <label for="fileinfo">Choose your exam file</label>
-    </dt>
-    <dd>
-      <input type="file" name="fileinfo" id="fileinfo" required="true">
-    </dd>
-    <dt>
-      <label for="tags">Enter some tags separated by commas defining your exam</label>
-    </dt>
-    <dd>
-      <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
-    </dd>
-    <dt></dt>
-    <dd>
-      <input type="checkbox" checked="true" required="true" name="cgu" id="cgu">
-      <label for="cgu"> <a href="/terms">Please accept our terms</a></label>
-    </dd>
-    <dt></dt>
-    <dd>
-      <button class="btn btn-primary" type="submit">Submit your test</button>
-    </dd>
-  </dl>
+<form method="post" action="/upload?_csrf={{csrf}}" enctype="multipart/form-data" role="form">
+  {{#if user.local.email}}
+  <input type="hidden" name="email" value="{{user.local.email}}">
+  {{else}}
+  <div class="form-group">
+    <label for="email">Please enter your email address</label>
+    <input class="form-control" type="email" name="email" id="email" required="true">
+  </div>
+  {{/if}}
+
+  <div class="form-group">
+    <label for="fileinfo">Choose your exam file</label>
+    <input type="file" name="fileinfo" id="fileinfo" required="true">
+    <p class="help-block">docx,xlsx,odt,pdf only</p>
+  </div>
+  <div class="form-group">
+    <label for="tags">Enter some tags separated by commas defining your exam</label>
+    <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
+  </div>
+  <div class="checkbox">
+    <label for="cgu">
+      <input type="checkbox" checked="true" required="true" name="cgu" id="cgu"> <a href="/terms">Please accept our terms</a>
+    </label>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit">Submit your test</button>
+  </div>
 </form>
 
 {{/if}}

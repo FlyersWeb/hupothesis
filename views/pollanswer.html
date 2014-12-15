@@ -1,5 +1,5 @@
 <div class="page-header">
-  <h1>Answer the poll</h1>
+  <h1>Answer our poll</h1>
   <p class="lead">Answer the poll {{poll.title}}</p>
 </div>
 
@@ -33,20 +33,19 @@
   <input type="hidden" name="_csrf" value="{{csrf}}">  
   <input type="hidden" name="pollid" value="{{poll._id}}">
   <div class="row">
-    <dl>
-      <dt>
-        <label for="email">Please provide your email</label>
-      </dt>
-      <dd>
-        <input type="email" class="form-control" name="email" id="email" placeholder="john.doe@unknown.com">
-      </dd>
-    </dl>
+    <div class="form-group">
+      <label for="email">Please provide your email</label>
+      <input type="email" class="form-control" name="email" id="email" placeholder="john.doe@unknown.com">
+    </div>
   </div>
 {{#each poll.questions}}
+  <input type="hidden" name="question_ids[]" value="{{_id}}">
   <div class="question">
     <div class="row">
-      <input type="text" class="form-control" name="question_prompts[]" value="{{prompt}}" placeholder="{{prompt}}" readonly>
-      <input type="hidden" name="question_ids[]" value="{{_id}}">
+      <div class="form-group">
+        <label>Question #{{@index}}</label>
+        <input type="text" class="form-control" name="question_prompts[]" value="{{prompt}}" placeholder="{{prompt}}" readonly>
+      </div>
     </div>
     <div class="row">
       {{#ifCond type "open"}}
@@ -99,21 +98,17 @@
 {{/each}}
 
   <div class="row">
-    <dl>
-      <dt>
-        <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
-        <noscript>
-          <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
-          <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-          <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
-        </noscript>
-      </dt>
-      <dd></dd>
-      <dt>
-        <button class="btn btn-primary" type="submit">Send your opinion</button>
-      </dt>
-      <dd></dd>
-    </dl>
+    <div class="form-group">
+      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
+      <noscript>
+        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
+        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+      </noscript>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-primary" type="submit">Send your opinion</button>
+    </div>
   </div>
 </form>
 
