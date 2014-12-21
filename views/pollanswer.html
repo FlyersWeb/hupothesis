@@ -81,16 +81,21 @@
       {{/ifCond}}
       
       {{#ifCond type "feel"}}
-      {{#each choices}}
-      <div class="col-md-3">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" name="question_answer_{{../id}}" value="{{this}}">
+      <div class="col-md-12">
+        <input type="range" step="1" min="1" max="{{choices.length}}" value="2" class="form-control range_feeling">
+        <div class="feeling_wrapper">
+          {{#each choices}}
+          <div class="col-md-2">
             {{this}}
-          </label>
+          </div>
+          {{/each}}
         </div>
       </div>
-      {{/each}}
+      <select name="question_answer_{{id}}" class="in_feeling" style="visibility:hidden;">
+        {{#each choices}}
+        <option index="{{@index}}">{{this}}</option>
+        {{/each}}
+      </select>
       {{/ifCond}}
     </div>
   </div>

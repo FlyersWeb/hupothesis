@@ -86,6 +86,14 @@ $(function(){
     }
     $question.find('.'+kind).show();
   });
+  //// feeling
+  $('.range_feeling').on('change',function(evt){
+    var idx = $(this).val();
+    var $select = $(this).parent().parent().find('.in_feeling');
+    console.log($select);
+    $select.find('option:selected').removeAttr('selected');
+    $select.find('option:eq('+(idx-1)+')').prop('selected', true);
+  });
 
 
   //// profile

@@ -1,10 +1,10 @@
 IN PROGRESS
 -----------
 
-* Add contestant check if email already exists
+* Add tracking informations for participants
 
-* Poll feeling 5 options
-* Poll feeling rendering
+* Add UT e2e FT
+* Add Fixtures
 
 * Profile page interface      (polls, exams, quizz)
     Add share link clipboard
@@ -17,9 +17,6 @@ IN PROGRESS
 
 TODO
 ----
-
-* Add UT e2e FT
-* Add Fixtures
 
 * Better emailing with HTML
 * Review Copy
@@ -40,6 +37,14 @@ TODO
 DONE
 ----
 
+* Poll feeling 5 options
+* Poll feeling rendering
+
+* Add contestant check if email already exists
+
+* Change form layouts, use "form-group" bootstrap like
+* Make GFX compatible mobile
+
 * Poll widget                 [versioning + dynamic types]
 * Add Poll answer interface   DONE
 * Add poll creation interface DONE
@@ -58,6 +63,3 @@ DONE
 * Add social share            DONE 
 * Investigate ses mailing     DONE [using sendgrid]
 * Add XSS/CSRF protection     DONE
-
-* Change form layouts, use "form-group" bootstrap like
-* Make GFX compatible mobile

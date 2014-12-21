@@ -109,8 +109,6 @@ router.post('/poll/answer', function(req, res, next){
   var pollid = req.body.pollid;
   pollid=validator.toString(pollid);
 
-  var contestant = req.session.contestant;
-
   var email = req.body.email;
 
   if ( !validator.isEmail(email) ) {
@@ -137,12 +135,23 @@ router.post('/poll/answer', function(req, res, next){
       return;
     }
 
-    Contestant.update({'_id':contestant._id,'deleted':null},{'email':email},function(err){
+    Contestant.findOne({'email':email,'deleted':null},function(err,rcontest){
       if(err){
         next(err);
         return;
       }
-    });
+
+      if(!rcontest) {
+        Contestant.update({'_id':contestant._id,'deleted':null},{'email':email},function(err){
+          if(err){
+            next(err);
+            return;
+          }
+        });
+      } else {
+        contestant = rcontest;
+        req.session.contestant = contestant;
+      }
 
       User.findOne({'local.email':email,'deleted':null},function(err,user){
         if(err) {
@@ -217,6 +226,7 @@ router.post('/poll/answer', function(req, res, next){
           });
         });
       });
+    });
   });
 
 
