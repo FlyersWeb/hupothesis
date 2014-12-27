@@ -27,6 +27,7 @@
     <textarea name="comments" id="comments" class="form-control"></textarea>
   </div>
   <div class="form-group">
+    <label for="recaptcha_response_field">Copy the value and prove your're not a bot</label>
     <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
       <noscript>
         <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
@@ -37,39 +38,4 @@
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Send</button>
   </div>
-  <!--
-  <dl>
-    <dt>
-      <label for="email">Your email</label>
-    </dt>
-    <dd>
-      <input type="email" name="email" id="email" required="true" class="form-control"/>
-    </dd>
-    <dt>
-      <label for="subject">Subject</label>
-    </dt>
-    <dd>
-      <input type="text" name="subject" id="subject" required="true" class="form-control"/>
-    </dd>
-    <dt>
-      <label for="comments">Your message</label>
-    </dt>
-    <dd>
-      <textarea name="comments" id="comments" class="form-control"></textarea>
-    </dd>
-    <dt></dt>
-    <dd>
-      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
-      <noscript>
-        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
-        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
-      </noscript>
-    </dd>
-    <dt></dt>
-    <dd>
-      <button type="submit" class="btn btn-primary">Send</button>
-    </dd>
-  </dl>
-  -->
 </form>

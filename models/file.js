@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var fileSchema = new Schema({
     blob: { type: Schema.Types.ObjectId, index: true },
+    title: { type: String, default: '' },
     filename: { type: String },
     deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: Date.now() }

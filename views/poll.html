@@ -1,21 +1,18 @@
 <div class="page-header">
-  <h1>Create your poll</h1>
-  <p class="lead">Create your poll for people to answer.</p>
+  <h1>Create your questionnaire</h1>
+  <p class="lead">Create your questionnaire and share it with the right people.</p>
 </div>
 
 <div class="row">
-  <h3>How to create your poll</h3>
+  <h3>How to create your questionnaire</h3>
   <p>
-    Just fill the form and chose poll categories and it will be displayed on our partners website. You can also share it with your friends !
-  </p>
-  <p>
-    Want to know more ? See our <a href="/faq">FAQ</a>
+    Just fill the form, create your exam online and get <strong>advanced feedbacks</strong> about answers and contestants. Define your questions, you'll be able to share your questionnaire on your <strong>website</strong> and <strong>favourite social network</strong>. Be concise so people answer all your questions. Expected answers can be <strong><em>open</em></strong> answer, <strong><em>multiple</em></strong> or <strong><em>unique choice(s)</em></strong>.
   </p>
 </div>
 
 {{#if error }}
 <p class="notice bg-danger text-danger">
-  <i class="fa fa-exclamation-triangle"> <span>Error when creating poll : {{error}}</span></i>
+  <i class="fa fa-exclamation-triangle"> <span>Error when creating questionnaire : {{error}}</span></i>
 </p>
 {{/if}}
 
@@ -25,43 +22,81 @@
   <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
 </p>
 
-<p>
-  You can now share your poll using <a href="/poll/answer/{{options.pollid}}">/poll/answer/{{options.pollid}}</a>
-</p>
 
-<div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
-
-<p>Now share your exam test on your favourite social media : </p>
-<div class="row">
-  <div class="col-md-4 text-left">
-    <div class="fb-share-button" data-href="{{options.url}}/poll/answer/{{options.pollid}}" data-layout="button_count" data-width="100"></div>
-  </div>
-  <div class="col-md-4 text-center">
-    <div class="tw-share-button">
-      <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/poll/answer/{{options.pollid}}">Tweet</a>
-      <script>
-      !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-      </script>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Easily share your file using link
+      </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <p>
+          You can now share your questionnaire using <a href="/poll/answer/{{options.pollid}}">/poll/answer/{{options.pollid}}</a>
+        </p>
+      </div>
     </div>
   </div>
-  <div class="col-md-4 text-right">
-    <div class="lk-share-button">
-      <script src="//platform.linkedin.com/in.js" type="text/javascript">lang: EN_US</script>
-      <script type="IN/Share" data-counter="right" data-url="{{options.url}}/poll/answer/{{options.pollid}}"></script>
+
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingSecond">
+      <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapseSecond" aria-expanded="true" aria-controls="collapseSecond">
+        Easily share your file using social network
+      </a>
+      </h4>
+    </div>
+    <div id="collapseSecond" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSecond">
+      <div class="panel-body">
+        <div id="fb-root"></div>
+        <script>
+          (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
+          fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+        </script>
+
+        <p>Share your questionnaire on your favourite social media : </p>
+        <div class="row">
+          <div class="col-md-4 text-left">
+            <div class="fb-share-button" data-href="{{options.url}}/poll/answer/{{options.pollid}}" data-layout="button_count" data-width="100"></div>
+          </div>
+          <div class="col-md-4 text-center">
+            <div class="tw-share-button">
+              <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/poll/answer/{{options.pollid}}">Tweet</a>
+              <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+              </script>
+            </div>
+          </div>
+          <div class="col-md-4 text-right">
+            <div class="lk-share-button">
+              <script src="//platform.linkedin.com/in.js" type="text/javascript">lang: EN_US</script>
+              <script type="IN/Share" data-counter="right" data-url="{{options.url}}/poll/answer/{{options.pollid}}"></script>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<p>Or on your website by inserting our script where you want to insert widget :</p>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingThird">
+      <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapseThird" aria-expanded="true" aria-controls="collapseThird">
+        Easily share your file using our widget
+      </a>
+      </h4>
+    </div>
+    <div id="collapseThird" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThird">
+      <div class="panel-body">
+        <p>On your website by inserting our script where you want to insert widget :</p>
 <pre>
   &lt;script class="hupothesis-script-{{options.userid}}"&gt;
     (function() {
@@ -73,27 +108,22 @@
     }());
   &lt;/script&gt;
 </pre>
+      </div>
+    </div>
+  </div>
+</div>
 
 {{else}}
-
-<div class="row">
-  <h3>
-    Fill the form to create your poll.
-  </h3>
-  <p>
-    Define your questions, you'll be able to share your poll on our partners websites. Be concise so people answer all your questions. Expected answers can be open, consumer feeling, multiple or unique choices.
-  </p>
-</div>
 
 <form method="post" action="/poll">
   <input type="hidden" name="_csrf" value="{{csrf}}">
   <div class="row">
     <div class="form-group">
-      <label for="title">Please enter your poll title</label>
+      <label for="title">Please enter your questionnaire title</label>
       <input class="form-control" type="text" name="title" id="title" required>
     </div>
     <div class="form-group">
-      <label for="tags">Enter some tags separated by commas defining your poll</label>
+      <label for="tags">Chose questionnaire categories</label>
       <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
     </div>
   </div>
@@ -101,12 +131,12 @@
     <div class="question" data-id="0">
       <div class="row">
         <div class="col-md-2">
-          <label>Question title : </label>
+          <label>Question prompt : </label>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-7">
           <input type="text" class="form-control" name="question_title[]" required>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="radio">
             <label><input type="radio" name="question_type_0" value="unique" class="question_type" required> Unique choice</label>
           </div>
@@ -116,9 +146,11 @@
           <div class="radio">
             <label><input type="radio" name="question_type_0" value="open" class="question_type" required> Open</label>
           </div>
+          <!--
           <div class="radio">
             <label><input type="radio" name="question_type_0" value="feel" class="question_type" required> Feeling</label>
           </div>
+          -->
         </div>
       </div>
       <div class="row">
@@ -156,7 +188,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 text-right">
           <button class="btn btn-success question_add">Add question</button>
           <button class="btn btn-warning question_rm">Remove question</button>
         </div>
@@ -169,15 +201,17 @@
     </div>
   </div>
   <div class="row">
-    <div class="checkbox">
-      <label for="cgu">
-        <input type="checkbox" checked="true" required="true" name="cgu" id="cgu"> <a href="/terms">Please accept our terms</a>
-      </label>
-    </div>
-  </div>
-  <div class="row">
+
     <div class="col-md-12">
-      <button class="btn btn-primary" type="submit">Save Poll</button>
+      <div class="checkbox">
+        <label for="cgu">
+          <input type="checkbox" checked="true" required="true" name="cgu" id="cgu"> <a href="/terms">Accept our terms of use</a>
+        </label>
+      </div>
+    </div>
+
+    <div class="col-md-12">
+      <button class="btn btn-primary" type="submit">Save Questionnaire</button>
     </div>
   </div>
 </form>

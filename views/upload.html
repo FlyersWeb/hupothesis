@@ -1,6 +1,6 @@
 <div class="page-header">
   <h1>Exam upload</h1>
-  <p class="lead">Upload your exam</p>
+  <p class="lead">Upload your exam and share it with the right people.</p>
 </div>
 
 {{#if error }}
@@ -15,44 +15,81 @@
   <i class="fa fa-exclamation-triangle"> <span>{{notice}}</span></i>
 </p>
 
-<p>
-  You can now share your exam using <a href="/upload/answer/{{options.fileid}}">/upload/answer/{{options.fileid}}</a>
-</p>
-
-<div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
-
-<p>You can also share your exam on your favourite social media : </p>
-<div class="row">
-  <div class="col-md-4 text-left">
-    <div class="fb-share-button" data-href="{{options.url}}/upload/answer/{{options.fileid}}" data-layout="button_count" data-width="100"></div>
-  </div>
-  <div class="col-md-4 text-center">
-    <div class="tw-share-button">
-      <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/upload/answer/{{options.fileid}}">Tweet</a>
-      <script>
-      !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-      </script>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Easily share your file using link
+      </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <p>
+          You can now share your exam using <a href="/upload/answer/{{options.fileid}}">/upload/answer/{{options.fileid}}</a>
+        </p>
+      </div>
     </div>
   </div>
-  <div class="col-md-4 text-right">
-    <div class="lk-share-button">
-      <script src="//platform.linkedin.com/in.js" type="text/javascript">lang: EN_US</script>
-      <script type="IN/Share" data-counter="right" data-url="{{options.url}}/upload/answer/{{options.fileid}}"></script>
+
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingSecond">
+      <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapseSecond" aria-expanded="true" aria-controls="collapseSecond">
+        Easily share your file using social network
+      </a>
+      </h4>
+    </div>
+    <div id="collapseSecond" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSecond">
+      <div class="panel-body">
+        <div id="fb-root"></div>
+        <script>
+          (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
+          fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+        </script>
+        
+        <p>You can also share your exam on your favourite social media : </p>
+        <div class="row">
+          <div class="col-md-4 text-left">
+            <div class="fb-share-button" data-href="{{options.url}}/upload/answer/{{options.fileid}}" data-layout="button_count" data-width="100"></div>
+          </div>
+          <div class="col-md-4 text-center">
+            <div class="tw-share-button">
+              <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/upload/answer/{{options.fileid}}">Tweet</a>
+              <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+              </script>
+            </div>
+          </div>
+          <div class="col-md-4 text-right">
+            <div class="lk-share-button">
+              <script src="//platform.linkedin.com/in.js" type="text/javascript">lang: EN_US</script>
+              <script type="IN/Share" data-counter="right" data-url="{{options.url}}/upload/answer/{{options.fileid}}"></script>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<p>Or on your website by inserting our script where you want to insert widget :</p>
-<pre>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingThird">
+      <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapseThird" aria-expanded="true" aria-controls="collapseThird">
+        Easily share your file using our widget
+      </a>
+      </h4>
+    </div>
+    <div id="collapseThird" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThird">
+      <div class="panel-body">
+        <p>On your website by inserting our script where you want the widget to be visible :</p>
+        <pre>
   &lt;script class="hupothesis-script-{{options.userid}}"&gt;
     (function() {
     var s = document.createElement('script');
@@ -62,9 +99,23 @@
     document.body.appendChild(s);
     }());
   &lt;/script&gt;
-</pre>
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 {{else}}
+
+<div class="row">
+  <h3>
+    Fill the form
+  </h3>
+  <p>
+    Upload your exam so you can easily <strong>share it</strong> on <strong>your website</strong> or on <strong>your favorite social network</strong>. You'll receive <strong>basic feedbacks</strong> about contestants or you can <strong><a href="/poll">create your exam</a></strong> online for advanced feedbacks.
+  </p>
+</div>
 
 <form method="post" action="/upload?_csrf={{csrf}}" enctype="multipart/form-data" role="form">
   {{#if user.local.email}}
@@ -77,21 +128,28 @@
   {{/if}}
 
   <div class="form-group">
-    <label for="fileinfo">Choose your exam file</label>
-    <input type="file" name="fileinfo" id="fileinfo" required="true">
-    <p class="help-block">docx,xlsx,odt,pdf only</p>
+    <label for="title">Provide an exam title</label>
+    <input class="form-control" type="text" name="title" id="title">
   </div>
+
   <div class="form-group">
     <label for="tags">Enter some tags separated by commas defining your exam</label>
     <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
   </div>
+
+  <div class="form-group">
+    <label for="fileinfo">Choose your exam file</label>
+    <input type="file" name="fileinfo" id="fileinfo" required="true">
+    <p class="help-block">docx,xlsx,odt,pdf only</p>
+  </div>
+  
   <div class="checkbox">
     <label for="cgu">
       <input type="checkbox" checked="true" required="true" name="cgu" id="cgu"> <a href="/terms">Please accept our terms</a>
     </label>
   </div>
   <div class="form-group">
-    <button class="btn btn-primary" type="submit">Submit your test</button>
+    <button class="btn btn-primary" type="submit">Submit your exam</button>
   </div>
 </form>
 

@@ -67,6 +67,8 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
       return;
     }
 
+    var title = validator.toString(fields.title);
+
     var tag = validator.toString(fields.tags);
     var tags = tag.split(',');
     tags = _.map(tags,function(el){return el.trim();});
@@ -102,7 +104,7 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
           return;
         }
 
-        var file = new File({'blob':blob.id,'filename':files.fileinfo.name});
+        var file = new File({'blob':blob.id,'filename':files.fileinfo.name, 'title':title});
         file.save(function(err){
           if(err) {
             next(err);
