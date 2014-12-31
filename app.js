@@ -92,6 +92,7 @@ var contact = require('./routes/contact');
 var users  = require('./routes/users');
 var profile  = require('./routes/profile');
 var tags  = require('./routes/tag');
+var track  = require('./routes/track');
 
 var widgets = require('./routes/widget');
 
@@ -110,6 +111,7 @@ app.use('/', contact);
 app.use('/', logins);
 app.use('/', tags);
 app.use('/', profile);
+app.use('/', track);
 app.use('/', widgets);
 
 app.use('/users', users);
