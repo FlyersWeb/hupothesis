@@ -29,6 +29,9 @@
 
 {{else}}
 
+<p>Answer the questionnaire by using the form.</p>
+<p>Time is running : <strong><span class="timer">00:00</span></strong>. Good Luck.</p>
+
 <form action="/poll/answer" method="post">
   <input type="hidden" name="_csrf" value="{{csrf}}">  
   <input type="hidden" name="pollid" value="{{poll._id}}">
@@ -117,5 +120,15 @@
     </div>
   </div>
 </form>
+
+<script>
+$(function(){
+  $.event.trigger({
+    type:"launchTimer",
+    message: "",
+    time: new Date()
+  });
+});
+</script>
 
 {{/if}}

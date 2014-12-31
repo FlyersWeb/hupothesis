@@ -2,6 +2,7 @@ IN PROGRESS
 -----------
 
 * Add tracking informations about participants and on widget
+    (JSONP)
 
 * Add UT e2e FT
 * Add Fixtures
@@ -15,6 +16,9 @@ IN PROGRESS
   | http://msdn.microsoft.com/en-us/library/azure/dn790517.aspx
   | http://azure.microsoft.com/en-us/pricing/details/storage/
 
+* Traduction
+* Review Copy
+
 TODO
 ----
 
@@ -23,19 +27,16 @@ USER Test
   * Creation confirmation page, separate options and use styling for sharing link
   * About change message, less commercial                 DONE
   * Register confirm message no redirect to login         DONE
-  * Explain captcha, what to do
+  * Explain captcha, what to do                           DONE
   * Explain forms what to do
   * Poll creation explain answers and add question number
   * Index change message, less commercial                 DONE
   * Poll answer explain captcha and edit question number
   * Change TimeUp in terms to Hupothesis                  DONE
-  * Show a timer while answering
   * Use more style, more h4
-  * Traductions
 
 
 * Better emailing with HTML
-* Review Copy
 
 * Add launch page (for marketing)  ->  TODO (add promotional video)
 
@@ -52,6 +53,8 @@ USER Test
 
 DONE
 ----
+
+* Show a timer while answering
 
 * Poll feeling 5 options   |
 * Poll feeling rendering   | feeling removed from polls

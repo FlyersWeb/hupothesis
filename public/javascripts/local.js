@@ -1,4 +1,33 @@
+function pad(number) {
+    var r = String(number);
+    if ( r.length === 1 ) {
+        r = '0' + r;
+    }
+    return r;
+}
+
 $(function(){
+
+  var zecsec  = 0;
+  var seconds = 0;
+  var mints   = 0;
+  var $timer = $('.timer');
+  var chronometer = function(e){
+    zecsec+=1;
+    if(zecsec>9){zecsec=0;seconds+=1;}
+    if(seconds>59){seconds=0;mints+=1;}
+    $timer.html(pad(mints)+":"+pad(seconds));
+    setTimeout(chronometer,100);
+  };
+  $(document).on("launchTimer",chronometer);
+  $("a.launchTimer").on("click",function(e){
+    $.event.trigger({
+      type:"launchTimer",
+      message: "",
+      time: new Date()
+    });
+  });
+
   //// autocomplete
   var tagCache = {};
   $("#tags").autocomplete({

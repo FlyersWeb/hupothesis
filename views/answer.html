@@ -14,8 +14,8 @@
 
 {{else}}
 
-<p><a href="/getfile/{{fileinfo._id}}">Download the test</a> and POST your answer using the form.</p>
-<p>Good Luck. </p>
+<p><a href="/getfile/{{fileinfo._id}}" class="launchTimer" target="_blank">Download the test</a> and send your answers using the form.</p>
+<p>Time is running : <strong><span class="timer">00:00</span></strong>. Good Luck.</p>
 
 <form method="POST" action="/upload/answer?_csrf={{csrf}}" enctype="multipart/form-data" role="form">
   <input type="hidden" name="fileid" value="{{fileinfo._id}}"/>
