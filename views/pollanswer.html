@@ -119,3 +119,23 @@
 </form>
 
 {{/if}}
+
+<script>
+$(function(){
+  var uinf = {};
+  uinf['appCodeName']=navigator.appCodeName;
+  uinf['appName']=navigator.appName;
+  uinf['appVersion']=navigator.appVersion;
+  uinf['language']=navigator.language;
+  uinf['platform']=navigator.platform;
+  uinf['product']=navigator.product;
+  uinf['productSub']=navigator.productSub;
+  uinf['userAgent']=navigator.userAgent;
+  uinf['vendor']=navigator.vendor;
+  $.ajax({
+    url: '/track',
+    data: uinf,
+    dataType: 'jsonp'
+  });
+});
+</script>
