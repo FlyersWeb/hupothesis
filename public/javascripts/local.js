@@ -8,6 +8,34 @@ function pad(number) {
 
 $(function(){
 
+  var sendTrack = function(cid) {
+    var uinf = {};
+    var d = new Date();
+    if(typeof cid != 'undefined') uinf['cid']=cid;
+    uinf['appCodeName']=navigator.appCodeName;
+    uinf['appName']=navigator.appName;
+    uinf['appVersion']=navigator.appVersion;
+    uinf['language']=navigator.language;
+    uinf['platform']=navigator.platform;
+    uinf['product']=navigator.product;
+    uinf['productSub']=navigator.productSub;
+    uinf['userAgent']=navigator.userAgent;
+    uinf['vendor']=navigator.vendor;
+    uinf['location']=document.location.href;
+    uinf['referrer']=document.referrer;
+    uinf['screen']=screen.width+'x'+screen.height+'x'+screen.pixelDepth;
+    uinf['time']=d.getTime();
+    uinf['timeoffset']=d.getTimezoneOffset();
+    $.ajax({
+      url: '/track',
+      data: uinf,
+      dataType: 'jsonp'
+    });
+  };
+  $(document).on("sendTrack",function(e){
+    sendTrack(e.message);
+  });
+
   var zecsec  = 0;
   var seconds = 0;
   var mints   = 0;
@@ -17,7 +45,9 @@ $(function(){
     if(zecsec>9){zecsec=0;seconds+=1;}
     if(seconds>59){seconds=0;mints+=1;}
     $timer.html(pad(mints)+":"+pad(seconds));
-    setTimeout(chronometer,100);
+    setTimeout(function(){
+      chronometer(e);
+    },100);
   };
   $(document).on("launchTimer",chronometer);
   $("a.launchTimer").on("click",function(e){
@@ -119,7 +149,6 @@ $(function(){
   $('.range_feeling').on('change',function(evt){
     var idx = $(this).val();
     var $select = $(this).parent().parent().find('.in_feeling');
-    console.log($select);
     $select.find('option:selected').removeAttr('selected');
     $select.find('option:eq('+(idx-1)+')').prop('selected', true);
   });

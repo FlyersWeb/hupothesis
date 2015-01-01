@@ -47,3 +47,17 @@
 </form>
 
 {{/if}}
+
+<script>
+$(function(){
+  $.event.trigger({
+    type:"sendTrack",
+    {{#if contestant}}
+    message:'{{contestant._id}}',
+    {{else}}
+    message:'',
+    {{/if}}
+    time: new Date()
+  });
+});
+</script>
