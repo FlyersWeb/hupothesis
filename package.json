@@ -45,7 +45,14 @@
     "underscore": "^1.7.0",
     "validator": "^3.16.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "chai-as-promised": "^4.1.1",
+    "mocha": "^2.1.0",
+    "phantomjs": "^1.9.13",
+    "selenium-standalone": "^2.44.0-3",
+    "webdriverio": "^2.4.0"
+  },
   "bundleDependencies": [],
   "private": true,
   "main": "./bin/www",

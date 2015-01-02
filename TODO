@@ -1,6 +1,8 @@
 IN PROGRESS
 -----------
 
+* Check viewed field for poll answer (error)
+
 * Add tracking informations about participants and on widget
     (JSONP)
     [Poll and Exam DONE, add widget]
@@ -8,8 +10,9 @@ IN PROGRESS
 * Add UT e2e FT
 * Add Fixtures
 
-* Profile page interface      (polls, exams, quizz)
+* Profile page interface      (polls, exams)
     Add share link clipboard
+    Add export feature
     Add diagrams (Percent poll)
 * Add social auth             (check passportjs)
 * Investigate s3 storage      (windows BLOB storage)
