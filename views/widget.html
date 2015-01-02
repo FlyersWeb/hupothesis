@@ -36,7 +36,7 @@
   {
     var script = scripts[i];
 
-    var divid = 'hupothesis-'+options.blobid;
+    var divid = 'hupothesis-'+options.b;
     var div = document.createElement('div');
     div.className = divid;
     var h4 = document.createElement('h4');
@@ -46,7 +46,7 @@
     p2.className = 'hupothesis-slogan';
     h4.innerHTML = 'Hupothesis download';
     p1.innerHTML = '{{grip}} <a class="download" href="'+options.r+'{{suffix}}{{blobid}}"><i class="fa fa-cloud-download"></i><span class="download-inner">Hupothesis</span></a>';
-    p2.innerHTML = 'Offered with <a href="'+options.r+'">Hupothesis</a> <i class="fa fa-copyright"></i> courtesy';
+    p2.innerHTML = 'Offered by <a href="'+options.r+'">Hupothesis</a> <i class="fa fa-copyright"></i>';
 
     div.appendChild(h4);
     div.appendChild(p1);
@@ -57,7 +57,7 @@
 
   // Style
   var sBody = '\
-  div.hupothesis-'+options.blobid+'{  \
+  div.hupothesis-'+options.b+'{  \
     font-size:1em;                    \
   }                                   \
   .hupothesis-download .download {\
@@ -132,4 +132,33 @@
   css.innerHTML = sBody;
   document.body.appendChild(link);
   document.body.appendChild(css);
+
+  var trackUrl = options.r+'/track?callback=widget';
+  
+  var d = new Date();
+
+  var uinf = {};
+  uinf['appCodeName']=navigator.appCodeName;
+  uinf['appName']=navigator.appName;
+  uinf['appVersion']=navigator.appVersion;
+  uinf['language']=navigator.language;
+  uinf['platform']=navigator.platform;
+  uinf['product']=navigator.product;
+  uinf['productSub']=navigator.productSub;
+  uinf['userAgent']=navigator.userAgent;
+  uinf['vendor']=navigator.vendor;
+  uinf['location']=document.location.href;
+  uinf['referrer']=document.referrer;
+  uinf['screen']=screen.width+'x'+screen.height+'x'+screen.pixelDepth;
+  uinf['time']=d.getTime();
+  uinf['timeoffset']=d.getTimezoneOffset();
+
+  for(var inf in uinf) {
+    var val = uinf[inf];
+    trackUrl += '&'+inf+'='+val;
+  }
+
+  var scriptTrack = document.createElement('script');
+  scriptTrack.src = trackUrl;
+  document.body.appendChild(scriptTrack);
 })();

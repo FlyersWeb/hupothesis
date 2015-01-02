@@ -42,7 +42,7 @@ router.get('/1.0/widget', function(req,res,next){
       return;
     }
     if (file) {
-      res.render('widget', {'layout':false, 'grip': 'File available at', 'suffix':'/file/answer/', 'blobid':file._id});
+      res.render('widget', {'layout':false, 'grip': 'File available at', 'suffix':'/upload/answer/', 'blobid':file._id});
       return;
     }
 

@@ -3,10 +3,6 @@ IN PROGRESS
 
 * Check viewed field for poll answer (error)
 
-* Add tracking informations about participants and on widget
-    (JSONP)
-    [Poll and Exam DONE, add widget]
-
 * Add UT e2e FT
 * Add Fixtures
 
@@ -57,6 +53,9 @@ USER Test
 
 DONE
 ----
+
+* Add tracking informations about participants and on widget
+    (JSONP)
 
 * Show a timer while answering
 

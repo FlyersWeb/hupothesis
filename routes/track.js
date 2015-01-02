@@ -13,8 +13,11 @@ var Contestant = require('../models/contestant.js');
 router.get('/track', function(req, res, next){
   var deviceInfo = {};
   
-  deviceInfo['contestant'] = req.param('cid');
-  deviceInfo['contestant'] = new Array(validator.toString(deviceInfo['contestant']));
+  var cid = req.param('cid');
+  if(typeof cid !== 'undefined') {
+    deviceInfo['contestant'] = cid;
+    deviceInfo['contestant'] = validator.toString(deviceInfo['contestant']);
+  }
   
   deviceInfo['appCodeName'] = req.param('appCodeName');
   deviceInfo['appCodeName'] = validator.toString(deviceInfo['appCodeName']);
@@ -42,6 +45,9 @@ router.get('/track', function(req, res, next){
   
   deviceInfo['referrer'] = req.param('referrer');
   deviceInfo['referrer'] = validator.toString(deviceInfo['referrer']);
+
+  deviceInfo['userAgent'] = req.param('userAgent');
+  deviceInfo['userAgent'] = validator.toString(deviceInfo['userAgent']);
   
   deviceInfo['productSub'] = req.param('productSub');
   deviceInfo['productSub'] = validator.toString(deviceInfo['productSub']);
@@ -61,54 +67,40 @@ router.get('/track', function(req, res, next){
 
   deviceInfo['remoteAddr'] = req.ip;
 
-  var callback = function(deviceInfo){
-    var device = new Device(deviceInfo);
-    device.save(function(err){
-      if(err){
-        next(err);
-        return;
-      }
-      res.jsonp({"status":"OK"});
-      return;
-    });
-  };
-
-  Device.findOne({'userAgent':deviceInfo['userAgent'],
-                  'deviceTimeOffset':deviceInfo['deviceTimeOffset'],
-                  'screenWidth':deviceInfo['screenWidth'],
-                  'screenHeight':deviceInfo['screenHeight'],
-                  'screenRatio':deviceInfo['screenRatio']},
-  function(err,device){
+  Contestant.findById(deviceInfo['contestant'],function(err,contestant){
     if(err){
       next(err);
       return;
-    }
-    
-    Contestant.findById(deviceInfo['contestant'],function(err,contestant){
+    } 
+
+    Device.findOne({'userAgent':deviceInfo['userAgent'],
+      'deviceTimeOffset':deviceInfo['deviceTimeOffset'],
+      'screenWidth':deviceInfo['screenWidth'],
+      'screenHeight':deviceInfo['screenHeight'],
+      'screenRatio':deviceInfo['screenRatio']}, function(err,device){
       if(err){
-        delete deviceInfo['contestant'];
-        if(!device) {
-          callback(deviceInfo);
-        }
-        res.jsonp({"status":"OK"});
-        return;
+        next(err);return;
       }
-      if(contestant && device){
-        if(device.contestant.indexOf(contestant.id)<0) {
-          device.contestant.push(contestant);
-          device.save();
-          res.jsonp({"status":"OK"});
-          return;
-        }
-      } 
-      if(!contestant) {
-        delete deviceInfo['contestant'];
+      if(!device){
+        var device = new Device(deviceInfo);
+        device.save(function(err){
+          if(err){
+            next(err);
+            return;
+          }
+        });
       }
-      if(!device) {
-        callback(deviceInfo);
+      if(device && contestant){
+        Device.update({'_id':device.id,'contestant':{$ne:contestant.id}},
+          {$push: {'contestant': contestant.id}},
+          {multi:true},
+          function(){}
+        );
       }
-    });  
-  });
+    });
+    res.jsonp({"status":"OK"});
+    return;
+  });  
 });
 
 module.exports = router;

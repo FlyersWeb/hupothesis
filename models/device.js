@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var deviceSchema = new Schema({
-    contestant: { type: [Schema.Types.ObjectId], index: true, default: null },
+    contestant: { type: [Schema.Types.ObjectId], index: true, default: [] },
     appCodeName : { type: String, default: null },
     appName : { type: String, default: null },
     appVersion : { type: String, default: null },
