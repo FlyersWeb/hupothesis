@@ -2,6 +2,9 @@ IN PROGRESS
 -----------
 
 * Check viewed field for poll answer (error)
+      refactor pollanswer to create answers on view (update not working)
+      and update on answered
+      and do not show in profile (profile.js)
 
 * Add UT e2e FT
 * Add Fixtures
@@ -28,10 +31,10 @@ USER Test
   * About change message, less commercial                 DONE
   * Register confirm message no redirect to login         DONE
   * Explain captcha, what to do                           DONE
-  * Explain forms what to do
-  * Poll creation explain answers and add question number
+  * Explain forms what to do 
+  * Poll creation explain answers and add question number DONE
   * Index change message, less commercial                 DONE
-  * Poll answer explain captcha and edit question number
+  * Poll answer explain captcha and edit question number  DONE
   * Change TimeUp in terms to Hupothesis                  DONE
   * Use more style, more h4
 

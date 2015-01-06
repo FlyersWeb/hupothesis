@@ -18,6 +18,12 @@ var hbs = exphbs.create({
         return options.fn(this);
       }
       return options.inverse(this);
+    },
+    inc: function(options) {
+      return (this.id+1);
+    },
+    dec: function(options) {
+      return (this.id-1);
     }
   }
 })

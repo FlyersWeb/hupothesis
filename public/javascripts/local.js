@@ -114,7 +114,8 @@ $(function(){
     pollQuestions[id] = loadValues($question);
 
     if(id >= 39) return false;
-    $qQuestion = $question.clone();$qQuestion.attr('data-id',(id+1));
+    $qQuestion = $question.clone();$qQuestion.attr('data-id',(id+2));
+    $qQuestion.find('.question_id').html((id+1));
     var question = $qQuestion[0].outerHTML;
     for(var i=0;i<replaces.length;i++){
       var replace=replaces[i];

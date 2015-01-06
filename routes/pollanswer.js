@@ -43,14 +43,14 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
       var pollObj = poll.toObject();
       pollObj.questions = [];
 
-      PollAnswer.update({'poll':poll.id,'contestant':contestant._id},{$set:{'viewed':new Date()}},{multi:true},function(err){
+      PollAnswer.update({'poll':poll._id,'contestant':contestant._id},{$set:{'viewed':new Date()}},{multi:true},function(err){
         if(err){
           next(err);
           return;
         }
       });
 
-      PollQuestion.find({'poll':poll.id,'deleted':null}, function(err,pollquestions){
+      PollQuestion.find({'poll':poll._id,'deleted':null}, function(err,pollquestions){
         if(err){
           next(err);
           return;

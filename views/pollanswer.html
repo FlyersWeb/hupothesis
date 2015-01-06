@@ -46,7 +46,7 @@
   <div class="question">
     <div class="row">
       <div class="form-group">
-        <label>Question #{{@index}}</label>
+        <label>Question #{{#inc}}{{@index}}{{/inc}}</label>
         <input type="text" class="form-control" name="question_prompts[]" value="{{prompt}}" placeholder="{{prompt}}" readonly>
       </div>
     </div>
