@@ -9,17 +9,17 @@ var assert = chai.assert,
 var options = { desiredCapabilities: { browserName: 'firefox' }, logLevel: 'silent' };
 var client = webdriverio.remote(options);
 
-describe('terms',function(){
+describe('faq',function(){
   this.timeout(99999999);
   before(function(done){
     return client.init(done);
   });
-  it('should display terms title',function(done){
+  it('should display faq title',function(done){
     client
-      .url('http://localhost:3000/terms')
+      .url('http://localhost:3000/faq')
       .getText('h1',function(err,text){
         assert.equal(undefined,err);
-        assert.strictEqual(text,'Terms of use');
+        assert.strictEqual(text,'Frequently Asked Questions');
       })
       .call(done);
   });

@@ -9,6 +9,11 @@ IN PROGRESS
 * Add UT e2e FT
 * Add Fixtures
 
+* Better emailing with HTML  
+      http://www.emailonacid.com/
+      https://github.com/niftylettuce/node-email-templates
+      http://www.scotchmedia.com/tutorials/express/authentication/3/02
+
 * Profile page interface      (polls, exams)
     Add share link clipboard
     Add export feature
@@ -39,7 +44,11 @@ USER Test
   * Use more style, more h4
 
 
-* Better emailing with HTML
+* Better emailing with HTML  
+      http://www.emailonacid.com/
+      https://github.com/niftylettuce/node-email-templates
+      http://www.scotchmedia.com/tutorials/express/authentication/3/02
+
 
 * Add launch page (for marketing)  ->  TODO (add promotional video)
 
