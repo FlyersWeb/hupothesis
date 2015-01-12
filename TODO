@@ -1,10 +1,7 @@
 IN PROGRESS
 -----------
 
-* Check viewed field for poll answer (error)
-      refactor pollanswer to create answers on view (update not working)
-      and update on answered
-      and do not show in profile (profile.js)
+* Add email asking only if not already contestant
 
 * Add UT e2e FT
 * Add Fixtures
@@ -65,6 +62,11 @@ USER Test
 
 DONE
 ----
+
+* Check viewed field for poll answer (error)
+      refactor pollanswer to create answers on view (update not working)
+      and update on answered
+      and do not show in profile (profile.js)
 
 * Add tracking informations about participants and on widget
     (JSONP)

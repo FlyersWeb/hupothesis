@@ -43,43 +43,32 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
       var pollObj = poll.toObject();
       pollObj.questions = [];
 
-      PollAnswer.update({'poll':poll._id,'contestant':contestant._id},{$set:{'viewed':new Date()}},{multi:true},function(err){
-        if(err){
-          next(err);
-          return;
-        }
-      });
-
-      PollQuestion.find({'poll':poll._id,'deleted':null}, function(err,pollquestions){
+      PollQuestion.find({'poll':poll.id,'deleted':null}, function(err,pollquestions){
         if(err){
           next(err);
           return;
         }
 
-        var question_ids = [];
         for(var i=0;i<pollquestions.length;i++){
           var pollquestion = pollquestions[i];
+          PollAnswer.update({'question':pollquestion._id,'contestant':contestant._id},
+                            {$set:{'poll':pollquestion.poll,'question':pollquestion._id,'contestant':contestant._id},$setOnInsert:{'viewed':new Date()}},
+                            {upsert:true,multi:true},
+            function(err){
+              if(err){
+                next(err);
+                return;
+              }
+          });
+
           var pollquestionObj = pollquestion.toObject();
           pollquestionObj.id = i;
           pollObj.questions.push(pollquestionObj);
-          question_ids.push(pollquestion.id);
         }
 
-        PollAnswer.find({'question':{$in:question_ids},'contestant':contestant._id,'deleted':null},function(err,answers){
-          if(err){
-            next(err);
-            return;
-          }
-
-          if(answers.length >= question_ids.length) {
-            req.flash('pollAnswerNotice', "You've already answered the poll. Thanks.")
-          }
-
-          res.render('pollanswer', { 'contestant': contestant, 'poll': pollObj, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
-        });
+        res.render('pollanswer', { 'contestant': contestant, 'poll': pollObj, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 
       });
-
     });
   };
 
@@ -119,7 +108,7 @@ router.post('/poll/answer', function(req, res, next){
 
   var contestant = req.session.contestant;
   if(!contestant){
-    req.flash('pollAnswerError', "Oops! you need to download the exam before answering");
+    req.flash('pollAnswerError', "Oops! you need to view our questionnaire before answering");
     res.redirect('/poll/answer/'+pollid);
     return;
   }
@@ -142,7 +131,7 @@ router.post('/poll/answer', function(req, res, next){
       }
 
       if(!rcontest) {
-        Contestant.update({'_id':contestant._id,'deleted':null},{'email':email},function(err){
+        Contestant.update({'_id':contestant._id,'deleted':null},{$set:{'email':email}},function(err){
           if(err){
             next(err);
             return;
@@ -160,7 +149,7 @@ router.post('/poll/answer', function(req, res, next){
         }
 
         if (user) {
-          Contestant.update({'_id':contestant._id,'deleted':null}, {'user':user.id}, {}, function(err){
+          Contestant.update({'_id':contestant._id,'deleted':null}, {$set:{'user':user.id}}, function(err){
             if(err){
               next(err);
               return;
@@ -180,50 +169,48 @@ router.post('/poll/answer', function(req, res, next){
         }
 
         // Create answers
-        PollQuestion.find({'_id':{$in: qids},'deleted':null},function(err,questions){
+        PollQuestion.find({'poll':poll.id,'deleted':null},function(err,questions){
           if(err){
             next(err);
             return;
           }
 
-          var answers = [];
           for(var i=0;i<questions.length;i++){
             var question=questions[i];
             var avalue=req.body['question_answer_'+i];
-            var answer={'poll':poll.id,'question':question.id,'contestant':contestant._id,'value':avalue};
-            answers.push(answer);
+
+            PollAnswer.update({'question':question._id,'contestant':contestant._id},{$set:{'added':new Date()},$push:{'value':avalue}},{multi:true,upsert:true},function(err){
+              if(err) {
+                next(err);
+                return;
+              }
+            });
           }
 
-          PollAnswer.create(answers,function(err){
-            if(err){
-              next(err);
-              return;
-            }
+          req.session.contestant = contestant;
 
-            req.session.contestant = contestant;
+          /*  --- Email Notification ---  */
+          var mailOptions = {
+            from: global.email.user,
+            to: ''+contestant.email+', '+global.email.user+'',
+            subject: "[Hupothesis] Answers uploaded with success",
+            text: "Congratulations, we've successfully received your answers for the poll : "+poll.title+". Your administrator will be notified."
+          };
 
-            /*  --- Email Notification ---  */
-            var mailOptions = {
-              from: global.email.user,
-              to: ''+contestant.email+', '+global.email.user+'',
-              subject: "[Hupothesis] Answers uploaded with success",
-              text: "Congratulations, we've successfully received your answers for the poll : "+poll.title+". Your administrator will be notified."
-            };
-
-            global.email.transporter.sendMail(mailOptions, function(err, info){
-                if(err){
-                  next(err);
-                  return;
-                }else{
-                  console.log('Message sent: ' + info.response);
-                }
-            });
-            /****************************************/
-
-            req.flash('pollAnswerNotice','Your opinion was successfully received.');
-            res.redirect('/poll/answer/'+poll.id);
-            return;
+          global.email.transporter.sendMail(mailOptions, function(err, info){
+              if(err){
+                next(err);
+                return;
+              }else{
+                console.log('Message sent: ' + info.response);
+              }
           });
+          /****************************************/
+
+          req.flash('pollAnswerNotice','Your opinion was successfully received.');
+          res.redirect('/poll/answer/'+poll.id);
+          return;
+
         });
       });
     });

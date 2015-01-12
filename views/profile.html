@@ -147,7 +147,9 @@
                   {{#if answers}}
                   <ul>
                     {{#each answers}}
+                    {{#if value}}
                     <li>{{contestant.email}} answered :{{#each value}} {{this}} {{/each}}</li>
+                    {{/if}}
                     {{/each}}
                   </ul>
                   {{else}}
