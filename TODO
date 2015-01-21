@@ -1,5 +1,20 @@
+BUGS
+----
+
+Poll display question prompt not visible
+    Edit CSS and Scroll
+
+Error in poll creation (check 3 questions)
+
+
 IN PROGRESS
 -----------
+
+* Add question response time
+
+* Add export file in zip
+
+* Add export poll in csv
 
 * Add email asking only if not already contestant
 
@@ -63,24 +78,24 @@ USER Test
 DONE
 ----
 
-* Check viewed field for poll answer (error)
+* Check viewed field for poll answer (error)  DONE
       refactor pollanswer to create answers on view (update not working)
       and update on answered
       and do not show in profile (profile.js)
 
-* Add tracking informations about participants and on widget
+* Add tracking informations about participants and on widget    DONE
     (JSONP)
 
-* Show a timer while answering
+* Show a timer while answering  DONE
 
 * Poll feeling 5 options   |
-* Poll feeling rendering   | feeling removed from polls
+* Poll feeling rendering   | feeling removed from polls  DONE
 * Poll feeling show labels |
 
-* Add contestant check if email already exists
+* Add contestant check if email already exists  DONE
 
 * Change form layouts, use "form-group" bootstrap like
-* Make GFX compatible mobile
+* Make GFX compatible mobile  DONE
 
 * Poll widget                 [versioning + dynamic types]
 * Add Poll answer interface   DONE
