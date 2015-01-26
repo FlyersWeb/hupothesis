@@ -1,9 +1,6 @@
 BUGS
 ----
 
-Poll display question prompt not visible
-    Edit CSS and Scroll
-
 Error in poll creation (check 3 questions)
 
 
@@ -74,6 +71,13 @@ USER Test
 * Review legal for bidder
 * Pay per display bidder
 * Credits buying
+
+CORRECTIONS
+-----------
+
+Poll display question prompt not visible
+    Edit CSS and Scroll
+
 
 DONE
 ----

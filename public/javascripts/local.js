@@ -154,6 +154,17 @@ $(function(){
     $select.find('option:eq('+(idx-1)+')').prop('selected', true);
   });
 
+  //// prompts
+  $('.prompt').on('click', function(e){
+    $(this).removeAttr('readonly');
+  });
+  $('.prompt').on('blur', function(e){
+    $(this).attr('readonly','');
+  });
+  $('.prompt').on('keypress', function(e){
+    e.preventDefault();
+    return false;
+  });
 
   //// profile
   // more
