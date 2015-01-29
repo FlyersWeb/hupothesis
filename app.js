@@ -24,6 +24,51 @@ var hbs = exphbs.create({
     },
     dec: function(options) {
       return (this.id-1);
+    },
+    prettify: function(timestamp) {
+      var ret = '';
+      var years = 0;
+      var months = 0;
+      var days = 0;
+      var hours = 0;
+      var minutes = 0;
+      var seconds = Math.floor(timestamp / 1000);
+
+      var interval = Math.floor(seconds / 31536000);
+      if (interval > 1) {
+        years = interval;
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1) {
+        months = interval;
+      }
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1) {
+        days = interval;
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1) {
+        hours = interval;
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval > 1) {
+        minutes = interval;
+      }
+      seconds = Math.floor(seconds);
+
+      if(hours) {
+        ret += hours+' hours ';
+      }
+      if(minutes) {
+        ret += minutes+' minutes ';
+      }
+      if(seconds) {
+        ret += seconds+'';
+      }
+      if(ret.length == 0) {
+        ret = 'Unknown';
+      }
+      return ret;
     }
   }
 })

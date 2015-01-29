@@ -78,6 +78,7 @@
                   {{#if contestant.email}}
                   <p>Answered by : {{contestant.email}}</p>
                   {{/if}}
+                  <p>in {{prettify ansTime}}</p>
                   {{#if comments}}
                   <p>{{comments}}</p>
                   {{/if}}
@@ -145,13 +146,15 @@
                   {{#each questions}}
                   <h4>{{prompt}}</h4>
                   {{#if answers}}
-                  <ul>
                     {{#each answers}}
+                    <p>Answers of : {{contestant.email}}</p>
+                    <p>in {{prettify ansTime}}</p>
                     {{#if value}}
-                    <li>{{contestant.email}} answered :{{#each value}} {{this}} {{/each}}</li>
+                    <ul>
+                      <li>{{#each value}} {{this}} {{/each}}</li>
+                    </ul>
                     {{/if}}
                     {{/each}}
-                  </ul>
                   {{else}}
                   <p>No answer</p>
                   {{/if}}

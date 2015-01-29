@@ -18,6 +18,15 @@ var PollAnswer = require('../models/pollanswer.js');
 var Contestant = require('../models/contestant.js');
 
 
+function calculateAnswerTime(viewed, answered)
+{
+  var ret = 0;
+  if( answered && viewed )
+    ret = answered.getTime()-viewed.getTime();
+  if(ret<0) ret = 0;
+  return ret;
+}
+
 function prepareDatas(user, files, fanswers, polls, pquestions, panswers, contestants)
 {
   var ret = {};
@@ -32,6 +41,7 @@ function prepareDatas(user, files, fanswers, polls, pquestions, panswers, contes
     for(var j=0; j<fanswers.length; j++) {
       var fanswer = fanswers[j];
       fanswer = fanswer.toObject();
+      fanswer.ansTime = calculateAnswerTime(fanswer.downloaded, fanswer.added);
       for(var k=0; k<contestants.length; k++){
         var contestant = contestants[k];
         if(fanswer.contestant.toString() == contestant._id.toString()) {
@@ -57,6 +67,7 @@ function prepareDatas(user, files, fanswers, polls, pquestions, panswers, contes
       for(var k=0; k<panswers.length; k++) {
         var panswer = panswers[k];
         panswer = panswer.toObject();
+        panswer.ansTime = calculateAnswerTime(panswer.viewed, panswer.added);
         for(var l=0; l<contestants.length; l++){
           var contestant = contestants[l];
           if(panswer.contestant.toString() == contestant._id.toString()) {
