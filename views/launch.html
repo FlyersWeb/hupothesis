@@ -11,12 +11,13 @@
 
 {{#if notice}}
 <p class="notice bg-info text-info"> <i class="fa fa-info"> <span>{{notice}}</span></i></p>
+<p>You'll be notified of Hupothesis advancements and you'll be able to participate to our bêta test.</p>
 {{else}}
 <p>Hupothesis is a service designed to validate your hypothesis. The tool allows you to validate hypothesis using large scale persona sample thanks to the Internet to validate your hypothesis. You have some hypothesis and want to validate it ? We can help you.</p>
 <p>If you want to get notified when hupothesis will be available, fill our form.</p>
 <p>You'll be able to use this same email address to use our service.</p>
 <form method="POST" action="/launch">
-  <input type="hidden" name="_csrf" value="{{csrf}}"/>
+  <input type="hidden" name="_csrf" value="{{csrf}}">
   <div class="form-group">
     <label for="email">Please enter you email</label>
     <input type="email" name="email" id="email" required="true" class="form-control"/>
@@ -32,31 +33,5 @@
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Notify me</button>
   </div>
-  <dl>
-    <dt>
-      <label for="email">Please enter you email</label>
-    </dt>
-    <dd>
-      <input type="email" name="email" id="email" required="true" class="form-control"/>
-    </dd>
-    <dt></dt>
-    <dd>
-      <script src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}"></script>
-      <noscript>
-        <iframe src="http://www.google.com/recaptcha/api/challenge?k={{captcha_key}}" height="300" width="500" frameborder="0"></iframe>
-        <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
-      </noscript>
-    </dd>
-    <dt></dt>
-    <dd>
-      <input type="checkbox" checked="true" required="true" name="newsletter" id="newsletter"/>
-      <label for="newsletter">&nbsp; I want to be notified when Hupothesis will be available</label>
-    </dd>
-    <dt></dt>
-    <dd>
-      <button type="submit" class="btn btn-primary">Notify me</button>
-    </dd>
-  </dl>
 </form>
 {{/if}}
