@@ -6,8 +6,11 @@ var global = require('../configuration/global.js');
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  // res.redirect('/launch');
+  res.redirect('/launch');
+  // res.render('index', { notice: req.flash('uploadNotice'), error: req.flash('uploadError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+});
 
+router.get('/home', function(req, res) {
   res.render('index', { notice: req.flash('uploadNotice'), error: req.flash('uploadError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
 });
 
