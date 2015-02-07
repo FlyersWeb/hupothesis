@@ -1,11 +1,17 @@
 BUGS
 ----
 
+Error in answer time calculation (totally false)
+
 Error in poll creation (check 3 questions)
+    => id not actualized !!!!
 
 Error in file answer added field datetime
 
 Profile Poll answer prez
+
+PollAnswer contestant add answer problem with viewed/added
+  => solution: allow only one contestant response
 
 
 IN PROGRESS

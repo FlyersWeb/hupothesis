@@ -146,12 +146,12 @@
                   {{#each questions}}
                   <h4>{{prompt}}</h4>
                   {{#if answers}}
+                    <p>You have <strong>{{answers.length}} answer(s)</strong></p>
                     {{#each answers}}
-                    <p>Answers of : {{contestant.email}}</p>
-                    <p>in {{prettify ansTime}}</p>
+                    <p>Answered by <strong>{{contestant.email}}</strong> in <strong>{{prettify ansTime}} seconds</strong></p>
                     {{#if value}}
-                    <ul>
-                      <li>{{#each value}} {{this}} {{/each}}</li>
+                    <ul class="answervalues">
+                      {{#each value}}<li> {{this}} </li>{{/each}}
                     </ul>
                     {{/if}}
                     {{/each}}

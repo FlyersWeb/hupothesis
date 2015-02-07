@@ -138,6 +138,26 @@
   </div>
 
   <div class="form-group">
+    <label for="instruction">Enter exam instructions for candidates</label>
+    <textarea class="form-control" name="instruction" id="instruction"></textarea>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" class="limit"> Limit test time ?
+    </label>
+  </div>
+
+  <div class="well">
+    <div id="limitation" class="input-append">
+      <input data-format="hh:mm:ss" type="text" name="limit"></input>
+      <span class="add-on">
+        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="form-group">
     <label for="fileinfo">Choose your exam file</label>
     <input type="file" name="fileinfo" id="fileinfo" required="true">
     <p class="help-block">docx,xlsx,odt,pdf only</p>
@@ -152,5 +172,13 @@
     <button class="btn btn-primary" type="submit">Submit your exam</button>
   </div>
 </form>
+
+<script type="text/javascript">
+  $(function() {
+    $('#limitation').datetimepicker({
+      pickDate: false
+    });
+  });
+</script>
 
 {{/if}}

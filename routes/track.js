@@ -14,7 +14,7 @@ router.get('/track', function(req, res, next){
   var deviceInfo = {};
   
   var cid = req.param('cid');
-  if(typeof cid !== 'undefined') {
+  if(typeof cid !== 'undefined' && cid.length > 0) {
     deviceInfo['contestant'] = cid;
     deviceInfo['contestant'] = validator.toString(deviceInfo['contestant']);
   }

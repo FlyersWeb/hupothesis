@@ -92,3 +92,11 @@ form dd.submit, dl.labels dd.submit {
 .feeling_wrapper div:last-child {
   text-align: right;
 }
+
+.answervalues {
+  display: block;
+  clear: both;
+}
+.answervalues li {
+  float: left;
+}

@@ -21,6 +21,8 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
   pollid = validator.toString(pollid);
 
   var callback = function(contestant) {
+
+    console.log(contestant)
     
     if(!contestant){
       req.flash('pollAnswerError', "Oops! Invalid temporary user creation");
@@ -81,13 +83,12 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
         return;
       }
       req.session.contestant = contestant;
-      callback(contestant);
+      callback(req.session.contestant);
     });
   }
   else
   {
-    var contestant = req.session.contestant;
-    callback(contestant);
+    callback(req.session.contestant);
   }
 
 });
