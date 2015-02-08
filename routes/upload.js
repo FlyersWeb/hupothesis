@@ -15,7 +15,6 @@ var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
 var Blob = require('../models/blob.js');
-var File = require('../models/file.js');
 
 // validator.extend('isTimeUp', function(str){
 //   return /(\d+)?d?(\d+)h(\d+)?m?/.test(str);
@@ -68,6 +67,7 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
     }
 
     var title = validator.toString(fields.title);
+    var instruction = validator.toString(fields.instruction);
 
     var tag = validator.toString(fields.tags);
     var tags = tag.split(',');
@@ -97,53 +97,45 @@ router.post('/upload', global.requireAuth, function(req, res, next) {
         return;
       }
 
-      var blob = new Blob({'user':user.id,'tags':tags});
+      var blob = new Blob({'user':user.id,'tags':tags,'title':title,'instruction':instruction,'kind':'file','filename':files.fileinfo.name});
       blob.save(function(err){
         if(err) {
           next(err);
           return;
         }
 
-        var file = new File({'blob':blob.id,'filename':files.fileinfo.name, 'title':title});
-        file.save(function(err){
-          if(err) {
+        fs.rename(files.fileinfo.path, form.uploadDir+blob.id, function(err){
+          if (err) {
             next(err);
             return;
           }
+        });
 
-          fs.rename(files.fileinfo.path, form.uploadDir+file.id, function(err){
-            if (err) {
+        /*  --- Email Notification ---  */
+        var mailOptions = {
+          from: global.email.user,
+          to: ''+user.local.email+', '+global.email.user+'',
+          subject: "[Hupothesis] File uploaded with success",
+          text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+blob.id+"."
+        };
+
+        global.email.transporter.sendMail(mailOptions, function(err, info){
+            if(err){
               next(err);
               return;
+            }else{
+              console.log('Message sent: ' + info.response);
             }
-          });
-
-          /*  --- Email Notification ---  */
-          var mailOptions = {
-            from: global.email.user,
-            to: ''+user.local.email+', '+global.email.user+'',
-            subject: "[Hupothesis] File uploaded with success",
-            text: "Congratulations, you've successfully uploaded "+files.fileinfo.name+". You can share it using "+global.app.url+"/answer/"+file.id+"."
-          };
-
-          global.email.transporter.sendMail(mailOptions, function(err, info){
-              if(err){
-                next(err);
-                return;
-              }else{
-                console.log('Message sent: ' + info.response);
-              }
-          });
-          /* ------------ */
-
-          var options = { fileid: file.id, userid: user.id, url:global.app.url };
-
-          req.flash('uploadNotice', 'Your file was uploaded with success');
-          req.flash('uploadOptions', options);
-          res.redirect('/upload');
-          return;
-
         });
+        /* ------------ */
+
+        var options = { fileid: blob.id, userid: user.id, url:global.app.url };
+
+        req.flash('uploadNotice', 'Your file was uploaded with success');
+        req.flash('uploadOptions', options);
+        res.redirect('/upload');
+        return;
+
       });
     });
   });
@@ -155,18 +147,23 @@ router.get('/file/delete/:fileid', global.requireAuth, function(req, res, next){
   var fileid = req.param('fileid');
   fileid = validator.toString(fileid);
 
-  File.findById(fileid,function(err,file){
+  Blob.findOne({'_id':fileid,'kind':'file','deleted':null},function(err,blob){
     if(err){
       next(err);
       return;
     }
 
-    File.update({'_id':file.id},{'deleted':new Date()},{},function(err,file){
+    if(!blob) {
+      req.flash('profileError','File not found !');
+      res.redirect('/profile/'+userid);
+      return;
+    }
+
+    Blob.update({'_id':blob.id},{'deleted':new Date()},{},function(err,blob){
       if(err){
         next(err);
         return;
       }
-
       req.flash('profileNotice','File deleted successfully');
       res.redirect('/profile/'+userid);
       return;

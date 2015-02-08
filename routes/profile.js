@@ -3,6 +3,8 @@ var router = express.Router();
 
 var validator = require('validator');
 
+var async  = require('async');
+
 var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
@@ -48,7 +50,7 @@ function prepareDatas(user, files, fanswers, polls, pquestions, panswers, contes
           fanswer.contestant = contestant.toObject();
         }
       }
-      if(fanswer.file.toString() == file._id.toString()){
+      if(fanswer.blob.toString() == file._id.toString()){
         file.answers.push(fanswer);
       }
     }
@@ -78,7 +80,7 @@ function prepareDatas(user, files, fanswers, polls, pquestions, panswers, contes
           pquestion.answers.push(panswer);
         }
       }
-      if(pquestion.poll.toString() == poll._id.toString()){
+      if(pquestion.blob.toString() == poll._id.toString()){
         poll.questions.push(pquestion);
       }
     }
@@ -102,6 +104,7 @@ router.get('/profile/:userid', global.requireAuth, function(req, res, next){
     return;
   }
 
+
   User.findOne({'_id':userid,'deleted':null}, function(err, user){
     if(err) {
       next(err);
@@ -113,39 +116,109 @@ router.get('/profile/:userid', global.requireAuth, function(req, res, next){
       return;
     }
 
+    async.parallel([
+      function(cb){
+        Blob.find({'user':user.id,'kind':'file','deleted':null},function(err, blobs){
+          if(err) {
+            next(err);
+            return;
+          }
+          FileAnswer.find({'blob':{$in:blobs},'deleted':null},function(err,fanswers){
+            if(err) {
+              next(err);
+              return;
+            }
+            var contestants = fanswers.map(function(e){return e.contestant});
+            Contestant.find({'_id':{$in:contestants},'deleted':null},function(err,contestants){
+              if(err){
+                next(err);
+                return;
+              }
+              cb(null,blobs,fanswers,contestants);
+            });
+          });
+        });
+      },
+      function(cb){
+        Blob.find({'user':user.id,'kind':'poll','deleted':null},function(err, blobs){
+          if(err) {
+            next(err);
+            return;
+          }
+          PollQuestion.find({'blob':{$in:blobs},'deleted':null},function(err,pquestions){
+            if(err) {
+              next(err);
+              return;
+            }
+            PollAnswer.find({'question':{$in:pquestions},'deleted':null},function(err,panswers){
+              if(err) {
+                next(err);
+                return;
+              }
+              var contestants = panswers.map(function(e){return e.contestant});
+              Contestant.find({'_id':{$in:contestants},'deleted':null},function(err,contestants){
+                if(err){
+                  next(err);
+                  return;
+                }
+                cb(null,blobs,pquestions,panswers,contestants);
+              });
+            });
+          });
+        });
+      }
+      ],function(err,results){
+        if(err){
+          next(err);
+          return;
+        }
+
+        var files = [];
+        var fanswers = [];
+        var polls = [];
+        var pquestions = [];
+        var panswers = [];
+        var contestants = [];
+
+        if(results[0][0].length>0) files=files.concat(results[0][0]);
+        if(results[0][1].length>0) fanswers=fanswers.concat(results[0][1]);
+        if(results[0][2].length>0) contestants=contestants.concat(results[0][2]);
+        if(results[1][0].length>0) polls=polls.concat(results[1][0]);
+        if(results[1][1].length>0) pquestions=pquestions.concat(results[1][1]);
+        if(results[1][2].length>0) panswers=panswers.concat(results[1][2]);
+        if(results[1][3].length>0) contestants=contestants.concat(results[1][3]);
+
+        var data = prepareDatas(user, files, fanswers, polls, pquestions, panswers, contestants);
+
+        /**
+        * data format
+        * data.user.files.answers.contestant
+        * data.user.polls.questions.answers.contestant
+        */
+        res.render('profile', { 'data':data, 'app':global.app, 'notice': req.flash('profileNotice'), 'error': req.flash('profileError'), csrf: req.csrfToken() });
+    });
+
+/*
     Blob.find({'user':user.id,'deleted':null},function(err, blobs){
       if(err) {
         next(err);
         return;
       }
 
-      File.find({'blob':{$in:blobs},'deleted':null},function(err,files){
-        if(err){
-          next(err);
-          return;
-        }
-
-        FileAnswer.find({'file':{$in:files},'deleted':null},function(err,fanswers){
+        FileAnswer.find({'blob':{$in:blobs},'deleted':null},function(err,fanswers){
           if(err) {
             next(err);
             return;
           }
-
-          Poll.find({'blob':{$in:blobs},'deleted':null},function(err,polls){
-            if(err){
-              next(err);
-              return;
-            }
-
           
-            PollQuestion.find({'poll':{$in:polls},'deleted':null},function(err,pquestions){
+            PollQuestion.find({'blob':{$in:blobs},'deleted':null},function(err,pquestions){
               if(err) {
                 next(err);
                 return;
               }
 
 
-              PollAnswer.find({'poll':{$in:polls},'deleted':null},function(err,panswers){
+              PollAnswer.find({'blob':{$in:blobs},'deleted':null},function(err,panswers){
                 if(err) {
                   next(err);
                   return;
@@ -169,16 +242,15 @@ router.get('/profile/:userid', global.requireAuth, function(req, res, next){
                   * data format
                   * data.user.files.answers.contestant
                   * data.user.polls.questions.answers.contestant
-                  */
-                  res.render('profile', { 'data':data, 'app':global.app, notice: req.flash('profileNotice'), error: req.flash('profileError'), csrf: req.csrfToken() });
+                  
+                  res.render('profile', { 'data':data, 'app':global.app, 'notice': req.flash('profileNotice'), 'error': req.flash('profileError'), csrf: req.csrfToken() });
 
                 });
               });
             });
-          });
         });
-      });
     });
+*/
   });
 });
 

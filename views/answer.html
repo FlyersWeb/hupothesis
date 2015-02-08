@@ -14,19 +14,29 @@
 
 {{else}}
 
-<p><a href="/getfile/{{fileinfo._id}}" class="launchTimer" target="_blank">Download the test</a> and send your answers using the form.</p>
+<h4>{{fileinfo.title}}</h4>
+
+<p>Answer the exam as fast as possible to get a good qualification because your time is limited.</p>
+
+{{#if fileinfo.instruction}}
+<p>{{fileinfo.instruction}}</p>
+{{/if}}
+
 <p>Time is running : <strong><span class="timer">00:00</span></strong>. Good Luck.</p>
 
+<iframe src="/getfile/{{fileinfo._id}}" width="100%" height="400"></iframe>
+
+<p></p>
 <form method="POST" action="/upload/answer?_csrf={{csrf}}" enctype="multipart/form-data" role="form">
   <input type="hidden" name="fileid" value="{{fileinfo._id}}"/>
   <div class="form-group">
     <label for="email">Please enter you email</label>
-    <input type="email" name="email" id="email" required="true" class="form-control"/>
+    <input type="email" name="email" id="email" required="true" class="form-control">
   </div>
   <div class="form-group">
     <label for="answerinfo">Chose your answers</label>
     <input type="file" name="answerinfo" id="answerinfo" required="true"/>
-    <p class="help-block">docx,xlsx,odt,pdf only</p>
+    <p class="help-block">pdf only</p>
   </div>
   <div class="form-group">
     <label for="comments">Some comments for your reviewer ?</label>
@@ -50,6 +60,12 @@
 
 <script>
 $(function(){
+  $.event.trigger({
+    type:"launchTimer",
+    message: "",
+    time: new Date()
+  });
+
   $.event.trigger({
     type:"sendTrack",
     {{#if contestant}}

@@ -25,7 +25,7 @@ var global = {
 		regex : /(\d+)?d?(\d+)h(\d+)?m?/,
 		host : "hupothesis.com",
 		url : "http://www.hupothesis.com",
-		fileExts : ['.doc','.docx','.xls','.xlsx','.odt', '.pdf'],
+		fileExts : ['.pdf'],
 		fileLimit : 2097152
 	},
 	db : {

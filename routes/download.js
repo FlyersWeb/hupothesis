@@ -11,39 +11,21 @@ var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
 var Blob = require('../models/blob.js');
-var File = require('../models/file.js');
 var Answer = require('../models/fileanswer.js');
-var Contestant = require('../models/contestant.js');
-
 
 router.get('/getfile/:fileinfoid', function(req, res, next){
 
   var fileinfoid = req.param('fileinfoid');
   fileinfoid = validator.toString(fileinfoid);
 
-  var callback = function(contestant) {
-
-    if(!contestant){
-      req.flash("answerError","Oops! Invalid temporary user creation");
-      res.redirect('/upload/answer/'+fileinfoid);
-      return;
-    }
-
-    File.findOne({'_id':fileinfoid,'deleted':null}, function(err,file){
-      if ( !file ) {
+    Blob.findOne({'_id':fileinfoid,'kind':'file','deleted':null}, function(err,blob){
+      if ( !blob ) {
         req.flash('answerError', "Oops, invalid file identifier");
         res.redirect('/upload/answer/'+fileinfoid);
         return;
       }
 
-      Answer.update({'file':file.id,'contestant':contestant._id}, { 'downloaded': new Date() }, {'upsert':true}, function(err){
-        if(err) {
-          next(err);
-          return;
-        }
-      });
-
-      var filePath = './tmp/'+file.id;
+      var filePath = './tmp/'+blob.id;
       var stat = fs.statSync(filePath);
 
       var rdStream = fs.createReadStream(filePath);
@@ -53,44 +35,7 @@ router.get('/getfile/:fileinfoid', function(req, res, next){
       });
 
       rdStream.pipe(res);
-
-      /*  --- Email Notification ---  */   
-      var mailOptions = {
-        from: global.email.user,
-        to: ''+global.email.user+'',
-        subject: "[Hupothesis] Exam downloaded with success",
-        text: "File "+file.filename+" downloaded with success. Downloaded by "+contestant.email+"."
-      };
-
-      global.email.transporter.sendMail(mailOptions, function(err, info){
-          if(err){
-            next(err);
-            return;
-          }else{
-            console.log('Message sent: ' + info.response);
-          }
-      });
-      /*  --- --- ---  */
     });
-  };
-
-  if (!req.session.contestant)
-  {
-    var contestant = new Contestant({});
-    contestant.save(function(err){
-      if(err) {
-        next(err);
-        return;
-      }
-      req.session.contestant = contestant;
-      callback(contestant);
-    });
-  }
-  else
-  {
-    var contestant = req.session.contestant;
-    callback(contestant);
-  }
 });
 
 router.get('/file/getanswer/:answerid', function(req, res, next){

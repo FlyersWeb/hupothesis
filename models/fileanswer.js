@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var fileAnswerSchema = new Schema({
+    blob: { type: Schema.Types.ObjectId, index: true },
     file: { type: Schema.Types.ObjectId, index: true },
     contestant: { type: Schema.Types.ObjectId, index: true },
     filename: { type: String },

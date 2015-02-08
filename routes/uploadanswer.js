@@ -25,21 +25,22 @@ validator.extend('isExtSupported', function(str){
 
 router.get('/upload/answer/:fileinfoid', function(req, res, err) {
 
+  //TODO add create answer with viewed date setted
   var fileinfoid = req.param('fileinfoid');
 
-  File.findOne({'_id': fileinfoid, 'deleted':null}, function(err, file){
+  Blob.findOne({'_id': fileinfoid, 'deleted':null}, function(err, blob){
     if (err) {
       next(err);
       return;
     }
 
-    if ( !file ) {
+    if ( !blob ) {
       res.redirect('/');
       return;
     }
 
     if (req.session.contestant) {
-      Answer.findOne({'contestant':req.session.contestant._id,'file':file.id,'filename':{$exists:true}},function(err,answer){
+      Answer.findOne({'contestant':req.session.contestant._id,'blob':blob.id,'filename':{$exists:true}},function(err,answer){
         if(err) {
           next(err);
           return;
@@ -49,10 +50,10 @@ router.get('/upload/answer/:fileinfoid', function(req, res, err) {
           req.flash('answerNotice', "You've already answered the test.");
         }
         
-        res.render('answer', { fileinfo: file.toObject(), contestant: req.session.contestant, error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+        res.render('answer', { fileinfo: blob.toObject(), contestant: req.session.contestant, error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
       });
     } else {
-      res.render('answer', { fileinfo: file.toObject(), error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });      
+      res.render('answer', { fileinfo: blob.toObject(), error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });      
     }
 
   });
@@ -146,25 +147,26 @@ router.post('/upload/answer', function(req, res, next) {
           }
         });
 
-        File.findOne({'_id':fileid,'deleted':null}, function(err,file){
+        Blob.findOne({'_id':fileid,'deleted':null}, function(err,blob){
           if(err) {
             next(err);
             return;
           }
 
-          if ( !file ) {
+          if ( !blob ) {
             res.redirect('/');
             return;
           }
 
-          Answer.findOne({'file':file.id,'contestant':contestant._id,'deleted':null}, 'id', function(err, answer){
+          // TODO review answer logic
+          Answer.findOne({'blob':blob.id,'contestant':contestant._id,'deleted':null}, 'id', function(err, answer){
             if(err) {
               next(err);
               return;
             }
 
             if(!answer) {
-              answer = new Answer({'file':file.id,'contestant':contestant._id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
+              answer = new Answer({'blob':blob.id,'contestant':contestant._id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
               answer.save(function(err){
                 if(err) {
                   next(err);
@@ -173,7 +175,7 @@ router.post('/upload/answer', function(req, res, next) {
               });
             }
             else {
-              Answer.update({'file':file.id,'contestant':contestant._id}, {'filename':files.answerinfo.name,'comments':fields.comments}, function(err){
+              Answer.update({'blob':blob.id,'contestant':contestant._id}, {'filename':files.answerinfo.name,'comments':fields.comments}, function(err){
                 if(err) {
                   next(err);
                   return;
@@ -205,56 +207,42 @@ router.post('/upload/answer', function(req, res, next) {
               });
               /****************************************/
 
-              Blob.findOne({'_id':file.blob,'deleted':null}, function(err,blob){
-
-                if(err) {
+              User.findOne({'_id':blob.user,'deleted':null}, function(err,fileUser){
+                if ( err ) {
                   next(err);
                   return;
                 }
 
-                if(!blob){
-                  var err = new Error("Invalid file blob");
-                  err.status = 500;
-                  next(err);
-                  return;
+                if ( fileUser )
+                {
+                  /**********************************/
+                  var mailOptions = {
+                    from: global.email.user,
+                    to: ''+fileUser.email+', '+global.email.user+'',
+                    subject: "[Hupothesis] Answers uploaded",
+                    text: "You've received answers for your file "+blob.filename+". You can view your files status on "+global.app.url+"/users/profile/"+fileUser.id+"."
+                  };
+
+                  global.email.transporter.sendMail(mailOptions, function(err, info){
+                      if(err){
+                        next(err);
+                        return;
+                      }else{
+                        console.log('Message sent: ' + info.response);
+                      }
+                  });
+                  /**********************************/
                 }
-
-                User.findOne({'_id':blob.user,'deleted':null}, function(err,fileUser){
-                  if ( err ) {
-                    next(err);
-                    return;
-                  }
-
-                  if ( fileUser )
-                  {
-                    /**********************************/
-                    var mailOptions = {
-                      from: global.email.user,
-                      to: ''+fileUser.email+', '+global.email.user+'',
-                      subject: "[Hupothesis] Answers uploaded",
-                      text: "You've received answers for your file "+file.filename+". You can view your files status on "+global.app.url+"/users/profile/"+fileUser.id+"."
-                    };
-
-                    global.email.transporter.sendMail(mailOptions, function(err, info){
-                        if(err){
-                          next(err);
-                          return;
-                        }else{
-                          console.log('Message sent: ' + info.response);
-                        }
-                    });
-                    /**********************************/
-                  }
-                });
-
-                /* ------------ */
-                
-                req.session.contestant = contestant;
-
-                req.flash('answerNotice', 'Your answers were successfully uploaded.');
-                res.redirect('/upload/answer/'+file.id);
-                return;
               });
+
+              /* ------------ */
+              
+              req.session.contestant = contestant;
+
+              req.flash('answerNotice', 'Your answers were successfully uploaded.');
+              res.redirect('/upload/answer/'+blob.id);
+              return;
+
             });
           });
         });

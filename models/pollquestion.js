@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var pollQuestionSchema = new Schema({
+    blob: { type: Schema.Types.ObjectId, index: true },
     poll: { type: Schema.Types.ObjectId, index: true },
     prompt: { type: String },
     type: { type: String },
@@ -13,7 +14,7 @@ var pollQuestionSchema = new Schema({
 var PollQuestion = mongoose.model('PollQuestion', pollQuestionSchema);
 
 PollQuestion.schema.path('type').validate(function (value) {
-  return /multiple|unique|singleLevel|multipleLevel|feel|open/i.test(value);
+  return /multiple|unique|open/i.test(value);
 }, 'Invalid question type');
 
 module.exports = PollQuestion;

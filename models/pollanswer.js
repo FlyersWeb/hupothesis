@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var pollAnswerSchema = new Schema({
+    blob: { type: Schema.Types.ObjectId, index: true },
     poll: { type: Schema.Types.ObjectId, index: true },
     question: { type: Schema.Types.ObjectId, index: true },
     contestant: { type: Schema.Types.ObjectId, index: true },
