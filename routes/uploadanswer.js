@@ -13,8 +13,7 @@ var global = require('../configuration/global.js');
 
 var User = require('../models/user.js');
 var Blob = require('../models/blob.js');
-var File = require('../models/file.js');
-var Answer = require('../models/fileanswer.js');
+var FileAnswer = require('../models/fileanswer.js');
 var Contestant = require('../models/contestant.js');
 
 
@@ -25,8 +24,32 @@ validator.extend('isExtSupported', function(str){
 
 router.get('/upload/answer/:fileinfoid', function(req, res, err) {
 
-  //TODO add create answer with viewed date setted
   var fileinfoid = req.param('fileinfoid');
+
+  var cb = function (blob) {
+    FileAnswer.findOne({'contestant':req.session.contestant._id,'blob':blob.id,'filename':{$exists:true}},function(err,answer){
+      if(err) {
+        next(err);
+        return;
+      }
+      if(!answer) {
+        var answer = new FileAnswer({
+          'contestant':req.session.contestant._id,
+          'blob':blob.id,
+          'viewed': Date.now()
+        });
+        answer.save(function(err,answer){
+          if(err) {
+            next(err);
+            return;
+          }
+        });    
+      } else {
+        req.flash('answerNotice', "You've already answered the exam");
+      }
+      res.render('answer', { fileinfo: blob.toObject(), contestant: req.session.contestant, error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+    });
+  }
 
   Blob.findOne({'_id': fileinfoid, 'deleted':null}, function(err, blob){
     if (err) {
@@ -39,23 +62,20 @@ router.get('/upload/answer/:fileinfoid', function(req, res, err) {
       return;
     }
 
-    if (req.session.contestant) {
-      Answer.findOne({'contestant':req.session.contestant._id,'blob':blob.id,'filename':{$exists:true}},function(err,answer){
+    if ( !req.session.contestant) {
+      var contestant = new Contestant();
+      contestant.save(function(err,contestant){
         if(err) {
           next(err);
           return;
         }
-
-        if(answer) {
-          req.flash('answerNotice', "You've already answered the test.");
-        }
-        
-        res.render('answer', { fileinfo: blob.toObject(), contestant: req.session.contestant, error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+        req.session.contestant = contestant;
+        cb(blob);
       });
     } else {
-      res.render('answer', { fileinfo: blob.toObject(), error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });      
+      cb(blob);
     }
-
+    
   });
 });
 
@@ -99,9 +119,8 @@ router.post('/upload/answer', function(req, res, next) {
       return;
     }
 
-    var contestant = req.session.contestant;
-    if(!contestant){
-      req.flash('answerError', "Oops! you need to download the exam before answering");
+    if(!req.session.contestant){
+      req.flash('answerError', "Oops! you need to view the exam before answering");
       res.redirect('/upload/answer/'+fileid);
       return;
     }
@@ -113,23 +132,17 @@ router.post('/upload/answer', function(req, res, next) {
         return;
       }
 
-      Contestant.findOne({'email':email,'deleted':null},function(err,rcontest){
+      Contestant.findById(req.session.contestant._id,function(err,contestant){
         if(err){
           next(err);
           return;
         }
 
-        if(!rcontest){
-          Contestant.update({'_id':contestant._id,'deleted':null},{$set:{'email':email}},function(err){
-            if(err){
-              next(err);
-              return;
-            }
-          });
-        } else {
-          contestant = rcontest;
-          req.session.contestant = contestant;
-        }
+        if(!contestant){
+          req.flash('answerError', "Oops! you need to view the exam before answering");
+          res.redirect('/upload/answer/'+fileid);
+          return;
+        } 
 
         User.findOne({'local.email':email,'deleted':null},function(err,user){
           if(err) {
@@ -145,6 +158,12 @@ router.post('/upload/answer', function(req, res, next) {
               }
             });
           }
+          Contestant.update({'_id':contestant._id,'deleted':null}, {$set:{'email':email}}, function(err){
+            if(err){
+              next(err);
+              return;
+            }
+          });
         });
 
         Blob.findOne({'_id':fileid,'deleted':null}, function(err,blob){
@@ -158,15 +177,14 @@ router.post('/upload/answer', function(req, res, next) {
             return;
           }
 
-          // TODO review answer logic
-          Answer.findOne({'blob':blob.id,'contestant':contestant._id,'deleted':null}, 'id', function(err, answer){
+          FileAnswer.findOne({'blob':blob.id,'contestant':req.session.contestant._id,'deleted':null}, function(err, answer){
             if(err) {
               next(err);
               return;
             }
 
             if(!answer) {
-              answer = new Answer({'blob':blob.id,'contestant':contestant._id,'downloaded':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments});
+              answer = new FileAnswer({'blob':blob.id,'contestant':req.session.contestant._id,'viewed':Date.now(),'filename':files.answerinfo.name,'comments':fields.comments,'added':Date.now()});
               answer.save(function(err){
                 if(err) {
                   next(err);
@@ -175,7 +193,7 @@ router.post('/upload/answer', function(req, res, next) {
               });
             }
             else {
-              Answer.update({'blob':blob.id,'contestant':contestant._id}, {'filename':files.answerinfo.name,'comments':fields.comments}, function(err){
+              FileAnswer.update({'blob':blob.id,'contestant':req.session.contestant._id}, {'filename':files.answerinfo.name,'comments':fields.comments,'added':Date.now()}, function(err){
                 if(err) {
                   next(err);
                   return;
@@ -237,7 +255,13 @@ router.post('/upload/answer', function(req, res, next) {
 
               /* ------------ */
               
-              req.session.contestant = contestant;
+              Contestant.findById(req.session.contestant._id, function(err,contestant){
+                if(err){
+                  next(err);
+                  return;
+                }
+                req.session.contestant = contestant;
+              });
 
               req.flash('answerNotice', 'Your answers were successfully uploaded.');
               res.redirect('/upload/answer/'+blob.id);
@@ -258,13 +282,13 @@ router.get('/file/answer/delete/:answerid', global.requireAuth, function(req, re
   var answerid = req.param('answerid');
   answerid = validator.toString(answerid);
 
-  Answer.findById(answerid,function(err,answer){
+  FileAnswer.findById(answerid,function(err,answer){
     if(err){
       next(err);
       return;
     }
 
-    Answer.update({'_id':answer.id},{$set:{'deleted':new Date()}},function(err,answer){
+    FileAnswer.update({'_id':answer.id},{$set:{'deleted':new Date()}},function(err,answer){
       if(err){
         next(err);
         return;

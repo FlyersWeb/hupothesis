@@ -43,7 +43,7 @@ function prepareDatas(user, files, fanswers, polls, pquestions, panswers, contes
     for(var j=0; j<fanswers.length; j++) {
       var fanswer = fanswers[j];
       fanswer = fanswer.toObject();
-      fanswer.ansTime = calculateAnswerTime(fanswer.downloaded, fanswer.added);
+      fanswer.ansTime = calculateAnswerTime(fanswer.viewed, fanswer.added);
       for(var k=0; k<contestants.length; k++){
         var contestant = contestants[k];
         if(fanswer.contestant.toString() == contestant._id.toString()) {

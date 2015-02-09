@@ -3,11 +3,10 @@ var Schema = mongoose.Schema;
 
 var fileAnswerSchema = new Schema({
     blob: { type: Schema.Types.ObjectId, index: true },
-    file: { type: Schema.Types.ObjectId, index: true },
     contestant: { type: Schema.Types.ObjectId, index: true },
     filename: { type: String },
     comments: { type: String, default: null},
-    downloaded: { type: Date, default: null, index: true },
+    viewed: { type: Date, default: null, index: true },
     deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: Date.now() }
 });

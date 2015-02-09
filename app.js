@@ -54,7 +54,12 @@ var hbs = exphbs.create({
       if (interval > 1) {
         minutes = interval;
       }
-      seconds = Math.floor(seconds);
+      if (interval > 1) {
+        seconds = Math.floor( (seconds / 60 - minutes) * 100 );
+      }
+      else {
+        seconds = Math.floor(seconds);
+      }
 
       if(hours) {
         ret += hours+' hours ';
@@ -63,7 +68,7 @@ var hbs = exphbs.create({
         ret += minutes+' minutes ';
       }
       if(seconds) {
-        ret += seconds+'';
+        ret += seconds+' seconds';
       }
       if(ret.length == 0) {
         ret = 'Unknown';

@@ -7,8 +7,8 @@ var pollAnswerSchema = new Schema({
     question: { type: Schema.Types.ObjectId, index: true },
     contestant: { type: Schema.Types.ObjectId, index: true },
     value: { type: [String], default: [] },
-    deleted: { type: Date, default: null, index: true },
     viewed: { type: Date, default: null },
+    deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: null }
 });
 

@@ -1,12 +1,8 @@
 BUGS
 ----
 
-Error in answer time calculation (totally false)
-
 Error in poll creation (check 3 questions)
     => id not actualized !!!!
-
-Error in file answer added field datetime
 
 Profile Poll answer prez
 
@@ -49,13 +45,17 @@ IN PROGRESS
 TODO
 ----
 
+* Poll answer points (automatic evaluation)
+
+* File and Poll limit answer time (close exam when finished)
+
 USER Test
 ---------
   * Creation confirmation page, separate options and use styling for sharing link
   * About change message, less commercial                 DONE
   * Register confirm message no redirect to login         DONE
   * Explain captcha, what to do                           DONE
-  * Explain forms what to do 
+  * Explain forms what to do                              TUTORIALS
   * Poll creation explain answers and add question number DONE
   * Index change message, less commercial                 DONE
   * Poll answer explain captcha and edit question number  DONE
