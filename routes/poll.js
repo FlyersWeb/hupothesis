@@ -9,7 +9,6 @@ var _ = require('underscore');
 
 var User = require('../models/user.js');
 var Blob = require('../models/blob.js');
-var Poll = require('../models/poll.js');
 var PollQuestion = require('../models/pollquestion.js');
 
 
@@ -59,72 +58,58 @@ router.post('/poll', global.requireAuth, function(req, res, next){
         return; 
       }
 
-      var poll = new Poll({'blob':blob.id});
-      poll.save(function(err){
-        if(err){
-          next(err);
-          return;
-        }
+      for(var i=0;i<question_titles.length;i++){
+        var question_title = question_titles[i];
+        
+        var question_type = req.body['question_type_'+i];
+        
+        var question_answers = req.body['question_answer_'+i];
+        question_answers = _.filter(question_answers,function(e){
+          if(e.trim().length>0) return e;
+        });
+        
+        var question_points = req.body['question_point_'+i];
+        question_points = _.filter(question_points,function(e){
+          if(e.trim().length>0) return e;
+        });
 
-        for(var i=0;i<question_titles.length;i++){
-          var question_title = question_titles[i];
-          
-          var question_type = req.body['question_type_'+i];
-          
-          var question_answers = req.body['question_answer_'+i];
-          question_answers = _.filter(question_answers,function(e){
-            if(e.trim().length>0) return e;
-          });
-          
-          var question_points = req.body['question_point_'+i];
-          question_points = _.filter(question_points,function(e){
-            if(e.trim().length>0) return e;
-          });
+        var pollquestion = new PollQuestion({'blob':blob.id,'prompt':question_title,'type':question_type,'choices':question_answers, 'points':question_points});
+        pollquestion.save(function(err){
+          if(err){
+            next(err);
+            return;
+          }
+        });
+      }
 
-          var pollquestion = new PollQuestion({'poll':poll.id,'prompt':question_title,'type':question_type,'choices':question_answers, 'points':question_points});
-          pollquestion.save(function(err){
-            if(err){
-              next(err);
-              return;
-            }
-          });
-        }
+      var options = { blobid: blob.id, userid: user.id, url:global.app.url };        
 
-        var options = { pollid: poll.id, userid: user.id, url:global.app.url };        
+      req.flash('pollNotice', 'Your Poll was successfully created.');
+      req.flash('pollOptions', options);        
+      res.redirect('/poll');
+      return;
 
-        req.flash('pollNotice', 'Your Poll was successfully created.');
-        req.flash('pollOptions', options);        
-        res.redirect('/poll');
-        return;
-
-      });
     });
   });
 
 });
 
-router.get('/poll/delete/:pollid', global.requireAuth, function(req, res, next){
+router.get('/poll/delete/:blobid', global.requireAuth, function(req, res, next){
   var userid = req.session.passport.user;
 
-  var pollid = req.param('pollid');
-  pollid = validator.toString(pollid);
+  var blobid = req.param('blobid');
+  blobid = validator.toString(blobid);
 
-  Poll.findById(pollid,function(err,poll){
+  Blob.update({'_id':blobid,'kind':'poll'},{$set:{'deleted':new Date()}},function(err,blob){
     if(err){
       next(err);
       return;
     }
 
-    Poll.update({'_id':poll.id},{'deleted':new Date()},{},function(err,poll){
-      if(err){
-        next(err);
-        return;
-      }
+    req.flash('profileNotice','Poll deleted successfully');
+    res.redirect('/profile/'+userid);
+    return;
 
-      req.flash('profileNotice','Poll deleted successfully');
-      res.redirect('/profile/'+userid);
-      return;
-    });
   });
 
 });

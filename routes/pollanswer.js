@@ -10,19 +10,16 @@ var simple_recaptcha = require('simple-recaptcha');
 var User = require('../models/user.js');
 var Contestant = require('../models/contestant.js');
 var Blob = require('../models/blob.js');
-var Poll = require('../models/poll.js');
 var PollQuestion = require('../models/pollquestion.js');
 var PollAnswer = require('../models/pollanswer.js');
 
 
-router.get('/poll/answer/:pollid', function(req, res, next) {
+router.get('/poll/answer/:blobid', function(req, res, next) {
   
-  var pollid = req.param('pollid');
-  pollid = validator.toString(pollid);
+  var blobid = req.param('blobid');
+  blobid = validator.toString(blobid);
 
   var callback = function(contestant) {
-
-    console.log(contestant)
     
     if(!contestant){
       req.flash('pollAnswerError', "Oops! Invalid temporary user creation");
@@ -30,22 +27,22 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
       return;
     }
   
-    Poll.findOne({'_id':pollid,'deleted':null},function(err,poll){
+    Blob.findOne({'_id':blobid,'deleted':null},function(err,blob){
       if(err){
         next(err);
         return;
       }
 
-      if(!poll){
+      if(!blob){
         req.flash('pollAnswerError', 'Oops ! Unknown poll');
         res.render('pollanswer', { notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
         return;
       }
 
-      var pollObj = poll.toObject();
+      var pollObj = blob.toObject();
       pollObj.questions = [];
 
-      PollQuestion.find({'poll':poll.id,'deleted':null}, function(err,pollquestions){
+      PollQuestion.find({'blob':blob.id,'deleted':null}, function(err,pollquestions){
         if(err){
           next(err);
           return;
@@ -54,7 +51,7 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
         for(var i=0;i<pollquestions.length;i++){
           var pollquestion = pollquestions[i];
           PollAnswer.update({'question':pollquestion._id,'contestant':contestant._id},
-                            {$set:{'poll':pollquestion.poll,'question':pollquestion._id,'contestant':contestant._id},$setOnInsert:{'viewed':new Date()}},
+                            {$set:{'blob':blob.id,'question':pollquestion._id,'contestant':contestant._id},$setOnInsert:{'viewed':new Date()}},
                             {upsert:true,multi:true},
             function(err){
               if(err){
@@ -96,21 +93,21 @@ router.get('/poll/answer/:pollid', function(req, res, next) {
 router.post('/poll/answer', function(req, res, next){
   var qids = req.body.question_ids;
 
-  var pollid = req.body.pollid;
-  pollid=validator.toString(pollid);
+  var blobid = req.body.blobid;
+  blobid=validator.toString(blobid);
 
   var email = req.body.email;
 
   if ( !validator.isEmail(email) ) {
     req.flash('pollAnswerError', 'Oops, invalid email !');
-    res.redirect('/poll/answer/'+pollid);
+    res.redirect('/poll/answer/'+blobid);
     return;
   }
 
   var contestant = req.session.contestant;
   if(!contestant){
     req.flash('pollAnswerError', "Oops! you need to view our questionnaire before answering");
-    res.redirect('/poll/answer/'+pollid);
+    res.redirect('/poll/answer/'+blobid);
     return;
   }
   
@@ -159,18 +156,18 @@ router.post('/poll/answer', function(req, res, next){
         }
       });
 
-      Poll.findOne({'_id':pollid,'deleted':null},function(err,poll){
+      Blob.findOne({'_id':blobid,'deleted':null},function(err,blob){
         if(err){
           next(err);
           return;
         }
-        if(!poll){
+        if(!blob){
           res.redirect('/');
           return;
         }
 
         // Create answers
-        PollQuestion.find({'poll':poll.id,'deleted':null},function(err,questions){
+        PollQuestion.find({'blob':blob.id,'deleted':null},function(err,questions){
           if(err){
             next(err);
             return;
@@ -195,7 +192,7 @@ router.post('/poll/answer', function(req, res, next){
             from: global.email.user,
             to: ''+contestant.email+', '+global.email.user+'',
             subject: "[Hupothesis] Answers uploaded with success",
-            text: "Congratulations, we've successfully received your answers for the poll : "+poll.title+". Your administrator will be notified."
+            text: "Congratulations, we've successfully received your answers for the poll : "+blob.title+". Your administrator will be notified."
           };
 
           global.email.transporter.sendMail(mailOptions, function(err, info){
@@ -209,7 +206,7 @@ router.post('/poll/answer', function(req, res, next){
           /****************************************/
 
           req.flash('pollAnswerNotice','Your opinion was successfully received.');
-          res.redirect('/poll/answer/'+poll.id);
+          res.redirect('/poll/answer/'+blob.id);
           return;
 
         });

@@ -35,7 +35,7 @@
     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
       <div class="panel-body">
         <p>
-          You can now share your questionnaire using <a href="/poll/answer/{{options.pollid}}">/poll/answer/{{options.pollid}}</a>
+          You can now share your questionnaire using <a href="/poll/answer/{{options.blobid}}">/poll/answer/{{options.blobid}}</a>
         </p>
       </div>
     </div>
@@ -65,11 +65,11 @@
         <p>Share your questionnaire on your favourite social media : </p>
         <div class="row">
           <div class="col-md-4 text-left">
-            <div class="fb-share-button" data-href="{{options.url}}/poll/answer/{{options.pollid}}" data-layout="button_count" data-width="100"></div>
+            <div class="fb-share-button" data-href="{{options.url}}/poll/answer/{{options.blobid}}" data-layout="button_count" data-width="100"></div>
           </div>
           <div class="col-md-4 text-center">
             <div class="tw-share-button">
-              <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/poll/answer/{{options.pollid}}">Tweet</a>
+              <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{options.url}}/poll/answer/{{options.blobid}}">Tweet</a>
               <script>
               !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
               </script>
@@ -78,7 +78,7 @@
           <div class="col-md-4 text-right">
             <div class="lk-share-button">
               <script src="//platform.linkedin.com/in.js" type="text/javascript">lang: EN_US</script>
-              <script type="IN/Share" data-counter="right" data-url="{{options.url}}/poll/answer/{{options.pollid}}"></script>
+              <script type="IN/Share" data-counter="right" data-url="{{options.url}}/poll/answer/{{options.blobid}}"></script>
             </div>
           </div>
         </div>
@@ -101,9 +101,9 @@
   &lt;script class="hupothesis-script-{{options.userid}}"&gt;
     (function() {
     var s = document.createElement('script');
-    s.src = '{{options.url}}/1.0/widget?b={{options.pollid}}';
+    s.src = '{{options.url}}/1.0/widget?b={{options.blobid}}';
     s.async = true;
-    window.hupothesis_options = (window.hupothesis_options || []).concat([{u:"{{options.userid}}",b:"{{options.pollid}}",r:"{{options.url}}"}]);
+    window.hupothesis_options = (window.hupothesis_options || []).concat([{u:"{{options.userid}}",b:"{{options.blobid}}",r:"{{options.url}}"}]);
     document.body.appendChild(s);
     }());
   &lt;/script&gt;

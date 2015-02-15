@@ -3,7 +3,6 @@ var Schema = mongoose.Schema;
 
 var pollQuestionSchema = new Schema({
     blob: { type: Schema.Types.ObjectId, index: true },
-    poll: { type: Schema.Types.ObjectId, index: true },
     prompt: { type: String },
     type: { type: String },
     choices: { type: [String], default: null },
