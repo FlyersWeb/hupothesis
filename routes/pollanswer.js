@@ -23,7 +23,7 @@ router.get('/poll/answer/:blobid', function(req, res, next) {
     
     if(!contestant){
       req.flash('pollAnswerError', "Oops! Invalid temporary user creation");
-      res.render('pollanswer', { notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+      res.render('pollanswer', { 'contestant': contestant, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
       return;
     }
   
@@ -34,39 +34,57 @@ router.get('/poll/answer/:blobid', function(req, res, next) {
       }
 
       if(!blob){
-        req.flash('pollAnswerError', 'Oops ! Unknown poll');
-        res.render('pollanswer', { notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+        req.flash('pollAnswerError', 'Oops ! Unknown questionnaire');
+        res.render('pollanswer', { 'contestant': contestant, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
         return;
       }
 
-      var pollObj = blob.toObject();
-      pollObj.questions = [];
-
-      PollQuestion.find({'blob':blob.id,'deleted':null}, function(err,pollquestions){
-        if(err){
+      // Check already answered
+      PollAnswer.find({'blob':blob.id,'contestant':contestant._id},function(err,answers){
+        if(err) {
           next(err);
           return;
         }
-
-        for(var i=0;i<pollquestions.length;i++){
-          var pollquestion = pollquestions[i];
-          PollAnswer.update({'question':pollquestion._id,'contestant':contestant._id},
-                            {$set:{'blob':blob.id,'question':pollquestion._id,'contestant':contestant._id},$setOnInsert:{'viewed':new Date()}},
-                            {upsert:true,multi:true},
-            function(err){
-              if(err){
-                next(err);
-                return;
-              }
-          });
-
-          var pollquestionObj = pollquestion.toObject();
-          pollquestionObj.id = i;
-          pollObj.questions.push(pollquestionObj);
+        var answered=false;
+        for(var i=0;i<answers.length;i++){
+          var answer = answers[i];
+          if(answer.value.length>0) answered=true;
         }
+        if(answered) {
+          req.flash('pollAnswerNotice', "You've already answered the questionnaire. Thanks.");
+          res.render('pollanswer', { 'contestant': contestant, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+          return;
+        }
+      
+        var pollObj = blob.toObject();
+        pollObj.questions = [];
 
-        res.render('pollanswer', { 'contestant': contestant, 'poll': pollObj, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+        PollQuestion.find({'blob':blob.id,'deleted':null}, function(err,pollquestions){
+          if(err){
+            next(err);
+            return;
+          }
 
+          for(var i=0;i<pollquestions.length;i++){
+            var pollquestion = pollquestions[i];
+            PollAnswer.update({'question':pollquestion._id,'contestant':contestant._id},
+                              {$set:{'blob':blob.id,'question':pollquestion._id,'contestant':contestant._id},$setOnInsert:{'viewed':new Date()}},
+                              {upsert:true,multi:true},
+              function(err){
+                if(err){
+                  next(err);
+                  return;
+                }
+            });
+
+            var pollquestionObj = pollquestion.toObject();
+            pollquestionObj.id = i;
+            pollObj.questions.push(pollquestionObj);
+          }
+
+          res.render('pollanswer', { 'contestant': contestant, 'poll': pollObj, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+          return;
+        });
       });
     });
   };
@@ -192,7 +210,7 @@ router.post('/poll/answer', function(req, res, next){
             from: global.email.user,
             to: ''+contestant.email+', '+global.email.user+'',
             subject: "[Hupothesis] Answers uploaded with success",
-            text: "Congratulations, we've successfully received your answers for the poll : "+blob.title+". Your administrator will be notified."
+            text: "Congratulations, we've successfully received your answers for the questionnaire : "+blob.title+". Your administrator will be notified."
           };
 
           global.email.transporter.sendMail(mailOptions, function(err, info){
@@ -205,7 +223,7 @@ router.post('/poll/answer', function(req, res, next){
           });
           /****************************************/
 
-          req.flash('pollAnswerNotice','Your opinion was successfully received.');
+          req.flash('pollAnswerNotice','Your answers were successfully received.');
           res.redirect('/poll/answer/'+blob.id);
           return;
 

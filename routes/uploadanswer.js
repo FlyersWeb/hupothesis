@@ -45,7 +45,7 @@ router.get('/upload/answer/:fileinfoid', function(req, res, err) {
           }
         });    
       } else {
-        req.flash('answerNotice', "You've already answered the exam");
+        req.flash('answerNotice', "You've already answered the exam.");
       }
       res.render('answer', { fileinfo: blob.toObject(), contestant: req.session.contestant, error: req.flash('answerError'), notice: req.flash('answerNotice'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
     });

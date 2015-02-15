@@ -1,21 +1,16 @@
-BUGS
-----
-
-PollAnswer contestant add answer problem with viewed/added
-  => solution: allow only one contestant response
-
-
 IN PROGRESS
 -----------
-
-* Add export file in zip
-
-* Add export poll in csv
 
 * Add email asking only if not already contestant
 
 * Add UT e2e FT
 * Add Fixtures
+
+* Add export questionnaire in csv
+
+* Widget integration refactoring
+
+* Social button refactoring
 
 * Better emailing with HTML  
       http://www.emailonacid.com/
@@ -38,10 +33,10 @@ IN PROGRESS
 TODO
 ----
 
-* Poll answer points (automatic evaluation)
+* Questionnaire answer points (automatic evaluation)
 
 * Add poll response time
-* File and Poll limit answer time (close exam when finished)
+* File and Questionnaire limit answer time (close exam when finished)
 
 USER Test
 ---------
@@ -86,6 +81,9 @@ Error in poll creation (check 3 questions)
     => id not actualized !!!!
 
 Profile Poll answer prez
+
+PollAnswer contestant add answer problem with viewed/added
+  => solution: allow only one contestant response
 
 
 DONE
