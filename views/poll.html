@@ -115,101 +115,30 @@
 
 {{else}}
 
-<form method="post" action="/poll">
+<form class="morespace" method="post" action="/poll">
   <input type="hidden" name="_csrf" value="{{csrf}}">
   <div class="row">
     <div class="form-group">
       <label for="title">Please enter your questionnaire title</label>
-      <input class="form-control" type="text" name="title" id="title" required>
+      <input class="form-control" type="text" name="title" id="title" required="true" placeholder="IQ test">
     </div>
     <div class="form-group">
       <label for="tags">Chose questionnaire categories</label>
       <input class="form-control" type="text" name="tags" id="tags" autocomplete="off">
     </div>
   </div>
-  <div>
-    <div class="question" data-id="0">
-      <div class="row">
-        <div class="col-md-2">
-          <label>
-            Question #<span class="question_id">1</span> prompt : 
-          </label>
-        </div>
-        <div class="col-md-7">
-          <input type="text" class="form-control" name="question_title[]" required>
-        </div>
-        <div class="col-md-3">
-          <div class="radio">
-            <label>
-              <input type="radio" name="question_type_0" value="unique" class="question_type" required> Unique choice
-            </label>
-          </div>
-          <div class="radio">
-            <label>
-              <input type="radio" name="question_type_0" value="multiple" class="question_type" required> Multiple choices
-            </label>
-          </div>
-          <div class="radio">
-            <label>
-              <input type="radio" name="question_type_0" value="open" class="question_type" checked required> Open
-            </label>
-          </div>
-          <!--
-          <div class="radio">
-            <label><input type="radio" name="question_type_0" value="feel" class="question_type" required> Feeling</label>
-          </div>
-          -->
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-8">
-          <div class="open" style="display:none;"></div>
-          <div class="multiple unique" style="display:none;">
-            <div class="col-md-3">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-            <div class="col-md-3">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-            <div class="col-md-3">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-            <div class="col-md-3">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-          </div>
-          <div class="feel" style="display:none;">
-            <div class="col-md-2">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-            <div class="col-md-2">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-            <div class="col-md-2">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-            <div class="col-md-2">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-            <div class="col-md-2">
-              <input type="text" class="form-control" name="question_answer_0[]" placeholder="choice title">
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 text-right">
-          <button class="btn btn-success question_add">Add question</button>
-          <button class="btn btn-warning question_rm">Remove question</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="preview"><p>&nbsp;</p></div>
-        </div>
-      </div>
+
+  <div class="question-wrapper">
+  </div>
+
+  <div class="row">
+    <div class="form-group">
+      <label for="instruction">Enter exam instructions for candidates</label>
+      <textarea class="form-control" name="instruction" id="instruction"></textarea>
     </div>
   </div>
-  <div class="row">
 
+  <div class="row">
     <div class="col-md-12">
       <div class="checkbox">
         <label for="cgu">
@@ -217,11 +146,23 @@
         </label>
       </div>
     </div>
+  </div>
 
+  <div class="row">
     <div class="col-md-12">
       <button class="btn btn-primary" type="submit">Save Questionnaire</button>
     </div>
   </div>
 </form>
+
+<script type="text/javascript">
+$(function(){
+  $.event.trigger({
+    type:"addQuestion",
+    message: "",
+    time: new Date()
+  });
+});
+</script>
 
 {{/if}}

@@ -100,3 +100,14 @@ form dd.submit, dl.labels dd.submit {
 .answervalues li {
   float: left;
 }
+
+.divider {
+  margin: 05px 0;
+  padding: 20px 0;
+  border-top: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
+}
+
+.morespace {
+  padding: 20px 0;
+}

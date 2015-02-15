@@ -30,8 +30,11 @@ router.post('/poll', global.requireAuth, function(req, res, next){
   // TODO add check question_title empty
   var question_titles = req.body.question_title;
 
-  var polltitle = req.body.title;
-  polltitle = validator.toString(polltitle);
+  var title = req.body.title;
+  title = validator.toString(title);
+
+  var instruction = req.body.instruction;
+  instruction = validator.toString(instruction);
 
   var tag = validator.toString(req.body.tags);
   var tags = tag.split(',');
@@ -49,14 +52,14 @@ router.post('/poll', global.requireAuth, function(req, res, next){
       return;
     }
 
-    var blob = new Blob({'user':user.id,'tags':tags});
+    var blob = new Blob({'kind':'poll','user':user.id,'title':title,'instruction':instruction,'tags':tags});
     blob.save(function(err){
       if(err){
         next(err);
         return; 
       }
 
-      var poll = new Poll({'blob':blob.id,'title':polltitle});
+      var poll = new Poll({'blob':blob.id});
       poll.save(function(err){
         if(err){
           next(err);
@@ -65,10 +68,20 @@ router.post('/poll', global.requireAuth, function(req, res, next){
 
         for(var i=0;i<question_titles.length;i++){
           var question_title = question_titles[i];
+          
           var question_type = req.body['question_type_'+i];
+          
           var question_answers = req.body['question_answer_'+i];
+          question_answers = _.filter(question_answers,function(e){
+            if(e.trim().length>0) return e;
+          });
+          
+          var question_points = req.body['question_point_'+i];
+          question_points = _.filter(question_points,function(e){
+            if(e.trim().length>0) return e;
+          });
 
-          var pollquestion = new PollQuestion({'poll':poll.id,'prompt':question_title,'type':question_type,'choices':question_answers});
+          var pollquestion = new PollQuestion({'poll':poll.id,'prompt':question_title,'type':question_type,'choices':question_answers, 'points':question_points});
           pollquestion.save(function(err){
             if(err){
               next(err);

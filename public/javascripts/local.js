@@ -1,3 +1,119 @@
+var qIndex = 0;
+var qTemplate = '' +
+'    <div class="question divider" data-id="{index}">' + 
+'      <div class="row">' + 
+'        <div class="col-md-2">' + 
+'          <label>' + 
+'            Question #<span class="question_id">{indexplus}</span> prompt : ' + 
+'          </label>' + 
+'        </div>' + 
+'        <div class="col-md-7">' + 
+'          <input type="text" class="form-control" name="question_title[]" required="true" placeholder="Two ducks and two dogs have a total of fourteen legs.">' + 
+'        </div>' + 
+'        <div class="col-md-3">' + 
+'          <div class="radio">' + 
+'            <label>' + 
+'              <input type="radio" name="question_type_{index}" value="unique" class="question_type" required="true" checked> Unique choice' + 
+'            </label>' + 
+'          </div>' + 
+'          <div class="radio">' + 
+'            <label>' + 
+'              <input type="radio" name="question_type_{index}" value="multiple" class="question_type" required="true"> Multiple choices' + 
+'            </label>' + 
+'          </div>' + 
+'          <div class="radio">' + 
+'            <label>' + 
+'              <input type="radio" name="question_type_{index}" value="open" class="question_type" required="true"> Open' + 
+'            </label>' + 
+'          </div>' + 
+'        </div>' + 
+'      </div>' + 
+'      <div class="row">' + 
+'        <div class="col-md-12">' + 
+'          <div class="multiple unique">' + 
+'            <div class="col-md-3">' + 
+'              <div class="form-group">' + 
+'                <label>Choice #1</label>' + 
+'                <input type="text" class="form-control" name="question_answer_{index}[]" placeholder="choice title">' + 
+'              </div>' + 
+'            </div>' + 
+'            <div class="col-md-3">' + 
+'              <div class="form-group">' + 
+'                <label>Choice #2</label>' + 
+'                <input type="text" class="form-control" name="question_answer_{index}[]" placeholder="choice title">' + 
+'              </div>' + 
+'            </div>' + 
+'            <div class="col-md-3">' + 
+'              <div class="form-group">' + 
+'                <label>Choice #3</label>' + 
+'                <input type="text" class="form-control" name="question_answer_{index}[]" placeholder="choice title">' + 
+'              </div>' + 
+'            </div>' + 
+'            <div class="col-md-3">' +
+'              <div class="form-group">' +
+'                <label>Choice #4</label>' +
+'                <input type="text" class="form-control" name="question_answer_{index}[]" placeholder="choice title">' +
+'              </div>' +
+'            </div>' +
+'          </div>' +
+'          <div class="open" style="display:none;">' +
+'            <div class="col-md-12">' +
+'              <div class="form-group">' +
+'                <label>Expected answer</label>' +
+'                <textarea class="form-control" name="question_answer_{index}[]" width="100%" height="40"></textarea>' +
+'              </div>' +
+'            </div>' +
+'          </div>' +
+'        </div>' +
+'      </div>' +
+'      <div class="row">' +
+'        <div class="col-md-12">' +
+'          <div class="multiple unique">' +
+'            <div class="col-md-3">' +
+'              <div class="form-group">' +
+'                <label>Choice #1 points</label>' +
+'                <input type="text" class="form-control" name="question_point_{index}[]" placeholder="10">' +
+'              </div>' +
+'            </div>' +
+'            <div class="col-md-3">' +
+'              <div class="form-group">' +
+'                <label>Choice #2 points</label>' +
+'                <input type="text" class="form-control" name="question_point_{index}[]" placeholder="10">' +
+'              </div>' +
+'            </div>' +
+'            <div class="col-md-3">' +
+'              <div class="form-group">' +
+'                <label>Choice #3 points</label>' +
+'                <input type="text" class="form-control" name="question_point_{index}[]" placeholder="10">' +
+'              </div>' +
+'            </div>' +
+'            <div class="col-md-3">' +
+'              <div class="form-group">' +
+'                <label>Choice #4 points</label>' +
+'                <input type="text" class="form-control" name="question_point_{index}[]" placeholder="10">' +
+'              </div>' +
+'            </div>' +
+'          </div>' +
+'          <div class="open" style="display:none;">' +
+'            <div class="col-md-12">' +
+'              <div class="form-group">' +
+'                <label>Answer points</label>' +
+'                <input type="text" class="form-control" name="question_point_{index}[]" placeholder="10">' +
+'              </div>' +
+'            </div>' +
+'          </div>' +
+'        </div>' +
+'      </div>' +
+'      <div class="row">' +
+'        <div class="col-md-12 text-right">' +
+'          <button class="btn btn-success question_add">Add question</button>' +
+'          <button class="btn btn-warning question_rm">Remove question</button>' +
+'        </div>' +
+'      </div>' +
+'    </div>';
+
+
+
 function pad(number) {
     var r = String(number);
     if ( r.length === 1 ) {
@@ -92,6 +208,7 @@ $(function(){
   });
 
   //// poll
+  /*
   function loadValues($question){
     var id = parseInt($question.attr('data-id'));
     var qTitleValue = $question.find('input[name="question_title[]"]').val();
@@ -153,6 +270,45 @@ $(function(){
     $select.find('option:selected').removeAttr('selected');
     $select.find('option:eq('+(idx-1)+')').prop('selected', true);
   });
+  */
+  var kinds = ['open','unique','multiple','feel'];
+  $(document.body).on('click',"input.question_type",function(evt){
+    var $question = $(".question-wrapper");
+    var kind = $(this).attr('value');
+    for(var i=0;i<kinds.length;i++){
+      var ckind = kinds[i];
+      $question.find('.'+ckind).hide();
+    }
+    $question.find('.'+kind).show();
+  });
+
+  var addQuestion = function() {
+    var content = qTemplate.replace(/{index}/ig,qIndex).replace(/{indexplus}/ig,qIndex+1);
+    $(".question-wrapper").append(content);
+    qIndex++;
+  };
+  $(document.body).on('click',"button.question_add",function(evt){
+    evt.preventDefault();
+    addQuestion();
+    return false;
+  });  
+  $(document).on('addQuestion',function(evt){
+    addQuestion();
+  });
+
+  var delQuestion = function($q) {
+    if(qIndex>1) {
+      $q.remove();
+      qIndex--;
+    }
+  };
+  $(document.body).on('click',"button.question_rm",function(evt){
+    evt.preventDefault();
+    var $question = $(this).parent().parent().parent();
+    delQuestion($question);
+    return false;
+  });
+
 
   //// prompts
   $('.prompt').on('click', function(e){

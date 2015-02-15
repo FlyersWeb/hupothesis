@@ -7,6 +7,7 @@ var pollQuestionSchema = new Schema({
     prompt: { type: String },
     type: { type: String },
     choices: { type: [String], default: null },
+    points: { type: [String], default: null },
     deleted: { type: Date, default: null, index: true },
     added: { type: Date, default: Date.now() }
 });
