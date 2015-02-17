@@ -29,10 +29,14 @@
 <p></p>
 <form method="POST" action="/upload/answer?_csrf={{csrf}}" enctype="multipart/form-data" role="form">
   <input type="hidden" name="fileid" value="{{fileinfo._id}}"/>
+  {{#if contestant.email}}
+  <input type="hidden" name="email" value="{{contestant.email}}">
+  {{else}}
   <div class="form-group">
     <label for="email">Please enter you email</label>
     <input type="email" name="email" id="email" required="true" class="form-control">
   </div>
+  {{/if}}
   <div class="form-group">
     <label for="answerinfo">Chose your answers</label>
     <input type="file" name="answerinfo" id="answerinfo" required="true"/>

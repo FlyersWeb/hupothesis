@@ -255,13 +255,7 @@ router.post('/upload/answer', function(req, res, next) {
 
               /* ------------ */
               
-              Contestant.findById(req.session.contestant._id, function(err,contestant){
-                if(err){
-                  next(err);
-                  return;
-                }
-                req.session.contestant = contestant;
-              });
+              req.session.contestant = contestant;
 
               req.flash('answerNotice', 'Your answers were successfully uploaded.');
               res.redirect('/upload/answer/'+blob.id);

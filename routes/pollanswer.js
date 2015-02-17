@@ -23,7 +23,7 @@ router.get('/poll/answer/:blobid', function(req, res, next) {
     
     if(!contestant){
       req.flash('pollAnswerError', "Oops! Invalid temporary user creation");
-      res.render('pollanswer', { 'contestant': contestant, notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
+      res.render('pollanswer', { notice: req.flash('pollAnswerNotice'), error: req.flash('pollAnswerError'), captcha_key: global.captcha.public_key, csrf: req.csrfToken() });
       return;
     }
   
@@ -203,8 +203,6 @@ router.post('/poll/answer', function(req, res, next){
             });
           }
 
-          req.session.contestant = contestant;
-
           /*  --- Email Notification ---  */
           var mailOptions = {
             from: global.email.user,
@@ -223,6 +221,8 @@ router.post('/poll/answer', function(req, res, next){
           });
           /****************************************/
 
+          req.session.contestant = contestant;
+          
           req.flash('pollAnswerNotice','Your answers were successfully received.');
           res.redirect('/poll/answer/'+blob.id);
           return;

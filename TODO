@@ -1,8 +1,6 @@
 IN PROGRESS
 -----------
 
-* Add email asking only if not already contestant
-
 * Add UT e2e FT
 * Add Fixtures
 
@@ -89,7 +87,9 @@ PollAnswer contestant add answer problem with viewed/added
 DONE
 ----
 
-* Check viewed field for poll answer (error)  DONE
+* Add email asking only if not already contestant   DONE
+
+* Check viewed field for poll answer (error)        DONE
       refactor pollanswer to create answers on view (update not working)
       and update on answered
       and do not show in profile (profile.js)

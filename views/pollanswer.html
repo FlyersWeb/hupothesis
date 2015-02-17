@@ -35,12 +35,16 @@
 <form action="/poll/answer" method="post">
   <input type="hidden" name="_csrf" value="{{csrf}}">  
   <input type="hidden" name="blobid" value="{{poll._id}}">
+  {{#if contestant.email}}
+  <input type="hidden" name="email" value="{{contestant.email}}">
+  {{else}}
   <div class="row">
     <div class="form-group">
       <label for="email">Please provide your email</label>
       <input type="email" class="form-control" name="email" id="email" placeholder="john.doe@unknown.com">
     </div>
   </div>
+  {{/if}}
 {{#each poll.questions}}
   <input type="hidden" name="question_ids[]" value="{{_id}}">
   <div class="question">
