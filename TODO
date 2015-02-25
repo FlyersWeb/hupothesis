@@ -1,14 +1,16 @@
 IN PROGRESS
 -----------
 
+* Add export questionnaire in csv
+
+* Questionnaire answer points (automatic evaluation)
+
+* Social button refactoring
+
 * Add UT e2e FT
 * Add Fixtures
 
-* Add export questionnaire in csv
-
 * Widget integration refactoring
-
-* Social button refactoring
 
 * Better emailing with HTML  
       http://www.emailonacid.com/
@@ -30,8 +32,6 @@ IN PROGRESS
 
 TODO
 ----
-
-* Questionnaire answer points (automatic evaluation)
 
 * Add poll response time
 * File and Questionnaire limit answer time (close exam when finished)
