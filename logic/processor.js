@@ -2,7 +2,8 @@
 var _ = require('underscore');
 
 
-function FileAnswered() {
+function FileAnswered(id) {
+  this.id = id || null;
   this.answers = [];
 }
 FileAnswered.prototype.addAnswer = function(answer) {
@@ -13,31 +14,103 @@ FileAnswered.prototype.computeMedian = function() {
   return this;
 };
 
-function PollAnswered() {
-  this.answers = [];
+function PollAnswered(id) {
+  this.id = id || null;
+  this.contestants  = {};
+
+  this.scores       = {};
+
+  this.timestampMedian  = null;
+  this.pointsMedian     = null;
 }
+// add answer storing points
 PollAnswered.prototype.addAnswer = function(question) {
   var that = this;
   _.each(question.answers, function(answer){
     answer.points = 0;
-    answer.totalPoints = _.reduce(question.points, function(p, c) { return parseInt(c)+parseInt(p); });
+    answer.totalPoints = _.reduce(question.points, function(m, c) { 
+      var c = parseInt(c);
+      var m = parseInt(m);
+      var ret = m+c;
+      return ret;
+      // if(ret>=0) {
+      //   return ret;
+      // } else if(c>=0) {
+      //   return c;
+      // } else {
+      //   return 0;
+      // }
+    });
     _.each(answer.value, function(val){
       var idx = _.indexOf(question.choices, val);
       if(idx>=0) answer.points += parseInt(question.points[idx]);
     });
-    that.answers.push(answer);
+    if(typeof that.contestants[answer.contestant._id] == "undefined")
+      that.contestants[answer.contestant._id] = [answer];
+    else  
+      that.contestants[answer.contestant._id].push(answer);
   });
   return this;
 };
+// compute timestamp mediane
 PollAnswered.prototype.computeMedian = function() {
-  var points = [];
+  var that = this;
+  var timestamps = [];
   var medIdx = 0;
-  _.each(this.answers, function(answer){
-    points.push(answer.points);
+  _.each(this.contestants, function(answers){
+    _.each(answers, function(answer){
+      timestamps.push(answer.ansTime);
+    });
   });
+  timestamps = timestamps.sort();
+  medIdx = Math.floor(timestamps.length/2)-1;
+
+  if(typeof timestamps[medIdx] != "undefined")
+    this.timestampMedian = timestamps[medIdx];
+
+  return this;
+};
+// compute total poll points
+PollAnswered.prototype.computePoints = function() {
+  
+  var points = [];
+
+  _.each(this.contestants, function(answers){
+    _.each(answers, function(answer){
+      points.push(answer.points);
+    });
+  });
+
   points = points.sort();
-  medIdx = Math.floor(points.length/2);
-  return points[medIdx];
+  medPts = Math.floor(points.length/2)-1;
+
+  if(typeof points[medPts] != "undefined")
+    this.pointsMedian = points[medPts];
+
+  return this;
+};
+// compute score ponderated with answer time or not
+PollAnswered.prototype.computeScore = function(withTimestamp) {
+  var that = this;
+  this.computePoints().computeMedian();
+
+  var withTimestamp = withTimestamp || true;
+
+  _.each(this.contestants, function(answers, contestantId){
+    _.each(answers, function(answer){
+      if(withTimestamp) {
+        var timestampScore = ((answer.ansTime-that.timestampMedian)/that.timestampMedian)*-1;
+        var score = answer.points+timestampScore;
+      } else {
+        var score = answer.points;
+      }
+      if(typeof that.scores[contestantId] == "undefined")
+        that.scores[contestantId] = score;
+      else
+        that.scores[contestantId] += score;
+    });
+  });
+  return this;
 };
 
 function Processor(user, files, fanswers, polls, pquestions, panswers, contestants) {
@@ -57,30 +130,30 @@ function Processor(user, files, fanswers, polls, pquestions, panswers, contestan
   this.prepareData();
 }
 
-Processor.prototype.calculateAnswerTime = function(viewed, answered) {
-  var ret = 0;
-  if( answered && viewed )
-    ret = answered.getTime()-viewed.getTime();
-  if(ret<0) ret = 0;
-  return ret;
-};
-
 // prepare data for processing
 Processor.prototype.prepareData = function() {
   var ret = {};
+
+  var calculateAnswerTime = function(viewed, answered) {
+    var ret = 0;
+    if( answered && viewed )
+      ret = answered.getTime()-viewed.getTime();
+    if(ret<0) ret = 0;
+    return ret;
+  };
 
   var user = this.user.toObject();
 
   var dfiles = [];
   for (var i=0; i<this.files.length; i++) {
-    var fileAnswered = new FileAnswered();
     var file = this.files[i];
+    var fileAnswered = new FileAnswered(file._id);
     file = file.toObject();
     file.answers = [];
     for(var j=0; j<this.fanswers.length; j++) {
       var fanswer = this.fanswers[j];
       fanswer = fanswer.toObject();
-      fanswer.ansTime = this.calculateAnswerTime(fanswer.viewed, fanswer.added);
+      fanswer.ansTime = calculateAnswerTime(fanswer.viewed, fanswer.added);
       for(var k=0; k<this.contestants.length; k++){
         var contestant = this.contestants[k];
         if(fanswer.contestant.toString() == contestant._id.toString()) {
@@ -98,8 +171,8 @@ Processor.prototype.prepareData = function() {
 
   var dpolls = [];
   for(var i=0; i<this.polls.length; i++) {
-    var pollAnswered = new PollAnswered();
     var poll = this.polls[i];
+    var pollAnswered = new PollAnswered(poll._id);
     poll = poll.toObject();
     poll.questions = [];
     for(var j=0; j<this.pquestions.length; j++) {
@@ -109,7 +182,7 @@ Processor.prototype.prepareData = function() {
       for(var k=0; k<this.panswers.length; k++) {
         var panswer = this.panswers[k];
         panswer = panswer.toObject();
-        panswer.ansTime = this.calculateAnswerTime(panswer.viewed, panswer.added);
+        panswer.ansTime = calculateAnswerTime(panswer.viewed, panswer.added);
         for(var l=0; l<this.contestants.length; l++){
           var contestant = this.contestants[l];
           if(panswer.contestant.toString() == contestant._id.toString()) {
@@ -135,25 +208,21 @@ Processor.prototype.prepareData = function() {
 
   this.data = ret;
 
+  this.computeScores();
+
   return this;
 };
 
 
 // process answer total points
-Processor.prototype.computePoints = function() {
-  console.log(this.data);
-  return this;
-};
-
-// get answers median points
-Processor.prototype.computeMedian = function(obj) {
-  var points 
-  var answers = obj.answers;
-  _.each(answers,function(answer){
-
+Processor.prototype.computeScores = function() {
+  var that = this;
+  _.each(this.answered.polls, function(p){
+    p.computeScore();
   });
   return this;
 };
+
 
 Processor.prototype.debug = function() {
   _.each(this.answered.files, function(e){
