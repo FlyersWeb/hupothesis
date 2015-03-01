@@ -1,21 +1,23 @@
 
 var _ = require('underscore');
 
-
-function FileAnswered(id) {
-  this.id = id || null;
-  this.answers = [];
+function FileAnswered(file) {
+  this.file = file || null;
+  this.contestants  = {};
 }
 FileAnswered.prototype.addAnswer = function(answer) {
-  this.answers.push(answer);
+  if(typeof this.contestants[answer.contestant._id] == "undefined")
+    this.contestants[answer.contestant._id] = [answer];
+  else
+    this.contestants[answer.contestant._id].push(answer);
   return this;
 };
 FileAnswered.prototype.computeMedian = function() {
   return this;
 };
 
-function PollAnswered(id) {
-  this.id = id || null;
+function PollAnswered(poll) {
+  this.poll = poll || null;
   this.contestants  = {};
 
   this.scores       = {};
@@ -147,7 +149,7 @@ Processor.prototype.prepareData = function() {
   var dfiles = [];
   for (var i=0; i<this.files.length; i++) {
     var file = this.files[i];
-    var fileAnswered = new FileAnswered(file._id);
+    var fileAnswered = new FileAnswered(file);
     file = file.toObject();
     file.answers = [];
     for(var j=0; j<this.fanswers.length; j++) {
@@ -172,7 +174,7 @@ Processor.prototype.prepareData = function() {
   var dpolls = [];
   for(var i=0; i<this.polls.length; i++) {
     var poll = this.polls[i];
-    var pollAnswered = new PollAnswered(poll._id);
+    var pollAnswered = new PollAnswered(poll);
     poll = poll.toObject();
     poll.questions = [];
     for(var j=0; j<this.pquestions.length; j++) {
@@ -208,14 +210,21 @@ Processor.prototype.prepareData = function() {
 
   this.data = ret;
 
-  this.computeScores();
-
   return this;
 };
 
+// get Data for view
+Processor.prototype.getData = function() {
+  var ret = {};
+  ret.user = this.user.toObject();
+  ret.user.files = this.answered.files;
+  ret.user.polls = this.answered.polls;
+
+  return this.data;
+};
 
 // process answer total points
-Processor.prototype.computeScores = function() {
+Processor.prototype.computeScore = function() {
   var that = this;
   _.each(this.answered.polls, function(p){
     p.computeScore();

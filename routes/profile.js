@@ -117,9 +117,7 @@ router.get('/profile/:userid', global.requireAuth, function(req, res, next){
         if(results[1][3].length>0) contestants=contestants.concat(results[1][3]);
 
         var processor = new Processor(user, files, fanswers, polls, pquestions, panswers, contestants);
-        var data = processor.data;
-
-        // processor.debug();
+        var data = processor.computeScore().getData();
 
         /**
         * data format

@@ -100,6 +100,7 @@ form dd.submit, dl.labels dd.submit {
 .answervalues {
   display: block;
   clear: both;
+  height: 1em;
 }
 .answervalues li {
   float: left;
