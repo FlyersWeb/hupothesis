@@ -33,8 +33,7 @@ IN PROGRESS
 TODO
 ----
 
-* Add poll response time
-* File and Questionnaire limit answer time (close exam when finished)
+* Add answer unique visitor ensurance (fingerprint + localstorage)
 
 USER Test
 ---------
