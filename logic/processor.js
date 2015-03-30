@@ -33,7 +33,7 @@ PollAnswered.prototype.addAnswer = function(question) {
     answer.totalPoints = _.reduce(question.points, function(m, c) { 
       var c = parseInt(c);
       var m = parseInt(m);
-      var ret = m+c;
+      var ret = parseInt(m+c);
       return ret;
       // if(ret>=0) {
       //   return ret;
@@ -130,6 +130,7 @@ function Processor(user, files, fanswers, polls, pquestions, panswers, contestan
 
   this.data       = {};
   this.prepareData();
+  this.computeScore();
 }
 
 // prepare data for processing
@@ -215,10 +216,18 @@ Processor.prototype.prepareData = function() {
 
 // get Data for view
 Processor.prototype.getData = function() {
-  var ret = {};
-  ret.user = this.user.toObject();
-  ret.user.files = this.answered.files;
-  ret.user.polls = this.answered.polls;
+
+  var that = this;
+
+  _.each(this.data.user.polls, function(poll){
+    var apoll = that.getPollById(poll['_id'].toString(), function(apoll){
+      _.each(poll.questions, function(question){
+        _.each(question.answers, function(answer){
+          answer.contestant['score'] = apoll.scores[answer.contestant['_id'].toString()];
+        });
+      });
+    });
+  });
 
   return this.data;
 };
@@ -232,6 +241,12 @@ Processor.prototype.computeScore = function() {
   return this;
 };
 
+Processor.prototype.getPollById = function(id, cb) {
+  var that=this;
+  _.each(this.answered.polls, function(p){
+    if(p.poll['_id'].toString() == id) cb(p);
+  });
+}
 
 Processor.prototype.debug = function() {
   _.each(this.answered.files, function(e){
