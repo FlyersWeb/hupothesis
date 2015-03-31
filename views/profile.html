@@ -149,6 +149,7 @@
                     <p>You have <strong>{{answers.length}} answer(s)</strong></p>
                     {{#each answers}}
                     <p>Answered by <strong>{{contestant.email}}</strong> in <strong>{{prettify ansTime}}</strong></p>
+                    <p>Scored : <strong>{{decimal contestant.score}}</strong></p>
                     {{#if value}}
                     <ul class="answervalues">
                       {{#each value}}<li> {{this}} </li>{{/each}}

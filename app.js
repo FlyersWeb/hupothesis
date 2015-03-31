@@ -19,6 +19,10 @@ var hbs = exphbs.create({
       }
       return options.inverse(this);
     },
+    decimal: function(options) {
+      var value = this.contestant.score;
+      return Math.round(value * 100) / 100;
+    },
     inc: function(options) {
       return (this.id+1);
     },
