@@ -11,15 +11,16 @@ var assert = chai.assert,
 var options = { desiredCapabilities: { browserName: 'phantomjs' }, logLevel: 'silent' };
 var client = webdriverio.remote(options);
 
-describe('terms',function(){
+describe('upload',function(){
   this.timeout(99999999);
   before(function(done){
-    client.init(done).url(config.url+'/terms');
+    client.init(done).url(config.url+'/upload');
   });
-  it('should display terms title',function(done){
+  it('should display login title',function(done){
     client
       .getText('h1',function(err,text){
-        assert.strictEqual(text,'Terms of use');
+        assert.equal(undefined,err);
+        assert.strictEqual(text,'Login');
       })
       .call(done);
   });
