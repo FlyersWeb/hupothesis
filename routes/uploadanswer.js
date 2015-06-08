@@ -220,7 +220,9 @@ router.post('/upload/answer', function(req, res, next) {
                     next(err);
                     return;
                   }else{
-                    console.log('Message sent: ' + info.response);
+                    if(info){
+                      console.log('Message sent: ' + info.response);
+                    }
                   }
               });
               /****************************************/
@@ -246,7 +248,9 @@ router.post('/upload/answer', function(req, res, next) {
                         next(err);
                         return;
                       }else{
-                        console.log('Message sent: ' + info.response);
+                        if(info){
+                          console.log('Message sent: ' + info.response);
+                        }
                       }
                   });
                   /**********************************/

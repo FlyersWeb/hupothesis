@@ -63,7 +63,9 @@ router.post('/contact', function(req, res, next) {
           if(err){
             next(err);
           }else{
-            console.log('Message sent: ' + info.response);
+            if(info){
+              console.log('Message sent: ' + info.response);
+            }
           }
       });
 
@@ -79,7 +81,9 @@ router.post('/contact', function(req, res, next) {
           if(err){
             next(err);
           }else{
-            console.log('Message sent: ' + info.response);
+            if(info){
+              console.log('Message sent: ' + info.response);
+            }
           }
       });
       /* ------------ */
