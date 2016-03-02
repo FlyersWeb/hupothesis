@@ -1,0 +1,25 @@
+<!doctype html>
+<head>
+  <title>Questionnary sample</title>
+</head>
+<body>
+  <form method="POST" action="http://perdu.com">
+    <p>First question</p>
+    <p>Answer1 Q1 : <input type="radio" value="42" name="answer[Q1][]"> | Answer2 Q1 : <input type="radio" value="24" name="answer[Q1][]"></p>
+    <input type="hidden" name="ganswer[Q1]" value="24">
+    <input type="hidden" name="vanswer[Q1]" value="10">
+    <p>Second question</p>
+    <p>Answer1 Q2 : <input type="checkbox" value="42" name="answer[Q2][]"> | Answer2 Q2 : <input type="checkbox" value="24" name="answer[Q2][]"></p>
+    <input type="hidden" name="ganswer[Q2][]" value="42"><input type="hidden" name="ganswer[Q2][]" value="24">
+    <input type="hidden" name="vanswer[Q2]" value="10">
+    <p>Third question</p>
+    <p>Answer1 Q3 : <input type="radio" value="answer3" name="answer[Q3][]"> | Answer2 Q3 : <input type="radio" value="answer3" name="answer[Q3][]"></p>
+    <input type="hidden" name="ganswer[Q3][]" value="0">
+    <input type="hidden" name="vanswer[Q3]" value="10">
+
+    <input type="hidden" name="timeElapsed" value="45">
+    <input type="hidden" name="timeMedian" value="30">
+
+    <input type="submit" value="Answer">
+  </form>
+</body>

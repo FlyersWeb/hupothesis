@@ -26,10 +26,28 @@ Then just use it in your expressjs application
 app.use(hupothesis());
 ```
 
-Options
+Then in your controller get the evaluation
+
+```
+app.post('/', function(req,res){
+  var score = req.hupothesisEvaluation();
+  res.json({'score': score});
+});
+```
+
+Working
 -------
 
-Work in progress
+To see a working form example see the test folder. You'll need to define each answer with each good answer and the value per question. This is done using form array as name field attribute.
+
+You can simulate a request using this curl query :
+
+```
+curl 'http://localhost:3000/' -H 'Content-Type: application/x-www-form-urlencoded' --data 'answerQ1%5B%5D=42&ganswer1=24&vanswer1=10&answerQ2%5B%5D=42&answerQ2%5B%5D=24&ganswer2%5B%5D=42&ganswer2%5B%5D=24&vanswer2=10&answerQ3%5B%5D=answer3&ganswer3%5B%5D=0&vanswer3=10&timeElapsed=45&timeMedian=30'
+```
+
+The middleware returns the evaluation in percent weighted by the time candidate took to answer.
+
 
 Contributors
 ------------
